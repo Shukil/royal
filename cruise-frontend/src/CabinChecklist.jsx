@@ -25,7 +25,7 @@ const CabinChecklist = () => {
   const handleAddTask = async (e) => {
     e.preventDefault();
     if (!newTaskText.trim()) return;
-
+  
     try {
       await api.post('/cabin-tasks', { text: newTaskText, assignedTo: assignee });
       setNewTaskText('');
