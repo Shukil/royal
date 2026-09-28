@@ -2104,6 +2104,7 @@ html.home-snap {
   font: inherit;
   cursor: pointer;
   user-select: none;
+  touch-action: manipulation;
 }
 .schedule__rsvp:hover {
   background: rgb(0 0 0 / 0.06);

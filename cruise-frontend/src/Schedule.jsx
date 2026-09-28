@@ -53,7 +53,16 @@ const Schedule = () => {
 
   const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
-  // לחיצה כפולה על אישור ההגעה מבטלת אותו
+  // לחיצה כפולה על אישור ההגעה מבטלת אותו. מזהים את הלחיצה הכפולה ידנית,
+  // כי בטלפונים (בעיקר iOS) האירוע dblclick לא נשלח ולחיצה כפולה מגדילה את המסך
+  const lastTap = useRef({ id: null, time: 0 });
+  const onRsvpTap = (ev, e) => {
+    const now = e.timeStamp;
+    const isDouble = lastTap.current.id === ev.id && now - lastTap.current.time < 400;
+    lastTap.current = isDouble ? { id: null, time: 0 } : { id: ev.id, time: now };
+    if (isDouble) cancelRsvp(ev);
+  };
+
   const cancelRsvp = async (ev) => {
     setError('');
     try {
@@ -345,10 +354,9 @@ const Schedule = () => {
                               type="button"
                               className="schedule__rsvp"
                               title="לחיצה כפולה לביטול אישור ההגעה"
-                              onClick={(e) => e.stopPropagation()}
-                              onDoubleClick={(e) => {
+                              onClick={(e) => {
                                 e.stopPropagation();
-                                cancelRsvp(ev);
+                                onRsvpTap(ev, e);
                               }}
                             >
                               {RSVP_LABELS[ev.myRsvp].icon} {RSVP_LABELS[ev.myRsvp].label}
