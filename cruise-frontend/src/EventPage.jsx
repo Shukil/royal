@@ -129,13 +129,20 @@ const EventPage = () => {
 
   useEffect(load, [load]);
 
+  // לחיצה על מצב אחר בוחרת אותו; לחיצה נוספת על המצב שכבר נבחר מבטלת את אישור ההגעה
+  const [rsvpBusy, setRsvpBusy] = useState(false);
   const setRsvp = async (value) => {
+    if (rsvpBusy) return;
     setError('');
+    setRsvpBusy(true);
     try {
-      await api.put(`/events/${id}/rsvp`, { status: value });
+      if (event.myRsvp === value) await api.delete(`/events/${id}/rsvp`);
+      else await api.put(`/events/${id}/rsvp`, { status: value });
       load();
     } catch (err) {
       setError(errorMessage(err, 'עדכון אישור ההגעה נכשל.'));
+    } finally {
+      setRsvpBusy(false);
     }
   };
 
@@ -251,6 +258,8 @@ const EventPage = () => {
                   type="button"
                   className={`rsvp__btn rsvp__btn--${key}${event.myRsvp === key ? ' is-on' : ''}`}
                   aria-pressed={event.myRsvp === key}
+                  title={event.myRsvp === key ? 'לחיצה נוספת מבטלת את אישור ההגעה' : undefined}
+                  disabled={rsvpBusy}
                   onClick={() => setRsvp(key)}
                 >
                   {r.icon} {r.label}
