@@ -14,7 +14,7 @@ const cruise = {
 const flights = [
   {
     id: 'singer',
-    family: 'משפחת סינגר',
+    family: 'משפחת זינגר',
     flight: 'LY385',
     label: 'טיסת הבוקר',
     departs: '06:05',

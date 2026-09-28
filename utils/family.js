@@ -3,7 +3,7 @@
 const normalizeName = (s) => String(s || '').replace(/[-־]/g, ' ').replace(/\s+/g, ' ').trim();
 
 const FAMILIES = {
-  singer: { label: 'משפחת סינגר', lastNames: ['סינגר', 'זינגר'] },
+  singer: { label: 'משפחת זינגר', lastNames: ['סינגר', 'זינגר'] },
   agayev: { label: 'משפחת עגייב', lastNames: ['עגייב', 'עגיב', 'בן שהם', 'בן שוהם'] },
 };
 
