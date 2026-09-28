@@ -53,22 +53,54 @@ const Schedule = () => {
 
   const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
-  // לחיצה על אישור ההגעה מחליפה מצב: בלי אישור -> "מגיע/ה", ועם אישור -> ביטול
+  // אישור הגעה מהטבלה: status=null מבטל את האישור
   const [rsvpBusy, setRsvpBusy] = useState(null);
-  const toggleRsvp = async (ev) => {
+  const saveRsvp = async (ev, status) => {
     if (rsvpBusy) return;
     setError('');
     setRsvpBusy(ev.id);
     try {
-      const { data } = ev.myRsvp
-        ? await api.delete(`/events/${ev.id}/rsvp`)
-        : await api.put(`/events/${ev.id}/rsvp`, { status: 'yes' });
+      const { data } = status
+        ? await api.put(`/events/${ev.id}/rsvp`, { status })
+        : await api.delete(`/events/${ev.id}/rsvp`);
       setEvents((list) => list.map((x) => (x.id === ev.id ? { ...x, myRsvp: data.myRsvp } : x)));
     } catch (err) {
       setError(errorMessage(err, 'לא הצלחנו לעדכן את אישור ההגעה. נסה שוב.'));
     } finally {
       setRsvpBusy(null);
     }
+  };
+
+  // לחיצה על "טרם אישרת" פותחת תפריט עם שלוש האפשרויות; לחיצה על אישור קיים מבטלת אותו.
+  // התפריט ממוקם ב-position: fixed לפי הכפתור, כי עוטף הטבלה גולל וחותך תוכן שיוצא ממנו
+  const [rsvpMenu, setRsvpMenu] = useState(null);
+  const onRsvpClick = (ev, e) => {
+    e.stopPropagation();
+    if (ev.myRsvp) {
+      saveRsvp(ev, null);
+      return;
+    }
+    if (rsvpMenu?.ev.id === ev.id) {
+      setRsvpMenu(null);
+      return;
+    }
+    const r = e.currentTarget.getBoundingClientRect();
+    const MENU_W = 170;
+    const MENU_H = 150;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    setRsvpMenu({
+      ev,
+      anchor: e.currentTarget,
+      right: Math.max(8, Math.min(vw - r.right, vw - MENU_W - 8)),
+      ...(r.bottom + MENU_H > vh ? { bottom: vh - r.top + 4 } : { top: r.bottom + 4 }),
+    });
+  };
+  const closeRsvpMenu = useCallback(() => setRsvpMenu(null), []);
+  const pickRsvp = (status) => {
+    const { ev } = rsvpMenu;
+    setRsvpMenu(null);
+    saveRsvp(ev, status);
   };
 
   // הסרת מוזמן מיידית; הוספת מוזמן רק אחרי שבודקים שהוא פנוי בזמן הזה
@@ -350,13 +382,11 @@ const Schedule = () => {
                           <button
                             type="button"
                             className={`schedule__rsvp${ev.myRsvp ? '' : ' schedule__pending'}`}
-                            title={ev.myRsvp ? 'לחיצה לביטול אישור ההגעה' : 'לחיצה לאישור הגעה'}
-                            aria-pressed={Boolean(ev.myRsvp)}
+                            title={ev.myRsvp ? 'לחיצה לביטול אישור ההגעה' : 'לחיצה לבחירת אישור הגעה'}
+                            aria-haspopup={ev.myRsvp ? undefined : 'menu'}
+                            aria-expanded={ev.myRsvp ? undefined : rsvpMenu?.ev.id === ev.id}
                             disabled={rsvpBusy === ev.id}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleRsvp(ev);
-                            }}
+                            onClick={(e) => onRsvpClick(ev, e)}
                           >
                             {ev.myRsvp
                               ? `${RSVP_LABELS[ev.myRsvp].icon} ${RSVP_LABELS[ev.myRsvp].label}`
@@ -374,6 +404,47 @@ const Schedule = () => {
       </article>
 
       {conflict && <ConflictDialog conflict={conflict} onClose={() => setConflict(null)} />}
+      {rsvpMenu && <RsvpMenu menu={rsvpMenu} onPick={pickRsvp} onClose={closeRsvpMenu} />}
+    </div>
+  );
+};
+
+// תפריט קטן לבחירת אישור הגעה מתוך הטבלה.
+// נסגר בלחיצה מחוץ לו, ב-Escape, בגלילה או בשינוי גודל החלון
+const RsvpMenu = ({ menu, onPick, onClose }) => {
+  const ref = useRef(null);
+  const { anchor, top, bottom, right } = menu;
+
+  useEffect(() => {
+    ref.current?.querySelector('button')?.focus();
+    const onDown = (e) => {
+      if (!ref.current?.contains(e.target) && !anchor.contains(e.target)) onClose();
+    };
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+        anchor.focus();
+      }
+    };
+    document.addEventListener('pointerdown', onDown);
+    document.addEventListener('keydown', onKey);
+    window.addEventListener('scroll', onClose, true);
+    window.addEventListener('resize', onClose);
+    return () => {
+      document.removeEventListener('pointerdown', onDown);
+      document.removeEventListener('keydown', onKey);
+      window.removeEventListener('scroll', onClose, true);
+      window.removeEventListener('resize', onClose);
+    };
+  }, [anchor, onClose]);
+
+  return (
+    <div ref={ref} className="rsvp-menu" role="menu" aria-label="אישור הגעה" style={{ top, bottom, right }}>
+      {Object.entries(RSVP_LABELS).map(([key, r]) => (
+        <button key={key} type="button" role="menuitem" className={`rsvp-menu__item rsvp-menu__item--${key}`} onClick={() => onPick(key)}>
+          {r.icon} {r.label}
+        </button>
+      ))}
     </div>
   );
 };
