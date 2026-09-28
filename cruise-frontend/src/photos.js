@@ -250,18 +250,18 @@ export const photos = {
     },
     "dining": [
       {
-        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Royal_Caribbean_Anthem_of_the_Seas_%2817264675905%29.jpg/960px-Royal_Caribbean_Anthem_of_the_Seas_%2817264675905%29.jpg",
-        "page": "https://commons.wikimedia.org/wiki/File:Royal_Caribbean_Anthem_of_the_Seas_(17264675905).jpg",
-        "credit": "Gary Bembridge",
-        "license": "CC BY 2.0",
-        "caption": "הכניסה למסעדת Wonderland (בספינת האחות Anthem of the Seas)"
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/39/Oddysey_of_the_Seas_%2855179108029%29.jpg/960px-Oddysey_of_the_Seas_%2855179108029%29.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Oddysey_of_the_Seas_(55179108029).jpg",
+        "credit": "Thank You (25 Millions ) views",
+        "license": "CC BY 4.0",
+        "caption": "המסדרון המוביל למסעדת Giovanni's Italian Kitchen"
       },
       {
-        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f0/Appetizer_Crab_Cake_%2852392073775%29.jpg/960px-Appetizer_Crab_Cake_%2852392073775%29.jpg",
-        "page": "https://commons.wikimedia.org/wiki/File:Appetizer_Crab_Cake_(52392073775).jpg",
-        "credit": "Thank You (23 Millions+) views",
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Royal_Promenade_%2853498564559%29.jpg/960px-Royal_Promenade_%2853498564559%29.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Royal_Promenade_(53498564559).jpg",
+        "credit": "Thank You (25 Millions ) views",
         "license": "CC BY 2.0",
-        "caption": "מנה בחדר האוכל הראשי (בספינת האחות Quantum of the Seas)"
+        "caption": "הטיילת המלכותית (Royal Promenade), עם הפיצרייה Sorrento's ובית הקפה"
       }
     ],
     "attractions": [
@@ -278,52 +278,38 @@ export const photos = {
         "credit": "Thank You (25 Millions ) views",
         "license": "CC BY 2.0",
         "caption": "סיפון הבריכה של Odyssey בערב"
-      },
-      {
-        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fe/Royal_Caribbean_Anthem_of_the_Seas_%2817057270357%29.jpg/960px-Royal_Caribbean_Anthem_of_the_Seas_%2817057270357%29.jpg",
-        "page": "https://commons.wikimedia.org/wiki/File:Royal_Caribbean_Anthem_of_the_Seas_(17057270357).jpg",
-        "credit": "Gary Bembridge",
-        "license": "CC BY 2.0",
-        "caption": "RipCord by iFLY (בספינת האחות Anthem of the Seas)"
-      },
-      {
-        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6f/Bumper_Cars_%2852416464621%29.jpg/960px-Bumper_Cars_%2852416464621%29.jpg",
-        "page": "https://commons.wikimedia.org/wiki/File:Bumper_Cars_(52416464621).jpg",
-        "credit": "Thank You (23 Millions+) views",
-        "license": "CC BY 2.0",
-        "caption": "מכוניות מתנגשות ב-SeaPlex (בספינת האחות Spectrum of the Seas)"
-      },
-      {
-        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Children_Splash_Pool_%2852517805850%29.jpg/960px-Children_Splash_Pool_%2852517805850%29.jpg",
-        "page": "https://commons.wikimedia.org/wiki/File:Children_Splash_Pool_(52517805850).jpg",
-        "credit": "Thank You (23 Millions+) views",
-        "license": "CC BY 2.0",
-        "caption": "פארק המים לילדים (בספינת האחות Spectrum of the Seas)"
       }
     ],
     "shows": [
       {
-        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b1/Two-70_%2852403635530%29.jpg/960px-Two-70_%2852403635530%29.jpg",
-        "page": "https://commons.wikimedia.org/wiki/File:Two-70_(52403635530).jpg",
-        "credit": "Thank You (23 Millions+) views",
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e9/The_Book_%2853519569280%29.jpg/960px-The_Book_%2853519569280%29.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:The_Book_(53519569280).jpg",
+        "credit": "Thank You (24 Millions ) views",
         "license": "CC BY 2.0",
-        "caption": "אולם Two70 עם החלונות והמסכים (בספינת האחות Quantum of the Seas)"
+        "caption": "המופע The Book באולם Two70"
       },
       {
-        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/90/Showgirls_%2852407833305%29.jpg/960px-Showgirls_%2852407833305%29.jpg",
-        "page": "https://commons.wikimedia.org/wiki/File:Showgirls_(52407833305).jpg",
-        "credit": "Thank You (23 Millions+) views",
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/The_Effectors_Pixel_%2853382204381%29.jpg/960px-The_Effectors_Pixel_%2853382204381%29.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:The_Effectors_Pixel_(53382204381).jpg",
+        "credit": "Thank You (24 Millions ) views",
         "license": "CC BY 2.0",
-        "caption": "המופע Showgirl! (בספינת האחות Spectrum of the Seas)"
+        "caption": "The Effectors על במת ה-Royal Theater"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0b/Disco_Inferno_Night_%2853391404246%29.jpg/960px-Disco_Inferno_Night_%2853391404246%29.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Disco_Inferno_Night_(53391404246).jpg",
+        "credit": "Thank You (24 Millions ) views",
+        "license": "CC BY 2.0",
+        "caption": "ערב דיסקו באולם Two70"
       }
     ],
     "more": [
       {
-        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Royal_Promenade_%2853498564559%29.jpg/960px-Royal_Promenade_%2853498564559%29.jpg",
-        "page": "https://commons.wikimedia.org/wiki/File:Royal_Promenade_(53498564559).jpg",
-        "credit": "Thank You (25 Millions ) views",
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9a/Odyssey_of_the_Seas_%2853429955475%29.jpg/960px-Odyssey_of_the_Seas_%2853429955475%29.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Odyssey_of_the_Seas_(53429955475).jpg",
+        "credit": "Thank You (24 Millions ) views",
         "license": "CC BY 2.0",
-        "caption": "הטיילת המלכותית (Royal Promenade) ב-Odyssey"
+        "caption": "Odyssey of the Seas מוארת בלילה בנמל פונשל, מדיירה"
       }
     ]
   }

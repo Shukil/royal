@@ -79,9 +79,9 @@ const attractions = [
 ];
 
 const shows = [
-  { name: 'Two70', note: 'אולם מירכתיים עם חלונות ענק, מסכים רובוטיים ומסך Vistarama ברוחב 30 מטר. מופעי אקרובטיקה עם הקרנות ענק.' },
-  { name: 'Royal Theater', note: 'הפקות בסגנון לאס וגאס ופריז, כמו Showgirl!.' },
-  { name: 'Casino Royale', note: 'קזינו עם שולחנות ומכונות.' },
+  { name: 'The Book', where: 'Two70', note: 'מסע בשבעה פרקים שמשלב אקרובטיקה, מסכים רובוטיים והקרנות ענק על חלונות המירכתיים. חינם, אבל צריך להזמין מקום מראש.' },
+  { name: 'Showgirl!', where: 'Royal Theater', note: 'Past, Present, Future: מופע ריקוד נוצץ בהשראת הרביו של פריז ולאס וגאס.' },
+  { name: 'The Effectors', where: 'Royal Theater', note: 'חבורת גיבורי-על נלחמת ברשע Crash ובצבא הרחפנים שלו, עם אפקטים ורחפנים מעופפים.' },  { name: 'Casino Royale', note: 'קזינו עם שולחנות ומכונות.' },
   { name: 'Comedy & Karaoke', note: 'מועדון סטנדאפ וערבי קריוקי.' },
 ];
 
@@ -195,7 +195,7 @@ const OdysseyInfo = () => (
           </ul>
           <Photo photo={photos.ship.more[0]} className="photo--wide" />
           <p className="tip">
-            הנתונים לפי ויקיפדיה ו-Royal Caribbean. חלק מהתמונות צולמו בספינות האחיות מאותה מחלקה (Quantum, Anthem, Spectrum), שיש בהן אותם מתחמים, וזה מצוין בכיתוב. רשימת המסעדות, הברים והמופעים מתעדכנת מדי פעם, אז כדאי לבדוק באפליקציה לקראת ההפלגה.
+            הנתונים לפי ויקיפדיה ו-Royal Caribbean. רשימת המסעדות, הברים והמופעים מתעדכנת מדי פעם, אז כדאי לבדוק באפליקציה לקראת ההפלגה.
           </p>
         </section>
       </div>
