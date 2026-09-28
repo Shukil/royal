@@ -2,7 +2,8 @@ import axios from 'axios';
 import { getToken } from './session';
 
 // כתובת השרת. אפשר לשנות בלי לגעת בקוד דרך VITE_API_URL בקובץ .env של הפרונטנד
-export const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+export const API_BASE = import.meta.env.VITE_API_URL
+  || (import.meta.env.PROD ? 'https://royal-q8gn.onrender.com/api' : 'http://localhost:5000/api');
 
 // כל הקריאות לשרת עוברות דרך המופע הזה, שמצרף אוטומטית את טוקן ההתחברות
 const api = axios.create({ baseURL: API_BASE });
