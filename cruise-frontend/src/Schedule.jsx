@@ -53,23 +53,21 @@ const Schedule = () => {
 
   const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
-  // לחיצה כפולה על אישור ההגעה מבטלת אותו. מזהים את הלחיצה הכפולה ידנית,
-  // כי בטלפונים (בעיקר iOS) האירוע dblclick לא נשלח ולחיצה כפולה מגדילה את המסך
-  const lastTap = useRef({ id: null, time: 0 });
-  const onRsvpTap = (ev, e) => {
-    const now = e.timeStamp;
-    const isDouble = lastTap.current.id === ev.id && now - lastTap.current.time < 400;
-    lastTap.current = isDouble ? { id: null, time: 0 } : { id: ev.id, time: now };
-    if (isDouble) cancelRsvp(ev);
-  };
-
-  const cancelRsvp = async (ev) => {
+  // לחיצה על אישור ההגעה מחליפה מצב: בלי אישור -> "מגיע/ה", ועם אישור -> ביטול
+  const [rsvpBusy, setRsvpBusy] = useState(null);
+  const toggleRsvp = async (ev) => {
+    if (rsvpBusy) return;
     setError('');
+    setRsvpBusy(ev.id);
     try {
-      await api.delete(`/events/${ev.id}/rsvp`);
-      setEvents((list) => list.map((x) => (x.id === ev.id ? { ...x, myRsvp: null } : x)));
+      const { data } = ev.myRsvp
+        ? await api.delete(`/events/${ev.id}/rsvp`)
+        : await api.put(`/events/${ev.id}/rsvp`, { status: 'yes' });
+      setEvents((list) => list.map((x) => (x.id === ev.id ? { ...x, myRsvp: data.myRsvp } : x)));
     } catch (err) {
-      setError(errorMessage(err, 'לא הצלחנו לבטל את אישור ההגעה. נסה שוב.'));
+      setError(errorMessage(err, 'לא הצלחנו לעדכן את אישור ההגעה. נסה שוב.'));
+    } finally {
+      setRsvpBusy(null);
     }
   };
 
@@ -349,21 +347,21 @@ const Schedule = () => {
                         </td>
                         <td>{ev.isMine ? 'אני' : ev.createdBy.name}{ev.isSystem && ' 🔒'}</td>
                         <td>
-                          {ev.myRsvp ? (
-                            <button
-                              type="button"
-                              className="schedule__rsvp"
-                              title="לחיצה כפולה לביטול אישור ההגעה"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onRsvpTap(ev, e);
-                              }}
-                            >
-                              {RSVP_LABELS[ev.myRsvp].icon} {RSVP_LABELS[ev.myRsvp].label}
-                            </button>
-                          ) : (
-                            <span className="schedule__pending">טרם אישרת</span>
-                          )}
+                          <button
+                            type="button"
+                            className={`schedule__rsvp${ev.myRsvp ? '' : ' schedule__pending'}`}
+                            title={ev.myRsvp ? 'לחיצה לביטול אישור ההגעה' : 'לחיצה לאישור הגעה'}
+                            aria-pressed={Boolean(ev.myRsvp)}
+                            disabled={rsvpBusy === ev.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleRsvp(ev);
+                            }}
+                          >
+                            {ev.myRsvp
+                              ? `${RSVP_LABELS[ev.myRsvp].icon} ${RSVP_LABELS[ev.myRsvp].label}`
+                              : 'טרם אישרת'}
+                          </button>
                         </td>
                       </tr>
                     ))}

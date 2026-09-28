@@ -2106,6 +2106,10 @@ html.home-snap {
   user-select: none;
   touch-action: manipulation;
 }
+.schedule__rsvp:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
 .schedule__rsvp:hover {
   background: rgb(0 0 0 / 0.06);
 }
