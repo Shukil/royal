@@ -295,6 +295,16 @@ router.put('/:id/rsvp', async (req, res) => {
   res.json({ myRsvp: status });
 });
 
+// ביטול אישור הגעה (חוזר למצב "טרם אישרת")
+router.delete('/:id/rsvp', async (req, res) => {
+  const event = await loadEvent(req, res);
+  if (!event) return;
+
+  event.rsvps = event.rsvps.filter((r) => !sameId(r.user, req.me._id));
+  await event.save();
+  res.json({ myRsvp: null });
+});
+
 // תגובה או תגובה לתגובה
 router.post('/:id/comments', async (req, res) => {
   const text = String(req.body.text || '').trim();

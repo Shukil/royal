@@ -53,6 +53,17 @@ const Schedule = () => {
 
   const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
+  // לחיצה כפולה על אישור ההגעה מבטלת אותו
+  const cancelRsvp = async (ev) => {
+    setError('');
+    try {
+      await api.delete(`/events/${ev.id}/rsvp`);
+      setEvents((list) => list.map((x) => (x.id === ev.id ? { ...x, myRsvp: null } : x)));
+    } catch (err) {
+      setError(errorMessage(err, 'לא הצלחנו לבטל את אישור ההגעה. נסה שוב.'));
+    }
+  };
+
   // הסרת מוזמן מיידית; הוספת מוזמן רק אחרי שבודקים שהוא פנוי בזמן הזה
   const toggleInvitee = async (id) => {
     if (form.invitees.includes(id)) {
@@ -330,7 +341,18 @@ const Schedule = () => {
                         <td>{ev.isMine ? 'אני' : ev.createdBy.name}{ev.isSystem && ' 🔒'}</td>
                         <td>
                           {ev.myRsvp ? (
-                            <span>{RSVP_LABELS[ev.myRsvp].icon} {RSVP_LABELS[ev.myRsvp].label}</span>
+                            <button
+                              type="button"
+                              className="schedule__rsvp"
+                              title="לחיצה כפולה לביטול אישור ההגעה"
+                              onClick={(e) => e.stopPropagation()}
+                              onDoubleClick={(e) => {
+                                e.stopPropagation();
+                                cancelRsvp(ev);
+                              }}
+                            >
+                              {RSVP_LABELS[ev.myRsvp].icon} {RSVP_LABELS[ev.myRsvp].label}
+                            </button>
                           ) : (
                             <span className="schedule__pending">טרם אישרת</span>
                           )}

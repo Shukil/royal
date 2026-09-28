@@ -2094,6 +2094,20 @@ html.home-snap {
   text-decoration: underline;
   color: var(--ink);
 }
+.schedule__rsvp {
+  padding: 0.15rem 0.4rem;
+  margin: -0.15rem -0.4rem;
+  border: 0;
+  border-radius: var(--radius-sm, 6px);
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  user-select: none;
+}
+.schedule__rsvp:hover {
+  background: rgb(0 0 0 / 0.06);
+}
 .schedule__pending {
   color: var(--muted);
   font-size: 0.9rem;
