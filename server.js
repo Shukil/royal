@@ -9,6 +9,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// משתנה חסר בסביבה (למשל ב-Render) — מדפיסים רק את שמות המשתנים הדומים, בלי ערכים
+if (!process.env.MONGO_URI) {
+  const similar = Object.keys(process.env).filter((k) => /MONGO|JWT|URI|SMTP|CLIENT/i.test(k));
+  console.error('MONGO_URI is not set. Similar env var names found:', similar);
+}
+
 // התחברות למסד הנתונים
 mongoose.connect(process.env.MONGO_URI)
   .then(async () => {
