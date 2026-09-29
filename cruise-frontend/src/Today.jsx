@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from './api';
 import Flag from './Flag';
+import Weather from './Weather';
+import TravelWarning from './TravelWarning';
 import { RSVP_LABELS, formatWhen } from './eventTypes';
 import { getToken } from './session';
 import { at } from './tripDays';
@@ -103,6 +105,7 @@ const Today = ({ day, next, now, preview }) => {
             <span dir="ltr" className="today__nowrap">{day.arrive && day.depart ? times : day.depart || day.arrive}</span>
           </p>
         )}
+        {day.weather && <Weather id={day.weather} date={day.date} compact />}
       </header>
 
       {status && (
@@ -111,6 +114,8 @@ const Today = ({ day, next, now, preview }) => {
           {status.detail && <span>{status.detail}</span>}
         </div>
       )}
+
+      {day.country && <TravelWarning country={day.country} compact onlyHigh />}
 
       {day.note && <p className="today__note">💡 {day.note}</p>}
 

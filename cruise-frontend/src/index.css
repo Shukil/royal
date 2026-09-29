@@ -2640,3 +2640,219 @@ html.home-snap {
 .today__nowrap {
   white-space: nowrap;
 }
+
+/* מזג אוויר (Weather.jsx) */
+.weather {
+  display: grid;
+  gap: 0.6rem;
+}
+.weather__subtitle {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+.weather__facts {
+  margin: 0;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+.weather__tip {
+  margin: 0;
+}
+.weather__source {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.weather__days {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+.weather__day {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem 0.75rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+.weather__date {
+  font-weight: 700;
+}
+.weather__icon {
+  font-size: 1.3rem;
+}
+.weather-line {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* מפה במדריכים (GuideMap.jsx) */
+.guide-map {
+  display: grid;
+  gap: 0.75rem;
+}
+.guide-map__canvas {
+  height: clamp(280px, 55vh, 460px);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  z-index: 0; /* שהמפה לא תעלה מעל התפריט והפס העליון */
+}
+.guide-map__legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 0.35rem 1rem;
+}
+.guide-map__legend a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: inherit;
+  text-decoration: none;
+}
+.guide-map__legend a:hover {
+  text-decoration: underline;
+}
+.map-pin {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--navy-800);
+  color: #fff;
+  font: 700 0.85rem/1 var(--font-body);
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+.map-pin--port {
+  background: var(--gold);
+  color: var(--navy-800);
+}
+.map-pin--small {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  font-size: 0.75rem;
+  border-width: 0;
+  box-shadow: none;
+}
+.map-popup {
+  display: grid;
+  gap: 0.3rem;
+  font-family: var(--font-body);
+}
+
+/* אזהרות מסע (TravelWarning.jsx) */
+.warnings {
+  display: grid;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+}
+.warning {
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  border-inline-start: 5px solid var(--gold);
+  background: var(--gold-soft);
+}
+.warning--high {
+  border-color: var(--danger);
+  background: var(--danger-bg);
+}
+.warning--compact {
+  padding: 0.65rem 0.9rem;
+}
+.warning__title {
+  margin: 0 0 0.2rem;
+  font-weight: 800;
+}
+.warning--high .warning__title {
+  color: var(--danger);
+}
+.warning__text {
+  margin: 0 0 0.2rem;
+}
+.warning__source {
+  margin: 0.3rem 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+.today .warnings {
+  margin: 0;
+}
+
+/* דף החירום (Emergency.jsx) */
+.sos {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  border-radius: var(--radius-md);
+  background: var(--danger-bg);
+  border: 1.5px solid var(--danger);
+}
+.sos__number {
+  margin: 0;
+  font-size: 2.6rem;
+  font-weight: 800;
+  line-height: 1;
+}
+.sos__number a {
+  color: var(--danger);
+  text-decoration: none;
+}
+.sos__text {
+  margin: 0;
+}
+.phone {
+  white-space: nowrap;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.missions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 0.75rem;
+}
+.mission {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+.mission__name {
+  margin: 0 0 0.2rem;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.mission__where {
+  margin: 0 0 0.5rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+.mission__lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.25rem;
+}
+.mission__lines li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.4rem;
+}
+.mission__note {
+  margin: 0.5rem 0 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+}

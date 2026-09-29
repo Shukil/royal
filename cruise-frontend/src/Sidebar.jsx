@@ -11,6 +11,7 @@ const menuItems = [
   { path: '/personal-checklist', label: 'צ\'ק ליסט אישי', icon: '🎒' },
   { path: '/cabin-checklist', label: 'צ\'ק ליסט חדר', icon: '📋' },
   { path: '/guides', label: 'מדריכי יעדים', icon: '🧭' },
+  { path: '/emergency', label: 'חירום ומידע חשוב', icon: '🆘' },
 ];
 
 const Brand = () => (

@@ -1,16 +1,26 @@
+import { lazy, Suspense } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { destinations, guideOrder } from './destinations';
 import { photos } from './photos';
 import Gallery, { Photo } from './Gallery';
 import Spots from './Spots';
 import CurrencyRates from './CurrencyRates';
+import Weather from './Weather';
+import TravelWarning from './TravelWarning';
+
+const GuideMap = lazy(() => import('./GuideMap'));
+
+// המדינה של כל יעד, לאזהרת המסע
+const WARNING_COUNTRY = { santorini: 'gr', mykonos: 'gr', kusadasi: 'tr', naples: 'it' };
 
 const toc = [
   { id: 'port', label: 'הנמל' },
   { id: 'about', label: 'על היעד' },
+  { id: 'weather', label: 'מזג אוויר' },
   { id: 'photos', label: 'תמונות' },
   { id: 'routes', label: 'מסלולים' },
   { id: 'sites', label: 'אתרים' },
+  { id: 'map', label: 'מפה' },
   { id: 'food', label: 'אוכל' },
   { id: 'shopping', label: 'קניות' },
   { id: 'transport', label: 'תחבורה וטיפים' },
@@ -42,6 +52,8 @@ const DestinationGuide = () => {
             ))}
           </nav>
 
+          <TravelWarning country={WARNING_COUNTRY[id]} compact />
+
           <section className="section prose" id="port">
             <h2 className="section__title">⚓ הנמל: {d.port.title}</h2>
             <ul>
@@ -61,6 +73,11 @@ const DestinationGuide = () => {
               ))}
             </dl>
             <p className="prose">{d.about}</p>
+          </section>
+
+          <section className="section" id="weather">
+            <h2 className="section__title">מזג האוויר 🌤️</h2>
+            <Weather id={id} />
           </section>
 
           {pics?.gallery && (
@@ -98,6 +115,14 @@ const DestinationGuide = () => {
                 </details>
               ))}
             </div>
+          </section>
+
+          <section className="section" id="map">
+            <h2 className="section__title">מפה 🗺️</h2>
+            <p className="field__hint">⚓ הנמל, והמספרים לפי רשימת האתרים. לחיצה על נקודה פותחת ניווט ב-Google Maps.</p>
+            <Suspense fallback={<p className="empty">טוען מפה…</p>}>
+              <GuideMap id={id} />
+            </Suspense>
           </section>
 
           <section className="section" id="food">

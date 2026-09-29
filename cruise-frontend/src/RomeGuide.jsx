@@ -1,16 +1,23 @@
+import { lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { photos } from './photos';
 import { destinations, guideOrder } from './destinations';
 import Gallery, { Photo } from './Gallery';
 import Spots from './Spots';
 import CurrencyRates from './CurrencyRates';
+import Weather from './Weather';
+import TravelWarning from './TravelWarning';
+
+const GuideMap = lazy(() => import('./GuideMap'));
 
 const toc = [
   { id: 'port', label: 'הגעה לאונייה' },
   { id: 'about', label: 'על רומא' },
+  { id: 'weather', label: 'מזג אוויר' },
   { id: 'photos', label: 'תמונות' },
   { id: 'routes', label: 'מסלולי הליכה' },
   { id: 'sites', label: 'אתרים' },
+  { id: 'map', label: 'מפה' },
   { id: 'vatican', label: 'הוותיקן' },
   { id: 'food', label: 'אוכל' },
   { id: 'shopping', label: 'קניות' },
@@ -177,6 +184,8 @@ const RomeGuide = () => (
           ))}
         </nav>
 
+        <TravelWarning country="it" compact />
+
         <section className="section prose" id="port">
           <h2 className="section__title">הגעה לאונייה 🚢</h2>
           <p>
@@ -208,6 +217,11 @@ const RomeGuide = () => (
               לפי האגדה, רומא נוסדה על ידי רומולוס, שגדל עם אחיו התאום רמוס אצל זאבה על גדות הטיבר. העיר שלטה באימפריה שהשתרעה בשיאה, בימי טריאנוס, מצפון אנגליה ועד מסופוטמיה. כל קיסר השאיר בה את חותמו: אספסיאנוס בנה את הקולוסאום ואדריאנוס את קסטל סנט׳אנג׳לו. היום העיר כולה היא אתר מורשת עולמית של אונסק״ו, עם יותר מ-900 כנסיות.
             </p>
           </div>
+        </section>
+
+        <section className="section" id="weather">
+          <h2 className="section__title">מזג האוויר 🌤️</h2>
+          <Weather id="rome" />
         </section>
 
         <section className="section" id="photos">
@@ -271,6 +285,14 @@ const RomeGuide = () => (
           <p className="tip">
             <strong>קוד לבוש:</strong> כתפיים וברכיים מכוסות. אין להיכנס עם תיקי גב גדולים, רק תיק צד קטן.
           </p>
+        </section>
+
+        <section className="section" id="map">
+          <h2 className="section__title">מפה 🗺️</h2>
+          <p className="field__hint">⚓ הנמל, והמספרים לפי רשימת האתרים. לחיצה על נקודה פותחת ניווט ב-Google Maps.</p>
+          <Suspense fallback={<p className="empty">טוען מפה…</p>}>
+            <GuideMap id="rome" />
+          </Suspense>
         </section>
 
         <section className="section" id="food">

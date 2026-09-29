@@ -70,6 +70,38 @@ export default defineConfig({
             },
           },
           {
+            // אריחי המפה במדריכים (GuideMap.jsx, נטענים ב-CORS). נשמרים רק אזורים שכבר הוצגו
+            urlPattern: ({ url }) => url.hostname === 'tile.openstreetmap.org',
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'map-tiles',
+              expiration: { maxEntries: 500, maxAgeSeconds: 30 * DAY },
+              cacheableResponse: { statuses: [200] },
+            },
+          },
+          {
+            // אזהרות מסע רשמיות (TravelWarning.jsx)
+            urlPattern: ({ url }) => url.hostname === 'data.gov.il',
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'travel-warnings',
+              networkTimeoutSeconds: 8,
+              expiration: { maxEntries: 5, maxAgeSeconds: 60 * DAY },
+              cacheableResponse: { statuses: [200] },
+            },
+          },
+          {
+            // תחזית מזג אוויר (Weather.jsx)
+            urlPattern: ({ url }) => url.hostname === 'api.open-meteo.com',
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'weather',
+              networkTimeoutSeconds: 5,
+              expiration: { maxEntries: 20, maxAgeSeconds: 7 * DAY },
+              cacheableResponse: { statuses: [200] },
+            },
+          },
+          {
             urlPattern: ({ url }) => url.hostname === 'fonts.googleapis.com',
             handler: 'StaleWhileRevalidate',
             options: { cacheName: 'google-fonts-css' },
