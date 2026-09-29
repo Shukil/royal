@@ -12,6 +12,7 @@ export default defineConfig({
     // קבצי האתר נשמרים מראש; נתונים מהשרת, תמונות ושערי מטבע נשמרים בפעם הראשונה שנטענים
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: false, // הרישום נעשה ב-main.jsx
       includeAssets: ['favicon.svg', 'favicon.ico', 'apple-touch-icon-180x180.png'],
       manifest: {
         name: 'Odyssey of the Seas · אוגוסט 2027',
@@ -35,6 +36,9 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
         navigateFallback: 'index.html',
         cleanupOutdatedCaches: true,
+        // גרסה חדשה נכנסת מיד, בלי לחכות שכל הלשוניות של האתר ייסגרו (בטלפון זה כמעט לא קורה)
+        skipWaiting: true,
+        clientsClaim: true,
         runtimeCaching: [
           {
             // נתונים מהשרת (לו״ז, חדר, צ׳ק ליסטים): קודם מהרשת, ואם אין חיבור - העותק האחרון.
