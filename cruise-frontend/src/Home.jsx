@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Countdown from './Countdown';
+import Today from './Today';
+import { findTripDay, useTripClock } from './tripDays';
 import OdysseyInfo from './OdysseyInfo';
 import { destinations, guideOrder } from './destinations';
 import { photos } from './photos';
@@ -51,6 +53,9 @@ const smoothstep = (x) => {
 
 const Home = () => {
   const [active, setActive] = useState('countdown');
+  // בימי הטיול (12–22.08) החלק העליון מציג את מסך "היום" במקום הספירה לאחור
+  const { now, preview } = useTripClock();
+  const today = findTripDay(now);
   const root = useRef(null);
   const layers = useRef({});
 
@@ -140,7 +145,7 @@ const Home = () => {
 
       <section id="scene-countdown" className="scene scene--countdown">
         <div className="reveal">
-          <Countdown />
+          {today ? <Today day={today.day} next={today.next} now={now} preview={preview} /> : <Countdown />}
         </div>
         <a href="#scene-odyssey" className="scroll-hint">
           <span>גללו להכיר את הספינה</span>
