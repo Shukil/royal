@@ -6,6 +6,7 @@ import EventPage from './EventPage';
 import Login from './Login';
 import Register from './Register';
 import Sidebar from './Sidebar';
+import OfflineBanner from './OfflineBanner';
 import CabinDetails from './CabinDetails';
 import PersonalChecklist from './PersonalChecklist';
 import CabinChecklist from './CabinChecklist';
@@ -44,6 +45,7 @@ const AppLayout = () => {
 
       {/* אזור התוכן הראשי - לוקח בחשבון את רוחב התפריט */}
       <main id="main" tabIndex={-1} className={hideSidebar ? 'app-main app-main--bare' : 'app-main'}>
+        <OfflineBanner />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/schedule" element={<Schedule />} />

@@ -183,7 +183,7 @@ const Home = () => {
         <section key={s.id} id={`scene-${s.id}`} className="scene scene--dest">
           <article className="dest reveal">
             <figure className="dest__photo">
-              <img src={s.photo.src} alt={s.photo.caption} loading="lazy" decoding="async" />
+              <img src={s.photo.src} alt={s.photo.caption} loading="lazy" decoding="async" crossOrigin="anonymous" />
               <figcaption>
                 <a href={s.photo.page} target="_blank" rel="noreferrer" dir="ltr">
                   © {s.photo.credit} · {s.photo.license}

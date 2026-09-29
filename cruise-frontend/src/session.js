@@ -37,6 +37,8 @@ export const clearSession = () => {
   } catch {
     // אין מה לנקות
   }
+  // הנתונים מהשרת שנשמרו לשימוש בלי אינטרנט (vite.config.js) שייכים למשתמש שהתנתק
+  if (typeof caches !== 'undefined') caches.delete('api').catch(() => {});
 };
 
 // שם פרטי ושם משפחה, גם למשתמשים שנשמרו לפני שהשדות האלה נוספו (רק name מלא)

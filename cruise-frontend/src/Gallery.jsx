@@ -1,7 +1,7 @@
 // תמונה אחת עם כיתוב וקרדיט (דרישת רישיון Creative Commons)
 export const Photo = ({ photo, className = '' }) => (
   <figure className={`photo ${className}`}>
-    <img src={photo.src} alt={photo.caption} loading="lazy" decoding="async" />
+    <img src={photo.src} alt={photo.caption} loading="lazy" decoding="async" crossOrigin="anonymous" />
     <figcaption>
       <span className="photo__caption">{photo.caption}</span>
       <a className="photo__credit" href={photo.page} target="_blank" rel="noreferrer" dir="ltr">
