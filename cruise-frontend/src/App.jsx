@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { useLayoutEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigationType } from 'react-router-dom';
 import Home from './Home';
 import Schedule from './Schedule';
 import EventPage from './EventPage';
@@ -19,8 +20,21 @@ import ResetPassword from './ResetPassword';
 // עמודים שמוצגים בלי התפריט הצדדי
 const AUTH_PATHS = ['/login', '/register', '/forgot-password', '/reset-password'];
 
+// מעבר לדף חדש מתחיל מראש הדף. לא בקישור לעוגן בתוך הדף (#), ולא בחזרה אחורה,
+// שבה נשארים במקום שבו היינו
+const useScrollToTopOnNavigate = () => {
+  const { pathname, hash } = useLocation();
+  const navigationType = useNavigationType();
+
+  useLayoutEffect(() => {
+    if (hash || navigationType === 'POP') return;
+    window.scrollTo(0, 0);
+  }, [pathname, hash, navigationType]);
+};
+
 const AppLayout = () => {
   const location = useLocation();
+  useScrollToTopOnNavigate();
   const hideSidebar = AUTH_PATHS.includes(location.pathname);
 
   return (
