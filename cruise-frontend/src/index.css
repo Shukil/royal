@@ -862,6 +862,40 @@ img {
   font-size: 1.1rem;
 }
 
+.fact--wide {
+  grid-column: 1 / -1;
+}
+.currency__list {
+  list-style: none;
+  margin: 0.3rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+.currency__item {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px dashed var(--line);
+}
+.currency__item:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.currency__rate {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.currency__note,
+.currency__source {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
 .amenities {
   list-style: none;
   padding: 0;

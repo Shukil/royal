@@ -3,6 +3,7 @@ import { photos } from './photos';
 import { destinations, guideOrder } from './destinations';
 import Gallery, { Photo } from './Gallery';
 import Spots from './Spots';
+import CurrencyRates from './CurrencyRates';
 
 const toc = [
   { id: 'port', label: 'הגעה לאונייה' },
@@ -21,6 +22,7 @@ const facts = [
   { label: 'נוסדה (לפי המסורת)', value: '753 לפנה"ס' },
   { label: 'נהר', value: 'הטיבר (Tevere)' },
   { label: 'עונות מומלצות', value: 'אפריל–מאי, ספט׳–אוק׳' },
+  { label: 'מטבע', currencies: ['EUR'] },
 ];
 
 const routes = [
@@ -195,9 +197,9 @@ const RomeGuide = () => (
           <h2 className="section__title">על רומא בקצרה</h2>
           <dl className="facts">
             {facts.map((f) => (
-              <div key={f.label} className="fact">
+              <div key={f.label} className={f.currencies ? 'fact fact--wide' : 'fact'}>
                 <dt>{f.label}</dt>
-                <dd>{f.value}</dd>
+                <dd>{f.currencies ? <CurrencyRates codes={f.currencies} /> : f.value}</dd>
               </div>
             ))}
           </dl>
