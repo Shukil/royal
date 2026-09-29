@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import RoyalLogo from './RoyalLogo';
 import { clearSession, getUser } from './session';
+import { isStandalone } from './installPrompt';
 
 const menuItems = [
   { path: '/schedule', label: 'לו״ז', icon: '📅' },
@@ -97,6 +98,22 @@ const Sidebar = () => {
             })}
           </ul>
         </nav>
+
+        {/* כפתור לדף ההסבר על התקנה כאפליקציה. לא מוצג כשהאתר כבר פתוח כאפליקציה */}
+        {!isStandalone() && (
+          <Link
+            to="/install"
+            className="install-link"
+            aria-current={location.pathname === '/install' ? 'page' : undefined}
+            onClick={() => setOpen(false)}
+          >
+            <span aria-hidden="true">📲</span>
+            <span>
+              <strong>להתקין כאפליקציה</strong>
+              <small>עובד גם בלי אינטרנט</small>
+            </span>
+          </Link>
+        )}
 
         <div className="sidebar__footer">
           {user ? (

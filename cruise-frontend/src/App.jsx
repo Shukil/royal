@@ -16,6 +16,7 @@ import Itinerary from './Itinerary';
 import Guides from './Guides';
 import DestinationGuide from './DestinationGuide';
 import Emergency from './Emergency';
+import Install from './Install';
 import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
 
@@ -64,6 +65,7 @@ const AppLayout = () => {
           <Route path="/guide/:id" element={<DestinationGuide />} />
           <Route path="/cabin-checklist" element={<CabinChecklist />} />
           <Route path="/emergency" element={<Emergency />} />
+          <Route path="/install" element={<Install />} />
         </Routes>
       </main>
     </>
