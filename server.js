@@ -21,6 +21,9 @@ mongoose.connect(process.env.MONGO_URI)
     console.log('Connected to MongoDB');
     // האירועים הקבועים בלו"ז: הטיסות של כל משפחה ותחילת ההפלגה
     await require('./routes/events').seedSystemEvents();
+    // משימות קבועות בימי הטיול, ותזכורות למשימות שמגיע תאריך היעד שלהן
+    await require('./routes/tasks').seedSystemTasks();
+    require('./utils/taskReminders').startTaskReminders();
   })
   .catch((err) => console.log('Failed to connect to MongoDB', err));
 
@@ -32,6 +35,8 @@ app.use('/api/events', require('./routes/events'));
 app.use('/api/ship-clock', require('./routes/shipClock'));
 app.use('/api/port-day', require('./routes/portDay'));
 app.use('/api/push', require('./routes/push'));
+app.use('/api/plan', require('./routes/plan'));
+app.use('/api/tasks', require('./routes/tasks'));
 
 // שגיאות מכל הנתיבים
 app.use(require('./middleware/errors'));

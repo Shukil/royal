@@ -5,7 +5,10 @@ import { clearSession, getUser } from './session';
 import { isStandalone } from './installPrompt';
 
 const menuItems = [
+  { path: '/search', label: 'חיפוש', icon: '🔍' },
   { path: '/schedule', label: 'לו״ז', icon: '📅' },
+  { path: '/plan', label: 'תוכנית הטיול', icon: '📋' },
+  { path: '/tasks', label: 'משימות', icon: '✅' },
   { path: '/itinerary', label: 'המסלול שלנו', icon: '🗺️' },
   { path: '/odyssey', label: 'על האודיסי', icon: '🚢' },
   { path: '/cabin', label: 'פרטי חדר', icon: '🛏️' },

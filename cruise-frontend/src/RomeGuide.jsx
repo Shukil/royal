@@ -188,6 +188,10 @@ const RomeGuide = () => (
 
         <TravelWarning country="it" compact />
 
+        <p className="plan-link">
+          <Link to="/plan?day=2027-08-13" className="btn btn--outline btn--sm">📋 התוכנית שלנו לימים ברומא</Link>
+        </p>
+
         <section className="section prose" id="port">
           <h2 className="section__title">הגעה לאונייה 🚢</h2>
           <p>

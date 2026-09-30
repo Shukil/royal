@@ -9,6 +9,7 @@ import Weather from './Weather';
 import TravelWarning from './TravelWarning';
 import Phrasebook from './Phrasebook';
 import { guideLanguage, languages } from './phrases';
+import { tripDays } from './tripDays';
 
 const GuideMap = lazy(() => import('./GuideMap'));
 
@@ -35,6 +36,7 @@ const DestinationGuide = () => {
   if (!d) return <Navigate to="/guides" replace />;
 
   const pics = photos[id];
+  const planDate = tripDays.find((t) => t.guide.to === `/guide/${id}` && t.boardBy)?.date;
   const index = guideOrder.indexOf(id);
   const prev = guideOrder[index - 1];
   const next = guideOrder[index + 1];
@@ -56,6 +58,12 @@ const DestinationGuide = () => {
           </nav>
 
           <TravelWarning country={WARNING_COUNTRY[id]} compact />
+
+          {planDate && (
+            <p className="plan-link">
+              <Link to={`/plan?day=${planDate}`} className="btn btn--outline btn--sm">📋 התוכנית שלנו ליום הזה</Link>
+            </p>
+          )}
 
           <section className="section prose" id="port">
             <h2 className="section__title">⚓ הנמל: {d.port.title}</h2>

@@ -5,6 +5,7 @@ import Flag from './Flag';
 import Weather from './Weather';
 import TravelWarning from './TravelWarning';
 import PortDay from './PortDay';
+import { TodayPlan, TodayTasks } from './TodayPlan';
 import { RSVP_LABELS, formatWhen } from './eventTypes';
 import { getToken } from './session';
 import { at, clockAt, tzMinutes } from './tripDays';
@@ -250,6 +251,9 @@ const Today = ({ day, next, now, preview }) => {
       {day.country && <TravelWarning country={day.country} compact onlyHigh />}
 
       {day.note && <p className="today__note">💡 {day.note}</p>}
+
+      {getToken() && <TodayPlan day={day} />}
+      {getToken() && <TodayTasks day={day} preview={preview} />}
 
       <section className="today__section" aria-labelledby="today-events">
         <h2 id="today-events" className="today__subtitle">📅 מה בלו״ז היום</h2>

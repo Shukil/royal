@@ -1,4 +1,4 @@
-import { useLayoutEffect } from 'react';
+import { lazy, Suspense, useLayoutEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigationType } from 'react-router-dom';
 import Home from './Home';
 import Schedule from './Schedule';
@@ -19,6 +19,11 @@ import Emergency from './Emergency';
 import Install from './Install';
 import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
+import Plan from './Plan';
+import Tasks from './Tasks';
+
+// החיפוש טוען את תוכן כל הדפים, אז הוא נטען רק כשנכנסים אליו
+const Search = lazy(() => import('./Search'));
 
 // עמודים שמוצגים בלי התפריט הצדדי
 const AUTH_PATHS = ['/login', '/register', '/forgot-password', '/reset-password'];
@@ -30,8 +35,22 @@ const useScrollToTopOnNavigate = () => {
   const navigationType = useNavigationType();
 
   useLayoutEffect(() => {
-    if (hash || navigationType === 'POP') return;
-    window.scrollTo(0, 0);
+    if (navigationType === 'POP') return undefined;
+    if (!hash) {
+      window.scrollTo(0, 0);
+      return undefined;
+    }
+    // קישור מדף אחר לעוגן (למשל מתוצאת חיפוש): הדפדפן לא גולל לבד, אז גוללים כשהקטע מופיע
+    const id = decodeURIComponent(hash.slice(1));
+    let tries = 0;
+    let timer;
+    const tick = () => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView();
+      else if (tries++ < 20) timer = setTimeout(tick, 50);
+    };
+    tick();
+    return () => clearTimeout(timer);
   }, [pathname, hash, navigationType]);
 };
 
@@ -66,6 +85,9 @@ const AppLayout = () => {
           <Route path="/cabin-checklist" element={<CabinChecklist />} />
           <Route path="/emergency" element={<Emergency />} />
           <Route path="/install" element={<Install />} />
+          <Route path="/plan" element={<Plan />} />
+          <Route path="/tasks" element={<Tasks />} />
+          <Route path="/search" element={<Suspense fallback={<p className="empty">טוען…</p>}><Search /></Suspense>} />
         </Routes>
       </main>
     </>

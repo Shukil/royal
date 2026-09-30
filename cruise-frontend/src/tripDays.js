@@ -43,6 +43,8 @@ export const tripDays = [
     date: '2027-08-17', weekday: 'שלישי', tz: '+03:00', place: 'סנטוריני', emoji: destinations.santorini.emoji, country: 'gr',
     kicker: 'יום 3 בהפלגה · עגינה בסירות',
     arrive: '09:00', depart: '23:00', boardBy: '22:30',
+    // מרווח הביטחון בתוכנית (דקות לפני שעת החזרה): התור לרכבל למטה והסירות לוקחים זמן
+    planMargin: 90, planMarginWhy: 'התור לרכבל למטה והסירות',
     note: 'יורדים בסירות (Tender) עם כרטיס תור שמחלקים בבוקר. בערב התור לרכבל למטה ארוך, והסירה האחרונה יוצאת כחצי שעה לפני ההפלגה.',
     guide: guide('santorini'), weather: 'santorini',
   },
