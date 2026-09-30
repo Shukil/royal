@@ -3293,3 +3293,323 @@ html.home-snap {
   vertical-align: -0.3em;
   color: #0a84ff;
 }
+
+/* ===== תוכנית הטיול (Plan.jsx) ===== */
+.plan-days {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.25rem;
+  scroll-snap-type: x proximity;
+}
+.plan-day {
+  flex: 0 0 auto;
+  display: grid;
+  gap: 0.1rem;
+  min-width: 9.5rem;
+  padding: 0.6rem 0.8rem;
+  text-align: start;
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  scroll-snap-align: start;
+}
+.plan-day[aria-selected='true'] {
+  border-color: var(--purple);
+  background: var(--purple-soft);
+}
+.plan-day:focus-visible {
+  box-shadow: var(--focus);
+}
+.plan-day__date {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.plan-day__place {
+  font-weight: 700;
+}
+.plan-day__meta {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.plan-day-view {
+  display: grid;
+  gap: 0.9rem;
+}
+.plan-day-view__head {
+  display: grid;
+  gap: 0.25rem;
+}
+.plan-day-view__head .section__title {
+  margin: 0;
+}
+.plan-day-view__ship {
+  margin: 0;
+  color: var(--muted);
+}
+.plan-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.plan-item {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr;
+  gap: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--line);
+  border-inline-start: 4px solid var(--purple);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+.plan-item--error {
+  border-inline-start-color: var(--danger);
+}
+.plan-item--editing {
+  display: block;
+}
+.plan-item__time {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.plan-item__body {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+.plan-item__title,
+.plan-item__meta,
+.plan-item__actions,
+.plan-issue {
+  margin: 0;
+}
+.plan-item__title {
+  font-weight: 700;
+}
+.plan-item__meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+.plan-item__actions {
+  font-size: 0.85rem;
+}
+.plan-item__by {
+  color: var(--muted);
+}
+.plan-badge {
+  display: inline-block;
+  margin-inline-start: 0.5rem;
+  padding: 0.05rem 0.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--gold-soft);
+  color: var(--warn);
+  font-size: 0.78rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.plan-badge--ok {
+  background: var(--success-bg);
+  color: var(--success);
+}
+.plan-issue {
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+}
+.plan-issue--warn {
+  background: var(--gold-soft);
+  color: var(--warn);
+}
+.plan-issue--error {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+.plan-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  padding: 0.9rem;
+  border-radius: var(--radius-md);
+  background: var(--purple-soft);
+}
+.plan-form__title,
+.plan-form__wide,
+.plan-form__actions {
+  grid-column: 1 / -1;
+}
+.plan-form__actions {
+  display: flex;
+  gap: 0.5rem;
+}
+@media (max-width: 480px) {
+  .plan-item {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+  .plan-item__time {
+    text-align: start;
+  }
+}
+
+/* ===== משימות (Tasks.jsx) ===== */
+.tasks {
+  display: grid;
+  gap: 1.25rem;
+}
+.tasks__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.tasks__group {
+  display: grid;
+  gap: 0.5rem;
+}
+.tasks__title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.task-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.task-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+.task-row--late {
+  border-inline-start: 4px solid var(--danger);
+}
+.task-row--done .task-row__title {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+.task-row--editing {
+  display: block;
+  padding: 0;
+  border: 0;
+}
+.task-row__check {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: -0.5rem;
+  cursor: pointer;
+}
+.task-row__check input {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--purple);
+}
+.task-row__body {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+.task-row__title,
+.task-row__meta,
+.task-row__note,
+.task-row__actions {
+  margin: 0;
+}
+.task-row__title {
+  font-weight: 700;
+}
+.task-row__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.9rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+.task-row--late .task-row__meta span:first-child {
+  color: var(--danger);
+  font-weight: 700;
+}
+.task-row__note {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.task-row__actions {
+  font-size: 0.85rem;
+}
+.plan-link {
+  margin: 0 0 1.25rem;
+}
+
+/* ===== חיפוש (Search.jsx) ===== */
+.search {
+  display: grid;
+  gap: 0.9rem;
+}
+.search__input {
+  font-size: 1.1rem;
+}
+.search__examples,
+.search__count {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+.search__results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.search-result {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+}
+.search-result:hover {
+  border-color: var(--purple);
+}
+.search-result:focus-visible {
+  box-shadow: var(--focus);
+}
+.search-result__where {
+  color: var(--purple-dark);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.search-result__title {
+  font-weight: 700;
+}
+.search-result__text {
+  color: var(--muted);
+  font-size: 0.92rem;
+  overflow-wrap: anywhere;
+}
+.search-result mark {
+  padding: 0 0.1rem;
+  border-radius: 2px;
+  background: var(--gold-soft);
+  color: var(--ink);
+  font-weight: 700;
+}
