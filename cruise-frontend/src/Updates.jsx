@@ -5,6 +5,12 @@ import { getToken } from './session';
 
 const formatDate = (iso) => iso.split('-').reverse().join('.');
 
+const STATUS = {
+  live: { label: '✓ באוויר', className: 'plan-badge plan-badge--ok' },
+  setup: { label: '⚙️ צריך הגדרה בשרת', className: 'plan-badge' },
+  action: { label: '⚠️ דורש טיפול', className: 'plan-badge plan-badge--danger' },
+};
+
 // יומן העדכונים של האתר. התוכן מגיע מהשרת רק למנהלים (ADMIN_EMAILS בשרת); לכל השאר הדף לא קיים
 const Updates = () => {
   const [state, setState] = useState({ status: getToken() ? 'loading' : 'denied', changelog: [] });
@@ -34,6 +40,14 @@ const Updates = () => {
           {state.status === 'loading' && <p className="empty">טוען…</p>}
           {state.status === 'error' && <p className="alert alert--error" role="alert">לא הצלחנו לטעון את העדכונים. צריך חיבור לאינטרנט.</p>}
 
+          {state.changelog.length > 1 && (
+            <nav className="toc" aria-label="עדכונים לפי תאריך">
+              {state.changelog.map((r) => (
+                <a key={r.date} href={`#rel-${r.date}`} className="toc__link" dir="ltr">{formatDate(r.date)}</a>
+              ))}
+            </nav>
+          )}
+
           {state.changelog.map((release) => (
             <section key={release.date} className="updates__release" aria-labelledby={`rel-${release.date}`}>
               <h2 id={`rel-${release.date}`} className="updates__date">
@@ -48,8 +62,8 @@ const Updates = () => {
                       <li key={item.title} className="update">
                         <div className="update__head">
                           <span className="update__title">{item.title}</span>
-                          <span className={item.status === 'setup' ? 'plan-badge' : 'plan-badge plan-badge--ok'}>
-                            {item.status === 'setup' ? '⚙️ צריך הגדרה בשרת' : '✓ באוויר'}
+                          <span className={(STATUS[item.status] || STATUS.live).className}>
+                            {(STATUS[item.status] || STATUS.live).label}
                           </span>
                         </div>
                         <p className="update__what">{item.what}</p>

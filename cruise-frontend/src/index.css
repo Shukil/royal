@@ -3676,3 +3676,7 @@ html.home-snap {
   font-size: 0.9rem;
   font-weight: 500;
 }
+.plan-badge--danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
