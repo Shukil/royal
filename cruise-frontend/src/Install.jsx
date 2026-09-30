@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { detectPlatform, isStandalone, promptInstall, useCanInstall } from './installPrompt';
+import Notifications from './Notifications';
 
 const PLATFORMS = [
   { id: 'ios', label: 'אייפון / אייפד' },
@@ -65,7 +66,10 @@ const Install = () => {
 
         <div className="card__body">
           {standalone ? (
-            <p className="install__status install__status--ok">🎉 האתר כבר פתוח כאפליקציה במכשיר הזה. אין צורך לעשות כלום.</p>
+            <>
+              <p className="install__status install__status--ok">🎉 האתר כבר פתוח כאפליקציה במכשיר הזה. אין צורך לעשות כלום.</p>
+              <Notifications />
+            </>
           ) : result === 'done' ? (
             <p className="install__status install__status--ok">🎉 מעולה! האפליקציה הותקנה. אפשר לפתוח אותה מהסמל ״האודיסי״.</p>
           ) : (

@@ -6,6 +6,7 @@ const User = require('../models/User');
 const auth = require('../middleware/auth');
 const { FAMILIES, familyOf } = require('../utils/family');
 const { TRIP_RANGE, SYSTEM_EVENTS } = require('../utils/trip');
+const { notify } = require('../utils/push');
 const router = express.Router();
 
 const TYPES = ['all', 'family', 'personal', 'custom'];
@@ -24,6 +25,8 @@ const FAMILY_LABELS = Object.fromEntries(Object.entries(FAMILIES).map(([k, f]) =
 const isId = (id) => mongoose.Types.ObjectId.isValid(id);
 const fullName = (u) => (u ? `${u.firstName} ${u.lastName}` : 'משתמש שנמחק');
 const person = (u) => ({ id: String(u._id), name: fullName(u), family: familyOf(u.lastName) });
+// "17.08 · 19:30" לגוף ההתראה
+const whenText = (ev) => [ev.date.split('-').reverse().slice(0, 2).join('.'), ev.allDay ? 'כל היום' : ev.time].filter(Boolean).join(' · ');
 const sameId = (a, b) => Boolean(a) && Boolean(b) && String(a._id || a) === String(b._id || b);
 // רשימת מזהים ייחודיים ותקינים מתוך קלט מהדפדפן (שאולי אינו מערך בכלל)
 const idList = (value) => [...new Set((Array.isArray(value) ? value : []).map(String))].filter(isId);
@@ -238,6 +241,16 @@ router.post('/', async (req, res) => {
     rsvps: [{ user: req.me._id, status: 'yes' }],
   });
   res.status(201).json({ id: String(event._id) });
+
+  // התראה לכל המוזמנים (חוץ ממי שיצר)
+  const audience = await audienceOf(event);
+  notify({
+    to: audience.map((u) => u._id),
+    except: req.me._id,
+    title: `📅 אירוע חדש: ${event.title}`,
+    body: `${whenText(event)} · הוסיף/ה: ${fullName(req.me)}`,
+    url: `/schedule/${event._id}`,
+  });
 });
 
 // טוען אירוע ומוודא שהמשתמש מוזמן אליו. אם לא, עונה 404 ומחזיר null
@@ -340,8 +353,16 @@ router.delete('/:id', async (req, res) => {
   if (event.systemKey) return res.status(403).json({ message: 'זה אירוע קבוע של הטיול ואי אפשר למחוק אותו' });
   if (!sameId(event.createdBy, req.me._id)) return res.status(403).json({ message: 'רק מי שיצר את האירוע יכול למחוק אותו' });
 
+  const audience = await audienceOf(event);
   await Promise.all([EventComment.deleteMany({ event: event._id }), event.deleteOne()]);
   res.json({ ok: true });
+  notify({
+    to: audience.map((u) => u._id),
+    except: req.me._id,
+    title: `❌ אירוע בוטל: ${event.title}`,
+    body: `${whenText(event)} · ביטל/ה: ${fullName(req.me)}`,
+    url: '/schedule',
+  });
 });
 
 // יוצר (או מעדכן) את האירועים הקבועים של הטיול: הטיסות של כל משפחה ותחילת ההפלגה.

@@ -2,6 +2,7 @@ const express = require('express');
 const ShipClock = require('../models/ShipClock');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
+const { notify } = require('../utils/push');
 const router = express.Router();
 
 // ימי ההפלגה (מהעלייה לספינה ועד הירידה)
@@ -43,6 +44,16 @@ router.put('/:date', async (req, res) => {
     );
   }
   res.json(toResponse(await ShipClock.find().lean()));
+
+  const hours = Math.abs(shift) === 1 ? 'שעה' : 'שעתיים';
+  notify({
+    except: me._id,
+    title: '🚢 שעון הספינה עודכן',
+    body: shift === 0
+      ? `ב-${date.split('-').reverse().slice(0, 2).join('.')} הספינה לפי השעה המקומית`
+      : `ב-${date.split('-').reverse().slice(0, 2).join('.')} הספינה ${hours} ${shift > 0 ? 'קדימה' : 'אחורה'} מהשעה המקומית`,
+    url: '/',
+  });
 });
 
 module.exports = router;
