@@ -39,6 +39,8 @@ export default defineConfig({
         // גרסה חדשה נכנסת מיד, בלי לחכות שכל הלשוניות של האתר ייסגרו (בטלפון זה כמעט לא קורה)
         skipWaiting: true,
         clientsClaim: true,
+        // התראות לטלפון (public/push-sw.js)
+        importScripts: ['push-sw.js'],
         runtimeCaching: [
           {
             // נתונים מהשרת (לו״ז, חדר, צ׳ק ליסטים): קודם מהרשת, ואם אין חיבור - העותק האחרון.

@@ -1,6 +1,10 @@
 // תאריכי הטיול. אירועים בלו"ז מותרים משבועיים לפני הטיסה (12.08) ועד חזרת ההפלגה (22.08)
 const TRIP_RANGE = { min: '2027-07-29', max: '2027-08-22' };
 
+// ימים שבהם צריך לעלות לספינה עד שעה מסוימת: יום העלייה וימי הנמל
+// (חייב להתאים ל-boardBy ב-cruise-frontend/src/tripDays.js)
+const PORT_DAYS = ['2027-08-15', '2027-08-17', '2027-08-18', '2027-08-19', '2027-08-21'];
+
 // אירועים קבועים שנוצרים אוטומטית בלו"ז (לפי systemKey, כך שלא נוצרים פעמיים)
 const SYSTEM_EVENTS = [
   {
@@ -41,4 +45,4 @@ const SYSTEM_EVENTS = [
   },
 ];
 
-module.exports = { TRIP_RANGE, SYSTEM_EVENTS };
+module.exports = { TRIP_RANGE, PORT_DAYS, SYSTEM_EVENTS };

@@ -4,6 +4,7 @@ import api, { errorMessage } from './api';
 import Flag from './Flag';
 import Weather from './Weather';
 import TravelWarning from './TravelWarning';
+import PortDay from './PortDay';
 import { RSVP_LABELS, formatWhen } from './eventTypes';
 import { getToken } from './session';
 import { at, clockAt, tzMinutes } from './tripDays';
@@ -243,6 +244,8 @@ const Today = ({ day, next, now, preview }) => {
           {status.detail && <span>{status.detail}</span>}
         </div>
       )}
+
+      {day.boardBy && getToken() && <PortDay day={day} now={now} preview={preview} />}
 
       {day.country && <TravelWarning country={day.country} compact onlyHigh />}
 

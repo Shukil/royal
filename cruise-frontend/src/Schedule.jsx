@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import api, { errorMessage } from './api';
 import { EVENT_TYPES, RSVP_LABELS, formatDate, formatDay, formatWhen } from './eventTypes';
 import { getToken } from './session';
+import Notifications from './Notifications';
 
 const emptyForm = {
   type: 'all',
@@ -183,6 +184,8 @@ const Schedule = () => {
 
         <div className="card__body">
           {error && <p className="alert alert--error" role="alert">{error}</p>}
+
+          <Notifications />
 
           <div className="schedule-toolbar">
             <div className="legend" role="group" aria-label="סינון לפי סוג אירוע">
