@@ -24,6 +24,21 @@ const flags = {
       </>
     ),
   },
+  il: {
+    label: 'ישראל',
+    viewBox: '0 0 220 160',
+    body: (
+      <>
+        <rect width="220" height="160" fill="#fff" />
+        <rect y="15" width="220" height="25" fill="#0038b8" />
+        <rect y="120" width="220" height="25" fill="#0038b8" />
+        <g fill="none" stroke="#0038b8" strokeWidth="5.5">
+          <polygon points="110,43.9 141.25,98 78.75,98" />
+          <polygon points="110,116.1 78.75,62 141.25,62" />
+        </g>
+      </>
+    ),
+  },
   tr: {
     label: 'טורקיה',
     viewBox: '0 0 1200 800',

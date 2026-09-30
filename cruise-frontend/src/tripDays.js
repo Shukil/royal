@@ -102,6 +102,18 @@ export const at = (day, time) => Date.parse(`${day.date}T${time}:00${day.tz}`);
 
 const HOUR = 60 * 60 * 1000;
 
+// "+03:00" -> 180 (דקות מ-UTC)
+export const tzMinutes = (tz) => {
+  const [, sign, h, m] = tz.match(/([+-])(\d{2}):(\d{2})/);
+  return (sign === '-' ? -1 : 1) * (Number(h) * 60 + Number(m));
+};
+
+// השעה עכשיו (HH:MM) באזור הזמן של יום בטיול
+export const clockAt = (now, tz) => {
+  const d = new Date(now + tzMinutes(tz) * 60 * 1000);
+  return `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`;
+};
+
 // היום בטיול שבו אנחנו נמצאים עכשיו, לפי שעון חצות-עד-חצות של אותו יום
 export const findTripDay = (now) => {
   const i = tripDays.findIndex((d) => now >= at(d, '00:00') && now < at(d, '00:00') + 24 * HOUR);

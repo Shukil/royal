@@ -6,7 +6,7 @@ import Weather from './Weather';
 import TravelWarning from './TravelWarning';
 import { RSVP_LABELS, formatWhen } from './eventTypes';
 import { getToken } from './session';
-import { at } from './tripDays';
+import { at, clockAt, tzMinutes } from './tripDays';
 
 const MINUTE = 60 * 1000;
 
@@ -54,6 +54,41 @@ const shipStatus = (d, now) => {
   if (depart) return { tone: 'info', title: 'הפלגנו! 🌊', detail: `יצאנו מ${d.place} ב-${d.depart}` };
   if (arrive) return { tone: 'info', title: `הגענו ב-${d.arrive}`, detail: null };
   return null;
+};
+
+const clockIn = (now, timeZone) =>
+  new Intl.DateTimeFormat('he-IL', { timeZone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(now);
+const israelClock = (now) => clockIn(now, 'Asia/Jerusalem');
+const phoneClock = (now) => clockIn(now, undefined);
+
+// שעון מקומי מול שעון ישראל, אזהרה אם השעון בטלפון לא תואם לשעה המקומית,
+// והודעה ביום שבלילה שאחריו מזיזים את השעון
+const Clocks = ({ day, next, now, preview }) => {
+  const local = clockAt(now, day.tz);
+  // בטלפון: getTimezoneOffset הפוך בסימן (UTC+3 -> -180). בתצוגה מקדימה השעה מדומה, אז לא משווים
+  const phoneOff = !preview && !day.sea && -new Date(now).getTimezoneOffset() !== tzMinutes(day.tz);
+  const shift = next ? (tzMinutes(next.tz) - tzMinutes(day.tz)) / 60 : 0;
+
+  return (
+    <>
+      <p className="today__clocks">
+        <span>🕐 כאן: <strong dir="ltr">{local}</strong></span>
+        <span><Flag code="il" /> בישראל: <strong dir="ltr">{israelClock(now)}</strong></span>
+      </p>
+      {phoneOff && (
+        <p className="today__note today__note--warn">
+          ⚠️ השעון בטלפון מראה <span dir="ltr">{phoneClock(now)}</span>,
+          אבל השעה המקומית כאן היא <span dir="ltr">{local}</span>. כל השעות באתר הן לפי השעה המקומית, וכדאי לוודא גם מול שעון הספינה.
+        </p>
+      )}
+      {shift !== 0 && (
+        <p className="today__note">
+          🕐 הלילה מזיזים את השעון {Math.abs(shift) === 1 ? 'שעה' : `${Math.abs(shift)} שעות`} {shift > 0 ? 'קדימה' : 'אחורה'}.
+          {' '}הספינה מודיעה על כך בתוכנייה היומית, וכדאי לבדוק שהשעון בטלפון התעדכן בבוקר.
+        </p>
+      )}
+    </>
+  );
 };
 
 // האירועים של היום מהלו״ז (נטען מהשרת, ובלי אינטרנט מהעותק השמור)
@@ -107,6 +142,8 @@ const Today = ({ day, next, now, preview }) => {
         )}
         {day.weather && <Weather id={day.weather} date={day.date} compact />}
       </header>
+
+      <Clocks day={day} next={next} now={now} preview={preview} />
 
       {status && (
         <div className={`today__status today__status--${status.tone}`} role="status">

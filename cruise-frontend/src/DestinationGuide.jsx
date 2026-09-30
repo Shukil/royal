@@ -7,6 +7,8 @@ import Spots from './Spots';
 import CurrencyRates from './CurrencyRates';
 import Weather from './Weather';
 import TravelWarning from './TravelWarning';
+import Phrasebook from './Phrasebook';
+import { guideLanguage, languages } from './phrases';
 
 const GuideMap = lazy(() => import('./GuideMap'));
 
@@ -24,6 +26,7 @@ const toc = [
   { id: 'food', label: 'אוכל' },
   { id: 'shopping', label: 'קניות' },
   { id: 'transport', label: 'תחבורה וטיפים' },
+  { id: 'phrases', label: 'מילים שימושיות' },
 ];
 
 const DestinationGuide = () => {
@@ -164,6 +167,11 @@ const DestinationGuide = () => {
                 {d.tips.map((t) => <li key={t}>{t}</li>)}
               </ul>
             </div>
+          </section>
+
+          <section className="section" id="phrases">
+            <h2 className="section__title">מילים שימושיות ב{languages[guideLanguage[id]].name} 💬</h2>
+            <Phrasebook lang={guideLanguage[id]} />
           </section>
 
           <nav className="guide-nav" aria-label="מדריכים נוספים">

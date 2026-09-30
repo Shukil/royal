@@ -7,6 +7,7 @@ import Spots from './Spots';
 import CurrencyRates from './CurrencyRates';
 import Weather from './Weather';
 import TravelWarning from './TravelWarning';
+import Phrasebook from './Phrasebook';
 
 const GuideMap = lazy(() => import('./GuideMap'));
 
@@ -22,6 +23,7 @@ const toc = [
   { id: 'food', label: 'אוכל' },
   { id: 'shopping', label: 'קניות' },
   { id: 'transport', label: 'תחבורה וטיפים' },
+  { id: 'phrases', label: 'מילים שימושיות' },
 ];
 
 const facts = [
@@ -342,6 +344,11 @@ const RomeGuide = () => (
               <li><strong>זיופים:</strong> רוכלי הרחוב בוויה דל קורסו מוכרים תיקי מותגים מזויפים. זו עבירה באיטליה, גם לקונה.</li>
             </ul>
           </div>
+        </section>
+
+        <section className="section" id="phrases">
+          <h2 className="section__title">מילים שימושיות באיטלקית 💬</h2>
+          <Phrasebook lang="it" />
         </section>
 
         {/* אותו תפריט כמו בתחתית כל מדריך יעד. רומא היא העצירה הראשונה, אז במקום "הקודם" יש קישור לכל המדריכים */}
