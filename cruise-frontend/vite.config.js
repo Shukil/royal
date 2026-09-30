@@ -44,8 +44,10 @@ export default defineConfig({
         runtimeCaching: [
           {
             // נתונים מהשרת (לו״ז, חדר, צ׳ק ליסטים): קודם מהרשת, ואם אין חיבור - העותק האחרון.
-            // רק GET נשמר; שמירת שינויים עדיין דורשת חיבור
-            urlPattern: ({ url }) => url.pathname.startsWith('/api/') && !url.pathname.startsWith('/api/auth/'),
+            // רק GET נשמר; שמירת שינויים עדיין דורשת חיבור.
+            // דף עדכוני האתר לא נשמר: שרת רדום ב-Render מתעורר ביותר מ-10 שניות, ואז היה מוצג עותק ישן
+            urlPattern: ({ url }) =>
+              url.pathname.startsWith('/api/') && !url.pathname.startsWith('/api/auth/') && !url.pathname.startsWith('/api/updates'),
             handler: 'NetworkFirst',
             options: {
               cacheName: 'api',
