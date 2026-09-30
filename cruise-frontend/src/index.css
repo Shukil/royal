@@ -905,6 +905,71 @@ img {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
+.currency-calc {
+  margin-top: 0.85rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  background: var(--purple-soft);
+  font-weight: 400;
+  font-size: 1rem;
+}
+.currency-calc__label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+}
+.currency-calc__row {
+  display: flex;
+  gap: 0.5rem;
+}
+.currency-calc__input {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.1rem;
+  font-variant-numeric: tabular-nums;
+}
+.currency-calc__picker {
+  display: flex;
+  gap: 0.25rem;
+}
+.currency-calc__option {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 48px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.currency-calc__option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.currency-calc__option:has(input:checked) {
+  border-color: var(--purple);
+  background: var(--purple);
+  color: #fff;
+}
+.currency-calc__option:has(input:focus-visible) {
+  box-shadow: var(--focus);
+}
+.currency-calc__result {
+  margin: 0.55rem 0 0;
+  font-variant-numeric: tabular-nums;
+}
+.currency-calc__result strong {
+  font-size: 1.3rem;
+  color: var(--purple-dark);
+}
+.currency-calc__hint {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
 .currency__note,
 .currency__source {
   margin: 0.5rem 0 0;
