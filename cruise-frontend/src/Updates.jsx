@@ -9,6 +9,7 @@ const STATUS = {
   live: { label: '✓ באוויר', className: 'plan-badge plan-badge--ok' },
   setup: { label: '⚙️ צריך הגדרה בשרת', className: 'plan-badge' },
   action: { label: '⚠️ דורש טיפול', className: 'plan-badge plan-badge--danger' },
+  resolved: { label: '✓ טופל', className: 'plan-badge plan-badge--ok' },
 };
 
 // יומן העדכונים של האתר. התוכן מגיע מהשרת רק למנהלים (ADMIN_EMAILS בשרת); לכל השאר הדף לא קיים
