@@ -82,6 +82,21 @@ export const tripDays = [
   },
 ];
 
+// תזכורות All Aboard ליומן בטלפון (calendar.js): אירוע לכל יום עם שעת חזרה לספינה,
+// עם התראה שעתיים ושעה לפני. השעות "צפות", כך שהן נכונות בשעון המקומי של כל נמל
+export const allAboardEvents = tripDays
+  .filter((d) => d.boardBy)
+  .map((d) => ({
+    id: `all-aboard-${d.date}`,
+    title: `⚓ ${d.boardVerb || 'חוזרים'} לספינה עד ${d.boardBy} · ${d.place}`,
+    date: d.date,
+    time: d.boardBy,
+    endTime: d.depart,
+    location: d.place,
+    description: [`הספינה מפליגה ב-${d.depart} ולא מחכה למי שמאחר.`, d.note].filter(Boolean).join('\n'),
+    alarms: [120, 60],
+  }));
+
 // שעה מקומית של יום בטיול -> זמן מוחלט (ms)
 export const at = (day, time) => Date.parse(`${day.date}T${time}:00${day.tz}`);
 

@@ -67,15 +67,10 @@ const fold = (line) => {
   return out.join('\r\n');
 };
 
-export const icsContent = (ev, url) => {
+// ev.alarms: כמה דקות לפני תחילת האירוע להקפיץ תזכורת בטלפון, למשל [120, 60]
+const veventLines = (ev, url, now) => {
   const { start, end, allDay } = range(ev);
-  const now = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-  const lines = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//Odyssey Cruise 2027//Schedule//HE',
-    'CALSCALE:GREGORIAN',
-    'METHOD:PUBLISH',
+  return [
     'BEGIN:VEVENT',
     `UID:${ev.id}@odyssey-cruise-2027`,
     `DTSTAMP:${now}`,
@@ -85,18 +80,42 @@ export const icsContent = (ev, url) => {
     ev.location && `LOCATION:${escapeIcs(ev.location)}`,
     `DESCRIPTION:${escapeIcs(detailsText(ev, url))}`,
     url && `URL:${url}`,
+    ...(ev.alarms || []).flatMap((minutes) => [
+      'BEGIN:VALARM',
+      'ACTION:DISPLAY',
+      `DESCRIPTION:${escapeIcs(ev.title)}`,
+      `TRIGGER:-PT${minutes}M`,
+      'END:VALARM',
+    ]),
     'END:VEVENT',
+  ];
+};
+
+// קובץ יומן אחד עם כמה אירועים
+export const icsCalendar = (events, url) => {
+  const now = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Odyssey Cruise 2027//Schedule//HE',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    ...events.flatMap((ev) => veventLines(ev, url, now)),
     'END:VCALENDAR',
   ].filter(Boolean);
   return `${lines.map(fold).join('\r\n')}\r\n`;
 };
 
-export const downloadIcs = (ev, url) => {
-  const blob = new Blob([icsContent(ev, url)], { type: 'text/calendar;charset=utf-8' });
+export const icsContent = (ev, url) => icsCalendar([ev], url);
+
+export const downloadIcs = (ev, url) => downloadIcsFile(ev.title, icsContent(ev, url));
+
+export const downloadIcsFile = (name, content) => {
+  const blob = new Blob([content], { type: 'text/calendar;charset=utf-8' });
   const href = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = href;
-  a.download = `${ev.title.replace(/[\\/:*?"<>|]/g, '').trim() || 'event'}.ics`;
+  a.download = `${name.replace(/[\\/:*?"<>|]/g, '').trim() || 'event'}.ics`;
   document.body.appendChild(a);
   a.click();
   a.remove();

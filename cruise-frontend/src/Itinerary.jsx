@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { destinations } from './destinations';
 import Flag from './Flag';
+import { downloadIcsFile, icsCalendar } from './calendar';
+import { allAboardEvents } from './tripDays';
 
 // מסלול "7 Night Greek Isles" של Odyssey of the Seas, 15–22.08.2027.
 // השעות לפי לוחות ההפלגות (CruiseTimetables, CruiseWeb) ועשויות להשתנות.
@@ -214,6 +216,23 @@ const Itinerary = () => (
             </li>
           ))}
         </ol>
+
+        <div className="reminders">
+          <p className="reminders__text">
+            <strong>⏰ תזכורות לחזרה לספינה</strong>
+            <span>
+              מוסיפים ליומן בטלפון את שעת ה-All Aboard של כל נמל, עם התראה שעתיים ושעה לפני.
+              ההתראות עובדות גם בלי אינטרנט וגם כשהאתר סגור.
+            </span>
+          </p>
+          <button
+            type="button"
+            className="btn btn--gold btn--sm"
+            onClick={() => downloadIcsFile('תזכורות All Aboard', icsCalendar(allAboardEvents))}
+          >
+            📅 הוספה ליומן
+          </button>
+        </div>
 
         <div className="ports">
           {days.map((d) => (
