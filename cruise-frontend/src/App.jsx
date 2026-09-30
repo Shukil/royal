@@ -21,6 +21,7 @@ import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
 import Plan from './Plan';
 import Tasks from './Tasks';
+import Updates from './Updates';
 
 // החיפוש טוען את תוכן כל הדפים, אז הוא נטען רק כשנכנסים אליו
 const Search = lazy(() => import('./Search'));
@@ -87,6 +88,7 @@ const AppLayout = () => {
           <Route path="/install" element={<Install />} />
           <Route path="/plan" element={<Plan />} />
           <Route path="/tasks" element={<Tasks />} />
+          <Route path="/updates" element={<Updates />} />
           <Route path="/search" element={<Suspense fallback={<p className="empty">טוען…</p>}><Search /></Suspense>} />
         </Routes>
       </main>

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import RoyalLogo from './RoyalLogo';
-import { clearSession, getUser } from './session';
+import api from './api';
+import { clearSession, getToken, getUser } from './session';
 import { isStandalone } from './installPrompt';
 
 const menuItems = [
@@ -18,6 +19,40 @@ const menuItems = [
   { path: '/emergency', label: 'חירום ומידע חשוב', icon: '🆘' },
 ];
 
+// דף "עדכוני האתר" מוצג רק למנהלים. השרת קובע מי מנהל (ADMIN_EMAILS), והתשובה נשמרת לשיחה הנוכחית
+const ADMIN_KEY = 'isAdmin';
+const useIsAdmin = (token) => {
+  const [admin, setAdmin] = useState(() => {
+    try {
+      return Boolean(token) && sessionStorage.getItem(ADMIN_KEY) === token;
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    if (!token) return undefined;
+    let alive = true;
+    api.get('/updates/access')
+      .then((res) => {
+        if (!alive) return;
+        setAdmin(res.data.admin);
+        try {
+          if (res.data.admin) sessionStorage.setItem(ADMIN_KEY, token);
+          else sessionStorage.removeItem(ADMIN_KEY);
+        } catch {
+          // בלי אחסון פשוט בודקים שוב בכל טעינה
+        }
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [token]);
+
+  return Boolean(token) && admin;
+};
+
 const Brand = () => (
   <Link to="/" className="brand" aria-label="Royal Caribbean · Odyssey of the Seas - דף הבית">
     <RoyalLogo compact />
@@ -29,6 +64,8 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const user = getUser();
+  const isAdmin = useIsAdmin(getToken());
+  const items = isAdmin ? [...menuItems, { path: '/updates', label: 'עדכוני האתר', icon: '🛠️' }] : menuItems;
 
   // סגירה עם Escape
   useEffect(() => {
@@ -83,7 +120,7 @@ const Sidebar = () => {
 
         <nav aria-label="ניווט ראשי">
           <ul className="nav">
-            {menuItems.map((item) => {
+            {items.map((item) => {
               const isActive = location.pathname === item.path || location.pathname.startsWith(`${item.path}/`);
               return (
                 <li key={item.path}>
