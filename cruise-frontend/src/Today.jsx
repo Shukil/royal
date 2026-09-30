@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import api from './api';
+import api, { errorMessage } from './api';
 import Flag from './Flag';
 import Weather from './Weather';
 import TravelWarning from './TravelWarning';
@@ -61,29 +61,121 @@ const clockIn = (now, timeZone) =>
 const israelClock = (now) => clockIn(now, 'Asia/Jerusalem');
 const phoneClock = (now) => clockIn(now, undefined);
 
-// שעון מקומי מול שעון ישראל, אזהרה אם השעון בטלפון לא תואם לשעה המקומית,
+const CRUISE_START = '2027-08-15';
+const hoursText = (h) => (Math.abs(h) === 1 ? 'שעה' : Math.abs(h) === 2 ? 'שעתיים' : `${Math.abs(h)} שעות`);
+
+// שעון הספינה בכל יום, משותף לכל המשפחות (נשמר בשרת, ובלי אינטרנט מהעותק השמור).
+// יום שלא עודכן = כמו השעה המקומית
+const useShipClock = () => {
+  const [days, setDays] = useState({});
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!getToken()) return undefined;
+    let alive = true;
+    api.get('/ship-clock')
+      .then((res) => alive && setDays(res.data.days))
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const save = async (date, shift) => {
+    setError('');
+    try {
+      const res = await api.put(`/ship-clock/${date}`, { shift });
+      setDays(res.data.days);
+      return true;
+    } catch (err) {
+      setError(errorMessage(err, 'לא הצלחנו לשמור. צריך חיבור לאינטרנט כדי לעדכן.'));
+      return false;
+    }
+  };
+
+  return { days, save, error };
+};
+
+// השעון המקומי, שעון הספינה ושעון ישראל. אזהרה אם השעון בטלפון לא תואם לאף אחד מהם,
 // והודעה ביום שבלילה שאחריו מזיזים את השעון
 const Clocks = ({ day, next, now, preview }) => {
+  const { days, save, error } = useShipClock();
+  const [editing, setEditing] = useState(false);
+
+  const onShip = day.date >= CRUISE_START;
+  const ship = onShip ? days[day.date] : null;
+  const shipShift = ship?.shift || 0;
   const local = clockAt(now, day.tz);
-  // בטלפון: getTimezoneOffset הפוך בסימן (UTC+3 -> -180). בתצוגה מקדימה השעה מדומה, אז לא משווים
-  const phoneOff = !preview && !day.sea && -new Date(now).getTimezoneOffset() !== tzMinutes(day.tz);
-  const shift = next ? (tzMinutes(next.tz) - tzMinutes(day.tz)) / 60 : 0;
+  const shipTime = clockAt(now + shipShift * 60 * MINUTE, day.tz);
+
+  // בטלפון: getTimezoneOffset הפוך בסימן (UTC+3 -> -180). בתצוגה מקדימה השעה מדומה, אז לא משווים.
+  // אם הטלפון מראה את שעון הספינה (למשל כשהוא מחובר לרשת של הספינה), זה בסדר
+  const phoneMinutes = -new Date(now).getTimezoneOffset();
+  const phoneOff = !preview && !day.sea
+    && phoneMinutes !== tzMinutes(day.tz)
+    && phoneMinutes !== tzMinutes(day.tz) + shipShift * 60;
+  const tonight = next ? (tzMinutes(next.tz) - tzMinutes(day.tz)) / 60 : 0;
+
+  const choose = async (shift) => {
+    if (await save(day.date, shift)) setEditing(false);
+  };
 
   return (
     <>
       <p className="today__clocks">
-        <span>🕐 כאן: <strong dir="ltr">{local}</strong></span>
+        {!day.sea && <span>🕐 כאן: <strong dir="ltr">{local}</strong></span>}
+        {onShip && <span>🚢 בספינה: <strong dir="ltr">{shipTime}</strong></span>}
         <span><Flag code="il" /> בישראל: <strong dir="ltr">{israelClock(now)}</strong></span>
       </p>
+
+      {onShip && (
+        <div className="ship-clock">
+          <p className="ship-clock__text">
+            {shipShift === 0
+              ? 'שעון הספינה כמו השעה המקומית.'
+              : `הספינה ${hoursText(shipShift)} ${shipShift > 0 ? 'קדימה' : 'אחורה'} מהשעה המקומית${ship.updatedBy ? ` (עדכן/ה: ${ship.updatedBy})` : ''}. שעת החזרה לספינה בתוכנייה היומית היא לפי שעון הספינה.`}
+            {getToken() && !preview && (
+              <>
+                {' '}
+                <button type="button" className="link-btn" onClick={() => setEditing((v) => !v)} aria-expanded={editing}>
+                  {editing ? 'סגירה' : shipShift === 0 ? 'הספינה בשעה אחרת?' : 'עדכון'}
+                </button>
+              </>
+            )}
+          </p>
+          {editing && (
+            <div className="ship-clock__edit">
+              <p className="field__hint">לפי התוכנייה היומית של הספינה. העדכון לכל המשפחות, ורק ליום הזה.</p>
+              <div className="ship-clock__options" role="group" aria-label="שעון הספינה ביחס לשעה המקומית">
+                {[-1, 0, 1].map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    className={s === shipShift ? 'btn btn--sm btn--primary' : 'btn btn--sm btn--outline'}
+                    aria-pressed={s === shipShift}
+                    onClick={() => choose(s)}
+                  >
+                    {s === 0 ? 'כמו המקומית' : `${hoursText(s)} ${s > 0 ? 'קדימה' : 'אחורה'}`}
+                  </button>
+                ))}
+              </div>
+              {error && <p className="alert alert--error" role="alert">{error}</p>}
+            </div>
+          )}
+        </div>
+      )}
+
       {phoneOff && (
         <p className="today__note today__note--warn">
           ⚠️ השעון בטלפון מראה <span dir="ltr">{phoneClock(now)}</span>,
-          אבל השעה המקומית כאן היא <span dir="ltr">{local}</span>. כל השעות באתר הן לפי השעה המקומית, וכדאי לוודא גם מול שעון הספינה.
+          אבל השעה המקומית כאן היא <span dir="ltr">{local}</span>
+          {shipShift !== 0 && <> ושעון הספינה <span dir="ltr">{shipTime}</span></>}.
+          {' '}השעות באתר הן לפי השעה המקומית.
         </p>
       )}
-      {shift !== 0 && (
+      {tonight !== 0 && (
         <p className="today__note">
-          🕐 הלילה מזיזים את השעון {Math.abs(shift) === 1 ? 'שעה' : `${Math.abs(shift)} שעות`} {shift > 0 ? 'קדימה' : 'אחורה'}.
+          🕐 הלילה מזיזים את השעון {hoursText(tonight)} {tonight > 0 ? 'קדימה' : 'אחורה'}.
           {' '}הספינה מודיעה על כך בתוכנייה היומית, וכדאי לבדוק שהשעון בטלפון התעדכן בבוקר.
         </p>
       )}
