@@ -29,6 +29,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/cabin-tasks', require('./routes/cabinTasks'));
 app.use('/api/personal-checklist', require('./routes/personalChecklist'));
 app.use('/api/events', require('./routes/events'));
+app.use('/api/ship-clock', require('./routes/shipClock'));
 
 // שגיאות מכל הנתיבים
 app.use(require('./middleware/errors'));
