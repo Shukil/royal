@@ -39,7 +39,11 @@ test('התחברות מחזירה חדר, שותפים ומשפחה מהשרת',
   assert.equal(user.familyLabel, 'משפחת זינגר');
   assert.deepEqual(user.cabins['10545'], ['דניאל', 'שוקי']);
   assert.equal(user.isAdmin, false);
-  assert.equal(user.inviteCode, 'Odyssey2027');
+  // קוד ההרשמה רק למנהלים
+  assert.equal(user.inviteCode, null);
+  process.env.ADMIN_EMAILS = 'admin@test.com,boss@test.com';
+  const admin = await signUp({ email: 'boss@test.com', firstName: 'מנהל' });
+  assert.equal(admin.user.inviteCode, 'Odyssey2027');
 
   // נרשם חדש עם אותו שם משפחה מצטרף לאותה משפחה
   const relative = await signUp({ firstName: 'נועה', lastName: 'זינגר' });
@@ -176,4 +180,22 @@ test('התראת ניסיון: כשההתראות כבויות בשרת עוני
   assert.equal(res.status, 200);
   assert.equal(res.body.enabled, false);
   assert.equal((await api().post('/api/push/test')).status, 401);
+});
+
+test('סיסמה חדשה: לפחות 8 תווים', async () => {
+  const res = await api().post('/api/auth/register')
+    .send({ firstName: 'קצר', lastName: 'סיסמה', email: 'short@test.com', password: '1234567', inviteCode: 'Odyssey2027' });
+  assert.equal(res.status, 400);
+  assert.match(res.body.message, /8 תווים/);
+
+  const { as } = await signUp();
+  const change = await as('put', '/api/auth/password').send({ currentPassword: 'secret123', newPassword: 'short12' });
+  assert.equal(change.status, 400);
+});
+
+test('השרת לא חושף שהוא Express ושולח כותרות אבטחה', async () => {
+  const res = await api().get('/api/health');
+  assert.equal(res.headers['x-powered-by'], undefined);
+  assert.equal(res.headers['x-content-type-options'], 'nosniff');
+  assert.equal(res.headers['x-frame-options'], 'DENY');
 });

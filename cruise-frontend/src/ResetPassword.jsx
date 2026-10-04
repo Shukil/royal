@@ -73,9 +73,9 @@ const ResetPassword = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            minLength="6"
+            minLength="8"
           />
-          <span id="reset-password-hint" className="field__hint">לפחות 6 תווים</span>
+          <span id="reset-password-hint" className="field__hint">לפחות 8 תווים</span>
         </div>
 
         <div className="field">
@@ -89,7 +89,7 @@ const ResetPassword = () => {
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             required
-            minLength="6"
+            minLength="8"
           />
         </div>
 

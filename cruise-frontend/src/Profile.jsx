@@ -137,10 +137,10 @@ const Profile = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  minLength="6"
+                  minLength="8"
                 />
                 <span id="profile-password-hint" className="field__hint">
-                  לפחות 6 תווים. אחרי ההחלפה כל שאר המכשירים שלך יתנתקו.
+                  לפחות 8 תווים. אחרי ההחלפה כל שאר המכשירים שלך יתנתקו.
                 </span>
               </div>
 
@@ -155,7 +155,7 @@ const Profile = () => {
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
                   required
-                  minLength="6"
+                  minLength="8"
                 />
               </div>
 

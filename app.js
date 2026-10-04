@@ -6,6 +6,19 @@ const cors = require('cors');
 // כדי שהבדיקות (tests/) יוכלו לטעון אותה מול מסד זמני
 const app = express();
 
+// בלי "X-Powered-By: Express" (לא חושפים במה השרת בנוי), ועם כותרות אבטחה בסיסיות.
+// השרת מחזיר רק JSON, אז אין סיבה שדפדפן יציג אותו בתוך מסגרת או יריץ ממנו תוכן
+app.disable('x-powered-by');
+app.use((req, res, next) => {
+  res.set({
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'Referrer-Policy': 'no-referrer',
+    'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none'",
+  });
+  next();
+});
+
 // השרת ב-Render יושב מאחורי פרוקסי, ובלי זה כל הבקשות נראות כאילו הגיעו מאותה כתובת IP
 // (וההגבלה על ניסיונות התחברות הייתה חוסמת את כולם יחד)
 app.set('trust proxy', Number(process.env.TRUST_PROXY ?? 1));
