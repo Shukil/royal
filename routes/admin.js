@@ -9,12 +9,14 @@ const Task = require('../models/Task');
 const PortDay = require('../models/PortDay');
 const PushSubscription = require('../models/PushSubscription');
 const auth = require('../middleware/auth');
-const { loadAdmin, requireAdmin } = require('../middleware/admin');
+const { loadAdmin, requireAdmin, requireSiteAdmin, SITE_ADMIN_ONLY } = require('../middleware/admin');
 const { UNASSIGNED } = require('../utils/cabins');
 const { loadFamilies, familyExists, isSiteAdmin, isAdminUser } = require('../utils/families');
 const router = express.Router();
 
-// דף ניהול המשפחות: מי בכל משפחה, מי באיזה חדר, ומי מנהל משפחה. רק למנהלים
+// דף ניהול המשפחות: מי בכל משפחה, מי באיזה חדר, ומי מנהל משפחה. רק למנהלים.
+// מנהל אתר (ADMIN_EMAILS) מנהל הכול. מנהל משפחה רואה את כל המשפחות, אבל משנה (שם, חדר) ומוחק
+// רק את בני המשפחה שלו. הוספה ומחיקה של משפחות, העברה בין משפחות ומינוי מנהלים - רק מנהלי אתר
 router.use(auth, loadAdmin, requireAdmin);
 
 const MAX_LABEL = 60;
@@ -55,11 +57,11 @@ const labelError = async (label, exceptKey = null) => {
 
 // כל המשפחות וכל המשתמשים
 router.get('/families', async (req, res) => {
-  res.json({ ...(await overview()), me: String(req.me._id) });
+  res.json({ ...(await overview()), me: String(req.me._id), siteAdmin: req.isSiteAdmin, myFamily: req.me.family || null });
 });
 
 // משפחה חדשה
-router.post('/families', async (req, res) => {
+router.post('/families', requireSiteAdmin, async (req, res) => {
   const label = cleanLabel(req.body.label);
   const invalid = await labelError(label);
   if (invalid) return res.status(400).json({ message: invalid });
@@ -70,7 +72,7 @@ router.post('/families', async (req, res) => {
 });
 
 // שינוי שם של משפחה
-router.put('/families/:key', async (req, res) => {
+router.put('/families/:key', requireSiteAdmin, async (req, res) => {
   const label = cleanLabel(req.body.label);
   const invalid = await labelError(label, req.params.key);
   if (invalid) return res.status(400).json({ message: invalid });
@@ -82,7 +84,7 @@ router.put('/families/:key', async (req, res) => {
 });
 
 // מחיקת משפחה: רק אם אין בה אף אחד ואין לה אירועים בלו"ז (למשל הטיסה של המשפחה)
-router.delete('/families/:key', async (req, res) => {
+router.delete('/families/:key', requireSiteAdmin, async (req, res) => {
   const { key } = req.params;
   if (!(await Family.exists({ key }))) return res.status(404).json({ message: 'המשפחה לא נמצאה' });
   if (await User.exists({ family: key })) {
@@ -102,6 +104,14 @@ router.patch('/users/:id', async (req, res) => {
   const user = await User.findById(req.params.id);
   if (!user) return res.status(404).json({ message: 'המשתמש לא נמצא' });
   const wasAdmin = isAdminUser(user);
+
+  // מנהל משפחה: רק בני המשפחה שלו, ובלי לשנות משפחה או מנהלים
+  if (!req.isSiteAdmin) {
+    if (!req.me.family || user.family !== req.me.family) {
+      return res.status(403).json({ message: 'אפשר לעדכן רק את בני המשפחה שלך' });
+    }
+    if ('family' in req.body || 'isAdmin' in req.body) return res.status(403).json(SITE_ADMIN_ONLY);
+  }
 
   // תיקון שם (למשל טעות בהרשמה). השם לא משפיע על החדר או על המשפחה, שנשמרים בנפרד
   for (const field of ['firstName', 'lastName']) {
@@ -150,6 +160,13 @@ router.delete('/users/:id', async (req, res) => {
   if (!user) return res.status(404).json({ message: 'המשתמש לא נמצא' });
   if (String(user._id) === String(req.me._id)) return res.status(400).json({ message: 'אי אפשר למחוק את עצמך' });
   if (isSiteAdmin(user)) return res.status(400).json({ message: 'אי אפשר למחוק מנהל אתר' });
+  // מנהל משפחה מוחק רק בני משפחה שלו, ולא מנהלים אחרים
+  if (!req.isSiteAdmin) {
+    if (!req.me.family || user.family !== req.me.family) {
+      return res.status(403).json({ message: 'אפשר למחוק רק את בני המשפחה שלך' });
+    }
+    if (isAdminUser(user)) return res.status(403).json({ message: 'רק מנהלי האתר יכולים למחוק מנהל משפחה' });
+  }
 
   const id = user._id;
   const ownEvents = await Event.find({ createdBy: id, systemKey: { $exists: false } }).select('_id').lean();

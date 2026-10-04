@@ -8,7 +8,9 @@ const NO_FAMILY = '';
 
 // שורה של משתמש: חדר, משפחה ומנהל משפחה. כל שינוי נשמר מיד בשרת.
 // המפתח של השורה כולל את מספר החדר, כך ששדה החדר מתאפס לערך מהשרת אחרי כל שמירה
-const MemberRow = ({ member, families, isMe, onSave, onDelete }) => {
+// can: מה מותר למנהל המחובר לעשות בשורה הזו (השרת אוכף את אותם כללים):
+// edit = שם וחדר, manage = משפחה ומנהל (רק מנהל אתר), remove = מחיקה
+const MemberRow = ({ member, families, isMe, can, onSave, onDelete }) => {
   const [cabin, setCabin] = useState(member.cabinNumber);
   const [busy, setBusy] = useState(false);
   // תיקון שם: נפתח בלחיצה על ✏️
@@ -34,7 +36,7 @@ const MemberRow = ({ member, families, isMe, onSave, onDelete }) => {
     if (value !== member.cabinNumber) save({ cabinNumber: value });
   };
 
-  const adminLocked = member.siteAdmin || !member.family;
+  const adminLocked = member.siteAdmin || !member.family || !can.manage;
 
   return (
     <li className={`admin-member${busy ? ' is-busy' : ''}`}>
@@ -69,16 +71,18 @@ const MemberRow = ({ member, families, isMe, onSave, onDelete }) => {
           <strong>
             {member.firstName} {member.lastName}
             {isMe && <span className="admin-member__me"> (אני)</span>}
-            <button
-              type="button"
-              className="admin-member__icon"
-              aria-label={`תיקון השם של ${member.firstName} ${member.lastName}`}
-              title="תיקון שם"
-              onClick={() => setNaming({ firstName: member.firstName, lastName: member.lastName })}
-            >
-              ✏️
-            </button>
-            {!isMe && !member.siteAdmin && (
+            {can.edit && (
+              <button
+                type="button"
+                className="admin-member__icon"
+                aria-label={`תיקון השם של ${member.firstName} ${member.lastName}`}
+                title="תיקון שם"
+                onClick={() => setNaming({ firstName: member.firstName, lastName: member.lastName })}
+              >
+                ✏️
+              </button>
+            )}
+            {can.remove && !isMe && !member.siteAdmin && (
               <button
                 type="button"
                 className="admin-member__icon"
@@ -104,7 +108,7 @@ const MemberRow = ({ member, families, isMe, onSave, onDelete }) => {
           placeholder="לא שויך"
           maxLength={6}
           value={cabin}
-          disabled={busy}
+          disabled={busy || !can.edit}
           onChange={(e) => setCabin(e.target.value.replace(/\D/g, ''))}
           onBlur={saveCabin}
           onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()}
@@ -116,7 +120,7 @@ const MemberRow = ({ member, families, isMe, onSave, onDelete }) => {
         <select
           className="input input--compact"
           value={member.family || NO_FAMILY}
-          disabled={busy}
+          disabled={busy || !can.manage}
           onChange={(e) => save({ family: e.target.value || null })}
         >
           {families.map((f) => <option key={f.key} value={f.key}>{f.label}</option>)}
@@ -138,7 +142,7 @@ const MemberRow = ({ member, families, isMe, onSave, onDelete }) => {
 };
 
 // כותרת של משפחה: שם, עריכת השם ומחיקה (רק משפחה ריקה)
-const FamilyHeader = ({ family, count, admins, onRename, onDelete }) => {
+const FamilyHeader = ({ family, count, admins, canManage, onRename, onDelete }) => {
   const [editing, setEditing] = useState(false);
   const [label, setLabel] = useState(family.label);
 
@@ -173,12 +177,14 @@ const FamilyHeader = ({ family, count, admins, onRename, onDelete }) => {
       <h2 className="admin-family__title">{family.label}</h2>
       <span className="plan-badge plan-badge--ok">{count === 1 ? 'משתתף אחד' : `${count} משתתפים`}</span>
       {admins > 0 && <span className="plan-badge">{admins === 1 ? 'מנהל אחד' : `${admins} מנהלים`}</span>}
-      <span className="admin-family__actions">
-        <button type="button" className="link-button" onClick={() => setEditing(true)}>✏️ שינוי שם</button>
-        {count === 0 && (
-          <button type="button" className="link-button admin-family__delete" onClick={() => onDelete(family)}>מחיקה</button>
-        )}
-      </span>
+      {canManage && (
+        <span className="admin-family__actions">
+          <button type="button" className="link-button" onClick={() => setEditing(true)}>✏️ שינוי שם</button>
+          {count === 0 && (
+            <button type="button" className="link-button admin-family__delete" onClick={() => onDelete(family)}>מחיקה</button>
+          )}
+        </span>
+      )}
     </div>
   );
 };
@@ -274,6 +280,14 @@ const AdminFamilies = () => {
 
   const users = data?.users || [];
   const families = data?.families || [];
+  // מנהל אתר מנהל הכול; מנהל משפחה משנה ומוחק רק את בני המשפחה שלו (ולא מנהלים אחרים)
+  const permissionsFor = (m) => {
+    if (data.siteAdmin) return { edit: true, manage: true, remove: true };
+    const mine = Boolean(data.myFamily) && m.family === data.myFamily;
+    return { edit: mine, manage: false, remove: mine && !m.isAdmin };
+  };
+  const myFamilyLabel = families.find((f) => f.key === data?.myFamily)?.label;
+
   const groups = [
     ...families.map((f) => ({ family: f, members: users.filter((u) => u.family === f.key) })),
     { family: null, members: users.filter((u) => !u.family || !families.some((f) => f.key === u.family)) },
@@ -311,6 +325,13 @@ const AdminFamilies = () => {
                 {users.length} משתתפים · {families.length} משפחות · {cabinList.length} חדרים
               </p>
 
+              {!data.siteAdmin && (
+                <p className="tip">
+                  כמנהל משפחה אפשר לתקן שם וחדר ולמחוק בני משפחה{myFamilyLabel ? ` ב${myFamilyLabel}` : ''}. הוספת משפחות,
+                  העברה בין משפחות ומינוי מנהלים נעשים על ידי מנהלי האתר.
+                </p>
+              )}
+
               <datalist id="admin-cabins">
                 {Object.keys(CABIN_TYPES).map((n) => <option key={n} value={n} />)}
               </datalist>
@@ -323,6 +344,7 @@ const AdminFamilies = () => {
                         family={family}
                         count={members.length}
                         admins={members.filter((m) => m.isAdmin).length}
+                        canManage={data.siteAdmin}
                         onRename={renameFamily}
                         onDelete={deleteFamily}
                       />
@@ -338,7 +360,15 @@ const AdminFamilies = () => {
                     ) : (
                       <ul className="admin-members">
                         {members.map((m) => (
-                          <MemberRow key={`${m.id}-${m.cabinNumber}`} member={m} families={families} isMe={m.id === data.me} onSave={saveMember} onDelete={deleteMember} />
+                          <MemberRow
+                            key={`${m.id}-${m.cabinNumber}`}
+                            member={m}
+                            families={families}
+                            isMe={m.id === data.me}
+                            can={permissionsFor(m)}
+                            onSave={saveMember}
+                            onDelete={deleteMember}
+                          />
                         ))}
                       </ul>
                     )}
@@ -346,21 +376,23 @@ const AdminFamilies = () => {
                 ),
               )}
 
-              <form className="admin-add" onSubmit={addFamily}>
-                <div className="field">
-                  <label className="field__label" htmlFor="new-family">משפחה חדשה</label>
-                  <input
-                    id="new-family"
-                    className="input"
-                    maxLength={60}
-                    placeholder="למשל: משפחת לוי"
-                    value={newFamily}
-                    onChange={(e) => setNewFamily(e.target.value)}
-                    required
-                  />
-                </div>
-                <button type="submit" className="btn btn--gold">הוספת משפחה</button>
-              </form>
+              {data.siteAdmin && (
+                <form className="admin-add" onSubmit={addFamily}>
+                  <div className="field">
+                    <label className="field__label" htmlFor="new-family">משפחה חדשה</label>
+                    <input
+                      id="new-family"
+                      className="input"
+                      maxLength={60}
+                      placeholder="למשל: משפחת לוי"
+                      value={newFamily}
+                      onChange={(e) => setNewFamily(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <button type="submit" className="btn btn--gold">הוספת משפחה</button>
+                </form>
+              )}
 
               <section className="section">
                 <h2 className="section__title">החדרים</h2>

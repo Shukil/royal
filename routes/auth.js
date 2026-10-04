@@ -16,11 +16,14 @@ const MIN_PASSWORD = 8; // רק לסיסמה חדשה; מי שכבר נרשם ע
 const RESET_TTL = 60 * 60 * 1000; // שעה
 const BCRYPT_ROUNDS = 10;
 const BAD_LOGIN = 'המייל או הסיסמה שגויים';
-const SHORT_PASSWORD = `הסיסמה צריכה להכיל לפחות ${MIN_PASSWORD} תווים`;
+// עד 128 תווים: bcrypt מתעלם ממה שאחרי 72 בתים, ואין סיבה לקבל קלט ענק
+const MAX_PASSWORD = 128;
+const SHORT_PASSWORD = `הסיסמה צריכה להכיל לפחות ${MIN_PASSWORD} תווים (ועד ${MAX_PASSWORD})`;
 
 const normalizeEmail = (email) => String(email || '').trim().toLowerCase();
 const hashToken = (token) => crypto.createHash('sha256').update(token).digest('hex');
-const isValidPassword = (password) => typeof password === 'string' && password.length >= MIN_PASSWORD;
+const isValidPassword = (password) =>
+  typeof password === 'string' && password.length >= MIN_PASSWORD && password.length <= MAX_PASSWORD;
 
 // יוצר טוקן אקראי: הגרסה הגלויה נשלחת במייל, ורק ה-hash נשמר במסד
 const createToken = () => {
@@ -128,6 +131,12 @@ router.post('/refresh', auth, async (req, res) => {
   if (req.remember) return res.json({ token: null });
   const user = await User.findById(req.userId).select('tokenVersion').lean();
   res.json({ token: signToken(user, false) });
+});
+
+// התנתקות מכל המכשירים (למשל אחרי שטלפון אבד): כל הטוקנים הקיימים מפסיקים לעבוד, כולל "השאר אותי מחובר"
+router.post('/logout-all', auth, async (req, res) => {
+  await User.updateOne({ _id: req.userId }, { $inc: { tokenVersion: 1 } });
+  res.json({ message: 'נותקת מכל המכשירים.' });
 });
 
 // החלפת סיסמה מתוך האתר. כל המכשירים האחרים מתנתקים, והמכשיר הנוכחי מקבל טוקן חדש

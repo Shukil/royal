@@ -199,3 +199,28 @@ test('השרת לא חושף שהוא Express ושולח כותרות אבטחה
   assert.equal(res.headers['x-content-type-options'], 'nosniff');
   assert.equal(res.headers['x-frame-options'], 'DENY');
 });
+
+test('התנתקות מכל המכשירים מבטלת גם טוקן של "השאר אותי מחובר"', async () => {
+  const { email, password, token } = await signUp();
+  const remembered = await api().post('/api/auth/login').send({ email, password, remember: true });
+  const res = await api().post('/api/auth/logout-all').set('Authorization', `Bearer ${token}`);
+  assert.equal(res.status, 200);
+  assert.equal((await api().get('/api/auth/me').set('Authorization', `Bearer ${token}`)).status, 401);
+  assert.equal((await api().get('/api/auth/me').set('Authorization', `Bearer ${remembered.body.token}`)).status, 401);
+  assert.equal((await api().post('/api/auth/login').send({ email, password })).status, 200);
+});
+
+test('טוקן שנחתם באלגוריתם אחר נדחה, וסיסמה ארוכה מ-128 לא מתקבלת', async () => {
+  const { user, as } = await signUp();
+  const forged = jwt.sign({ userId: user.id, v: 0 }, process.env.JWT_SECRET, { algorithm: 'HS512' });
+  assert.equal((await api().get('/api/auth/me').set('Authorization', `Bearer ${forged}`)).status, 401);
+  const long = 'x'.repeat(129);
+  assert.equal((await as('put', '/api/auth/password').send({ currentPassword: 'secret123', newPassword: long })).status, 400);
+});
+
+test('אי אפשר להוסיף פריט לתוכנית בתאריך שאינו יום בטיול', async () => {
+  const { as } = await signUp();
+  const res = await as('post', '/api/plan/2099-01-01').send({ title: 'x', start: '10:00' });
+  assert.equal(res.status, 404);
+  assert.equal((await as('post', '/api/plan/not-a-date').send({ title: 'x' })).status, 404);
+});

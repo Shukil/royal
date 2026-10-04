@@ -82,7 +82,7 @@ test('העברה בין חדרים ומשפחות מתעדכנת אצל המשת
   assert.equal((await user.as('get', '/api/auth/me')).body.user.cabinNumber, 'לא שויך');
 });
 
-test('אפשר כמה מנהלים לכל משפחה, והם מקבלים גישה לדפי המנהלים', async () => {
+test('אפשר כמה מנהלים לכל משפחה, והם רואים את דפי המנהלים', async () => {
   const boss = await admin();
   const a = await signUp({ lastName: 'עגייב' });
   const b = await signUp({ lastName: 'עגייב' });
@@ -94,7 +94,7 @@ test('אפשר כמה מנהלים לכל משפחה, והם מקבלים גיש
     assert.equal(res.body.user.isAdmin, true);
   }
 
-  // מנהל משפחה רואה את דף העדכונים ואת דף הניהול, ויכול למנות מנהלים
+  // מנהל משפחה רואה את דף העדכונים ואת דף הניהול
   assert.equal((await a.as('get', '/api/updates')).status, 200);
   assert.equal((await a.as('get', '/api/admin/families')).status, 200);
   assert.equal((await a.as('get', '/api/auth/me')).body.user.isAdmin, true);
@@ -102,11 +102,44 @@ test('אפשר כמה מנהלים לכל משפחה, והם מקבלים גיש
   const list = await a.as('get', '/api/admin/families');
   assert.equal(list.body.users.filter((u) => u.family === 'agayev' && u.isAdmin).length >= 2, true);
 
-  // מנהל לא יכול להוריד את עצמו, אבל מנהל אחר יכול
-  assert.equal((await a.as('patch', `/api/admin/users/${a.user.id}`).send({ isAdmin: false })).status, 400);
-  assert.equal((await a.as('patch', `/api/admin/users/${a.user.id}`).send({ family: null })).status, 400);
-  assert.equal((await b.as('patch', `/api/admin/users/${a.user.id}`).send({ isAdmin: false })).status, 200);
+  // מינוי והסרה של מנהלים - רק מנהלי האתר. מנהל אתר יכול להוריד מנהל משפחה
+  assert.equal((await b.as('patch', `/api/admin/users/${a.user.id}`).send({ isAdmin: false })).status, 403);
+  assert.equal((await boss.as('patch', `/api/admin/users/${a.user.id}`).send({ isAdmin: false })).status, 200);
   assert.equal((await a.as('get', '/api/admin/families')).status, 404);
+});
+
+test('מנהל משפחה מנהל רק את המשפחה שלו', async () => {
+  const boss = await admin();
+  const famAdmin = await signUp({ lastName: 'עגייב' });
+  const relative = await signUp({ lastName: 'עגייב' });
+  const otherFamily = await signUp({ lastName: 'זינגר' });
+  await boss.as('patch', `/api/admin/users/${famAdmin.user.id}`).send({ isAdmin: true });
+
+  const list = await famAdmin.as('get', '/api/admin/families');
+  assert.equal(list.body.siteAdmin, false);
+  assert.equal(list.body.myFamily, 'agayev');
+
+  // בן משפחה: שם וחדר מותרים, משפחה ומנהל לא
+  assert.equal((await famAdmin.as('patch', `/api/admin/users/${relative.user.id}`).send({ cabinNumber: '10558' })).status, 200);
+  assert.equal((await famAdmin.as('patch', `/api/admin/users/${relative.user.id}`).send({ firstName: 'נועם' })).status, 200);
+  assert.equal((await famAdmin.as('patch', `/api/admin/users/${relative.user.id}`).send({ family: 'singer' })).status, 403);
+  assert.equal((await famAdmin.as('patch', `/api/admin/users/${relative.user.id}`).send({ isAdmin: true })).status, 403);
+  assert.equal((await famAdmin.as('patch', `/api/admin/users/${famAdmin.user.id}`).send({ isAdmin: false })).status, 403);
+
+  // משפחה אחרת: אסור הכול
+  assert.equal((await famAdmin.as('patch', `/api/admin/users/${otherFamily.user.id}`).send({ cabinNumber: '10541' })).status, 403);
+  assert.equal((await famAdmin.as('delete', `/api/admin/users/${otherFamily.user.id}`)).status, 403);
+
+  // ניהול משפחות - רק מנהלי אתר
+  assert.equal((await famAdmin.as('post', '/api/admin/families').send({ label: 'משפחה חדשה' })).status, 403);
+  assert.equal((await famAdmin.as('put', '/api/admin/families/agayev').send({ label: 'שם אחר' })).status, 403);
+  assert.equal((await famAdmin.as('delete', '/api/admin/families/agayev')).status, 403);
+
+  // מחיקה: בן משפחה רגיל כן, מנהל משפחה אחר לא
+  const coAdmin = await signUp({ lastName: 'עגייב' });
+  await boss.as('patch', `/api/admin/users/${coAdmin.user.id}`).send({ isAdmin: true });
+  assert.equal((await famAdmin.as('delete', `/api/admin/users/${coAdmin.user.id}`)).status, 403);
+  assert.equal((await famAdmin.as('delete', `/api/admin/users/${relative.user.id}`)).status, 200);
 });
 
 test('מנהל משפחה חייב להיות במשפחה, ויציאה מהמשפחה מבטלת את הניהול', async () => {
