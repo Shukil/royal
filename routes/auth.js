@@ -12,7 +12,7 @@ const router = express.Router();
 
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const MIN_PASSWORD = 6;
+const MIN_PASSWORD = 8; // רק לסיסמה חדשה; מי שכבר נרשם עם סיסמה קצרה יותר ממשיך להתחבר איתה
 const RESET_TTL = 60 * 60 * 1000; // שעה
 const BCRYPT_ROUNDS = 10;
 const BAD_LOGIN = 'המייל או הסיסמה שגויים';

@@ -99,9 +99,9 @@ const Register = () => {
             value={form.password}
             onChange={update('password')}
             required
-            minLength="6"
+            minLength="8"
           />
-          <span id="reg-password-hint" className="field__hint">לפחות 6 תווים</span>
+          <span id="reg-password-hint" className="field__hint">לפחות 8 תווים</span>
         </div>
 
         <div className="field">

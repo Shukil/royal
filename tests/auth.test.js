@@ -177,3 +177,21 @@ test('התראת ניסיון: כשההתראות כבויות בשרת עוני
   assert.equal(res.body.enabled, false);
   assert.equal((await api().post('/api/push/test')).status, 401);
 });
+
+test('סיסמה חדשה: לפחות 8 תווים', async () => {
+  const res = await api().post('/api/auth/register')
+    .send({ firstName: 'קצר', lastName: 'סיסמה', email: 'short@test.com', password: '1234567', inviteCode: 'Odyssey2027' });
+  assert.equal(res.status, 400);
+  assert.match(res.body.message, /8 תווים/);
+
+  const { as } = await signUp();
+  const change = await as('put', '/api/auth/password').send({ currentPassword: 'secret123', newPassword: 'short12' });
+  assert.equal(change.status, 400);
+});
+
+test('השרת לא חושף שהוא Express ושולח כותרות אבטחה', async () => {
+  const res = await api().get('/api/health');
+  assert.equal(res.headers['x-powered-by'], undefined);
+  assert.equal(res.headers['x-content-type-options'], 'nosniff');
+  assert.equal(res.headers['x-frame-options'], 'DENY');
+});
