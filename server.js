@@ -8,6 +8,11 @@ if (!process.env.MONGO_URI) {
   console.error('MONGO_URI is not set. Similar env var names found:', similar);
 }
 
+// מפתח קצר לחתימת טוקני ההתחברות קל יותר לניחוש. מדפיסים רק את האורך, לא את המפתח
+if ((process.env.JWT_SECRET || '').length < 32) {
+  console.warn(`JWT_SECRET is too short (${(process.env.JWT_SECRET || '').length} characters). Use a random value of at least 32 characters.`);
+}
+
 // התחברות למסד הנתונים
 mongoose.connect(process.env.MONGO_URI)
   .then(async () => {

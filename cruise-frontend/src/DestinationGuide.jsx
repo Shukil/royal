@@ -11,6 +11,13 @@ import Phrasebook from './Phrasebook';
 import { guideLanguage, languages } from './phrases';
 import { tripDays } from './tripDays';
 import { portInfo } from './portInfo';
+import { mapPoints } from './mapData';
+
+// האזור של היעד ב-Google Maps (סביב הנמל), למי שמעדיף את האפליקציה של Google
+const googleArea = (id) => {
+  const port = mapPoints[id]?.find((p) => p.kind === 'port');
+  return port && `https://www.google.com/maps/@?api=1&map_action=map&center=${port.lat},${port.lon}&zoom=13`;
+};
 import { DriverCard, ShipOrSelf, Tickets, TimeBudget } from './PortPlanning';
 
 const GuideMap = lazy(() => import('./GuideMap'));
@@ -172,6 +179,13 @@ const DestinationGuide = () => {
             <Suspense fallback={<p className="empty">טוען מפה…</p>}>
               <GuideMap id={id} />
             </Suspense>
+            {googleArea(id) && (
+              <p className="plan-link">
+                <a href={googleArea(id)} target="_blank" rel="noreferrer" className="btn btn--outline btn--sm">
+                  🗺️ פתיחת האזור ב-Google Maps
+                </a>
+              </p>
+            )}
           </section>
 
           <section className="section" id="food">

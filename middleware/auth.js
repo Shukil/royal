@@ -12,6 +12,7 @@ const SESSION_TTL = '15m';
 // וכל הטוקנים הישנים (במכשירים אחרים) מפסיקים לעבוד. r: האם סימנו "השאר אותי מחובר"
 const signToken = (user, remember) =>
   jwt.sign({ userId: user._id, v: user.tokenVersion || 0, r: Boolean(remember) }, process.env.JWT_SECRET, {
+    algorithm: 'HS256',
     expiresIn: remember ? REMEMBER_TTL : SESSION_TTL,
   });
 
@@ -23,7 +24,8 @@ const auth = async (req, res, next) => {
 
   let payload;
   try {
-    payload = jwt.verify(token, process.env.JWT_SECRET);
+    // רק HS256, כדי שאי אפשר יהיה להחליף את שיטת החתימה בטוקן מזויף
+    payload = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ['HS256'] });
   } catch {
     return res.status(401).json(EXPIRED);
   }

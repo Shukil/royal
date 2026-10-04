@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import api, { errorMessage } from './api';
-import { saveToken, useUser } from './session';
+import { clearSession, saveToken, useUser } from './session';
 
 // הפרטים שלי והחלפת סיסמה. את השם לא משנים כאן, כי השם הפרטי קובע את החדר ושם המשפחה את המשפחה
 const Profile = () => {
@@ -46,6 +46,17 @@ const Profile = () => {
       setError(errorMessage(err, 'החלפת הסיסמה נכשלה. נסה שוב.'));
     } finally {
       setLoading(false);
+    }
+  };
+
+  // התנתקות מכל המכשירים (למשל אחרי שטלפון אבד), כולל המכשיר הזה
+  const logoutEverywhere = async () => {
+    if (!window.confirm('להתנתק מכל המכשירים, כולל המכשיר הזה? בכל מכשיר יהיה צריך להתחבר מחדש.')) return;
+    try {
+      await api.post('/auth/logout-all');
+      clearSession();
+    } catch (err) {
+      setError(errorMessage(err, 'ההתנתקות נכשלה. צריך חיבור לאינטרנט.'));
     }
   };
 
@@ -163,6 +174,16 @@ const Profile = () => {
                 {loading ? 'שומר…' : 'החלפת הסיסמה'}
               </button>
             </form>
+          </section>
+
+          <section className="section">
+            <h2 className="section__title">התנתקות מכל המכשירים</h2>
+            <p className="field__hint">
+              אם טלפון אבד, או שהתחברת במכשיר של מישהו אחר: מנתק את כל המכשירים שמחוברים לחשבון, כולל אלה עם "השאר אותי מחובר".
+            </p>
+            <button type="button" className="btn btn--outline btn--block" onClick={logoutEverywhere}>
+              🚪 התנתקות מכל המכשירים
+            </button>
           </section>
         </div>
       </article>
