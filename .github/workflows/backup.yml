@@ -1,0 +1,57 @@
+# גיבוי לילי של מסד הנתונים (משתמשים, משפחות, לו"ז, משימות...).
+# הגיבוי מוצפן בסיסמה לפני שהוא נשמר, כי המאגר ציבורי. הוא נשמר 30 יום ב-GitHub,
+# תחת Actions → Backup → הריצה הרצויה → Artifacts.
+#
+# הגדרה חד-פעמית: ב-GitHub → Settings → Secrets and variables → Actions → New repository secret
+#   MONGO_URI          - אותה כתובת כמו ב-Render
+#   BACKUP_PASSPHRASE  - סיסמה ארוכה לגיבויים. לשמור אותה במקום בטוח: בלעדיה אי אפשר לפתוח את הגיבוי
+#
+# שחזור (במחשב עם Docker):
+#   gpg --decrypt db.archive.gz.gpg > db.archive.gz
+#   docker run --rm -v "$PWD:/backup" mongo:7 mongorestore --uri "<MONGO_URI>" --archive=/backup/db.archive.gz --gzip --drop
+#   (--drop מחליף את מה שיש במסד במה שבגיבוי)
+name: Backup
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # כל לילה ב-02:00 UTC
+  workflow_dispatch: # אפשר גם להריץ ידנית: Actions → Backup → Run workflow
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: בדיקה שהסודות מוגדרים
+        id: check
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          if [ -z "$MONGO_URI" ] || [ -z "$BACKUP_PASSPHRASE" ]; then
+            echo "::warning::MONGO_URI or BACKUP_PASSPHRASE is not set in the repository secrets, skipping the backup"
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: גיבוי והצפנה
+        if: steps.check.outputs.ready == 'true'
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          set -euo pipefail
+          docker run --rm -v "$PWD:/backup" mongo:7 \
+            mongodump --uri "$MONGO_URI" --archive=/backup/db.archive.gz --gzip --quiet
+          gpg --batch --yes --symmetric --cipher-algo AES256 \
+            --passphrase "$BACKUP_PASSPHRASE" -o db.archive.gz.gpg db.archive.gz
+          rm db.archive.gz
+          ls -lh db.archive.gz.gpg
+
+      - name: שמירה ב-GitHub ל-30 יום
+        if: steps.check.outputs.ready == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-backup-${{ github.run_number }}
+          path: db.archive.gz.gpg
+          retention-days: 30
