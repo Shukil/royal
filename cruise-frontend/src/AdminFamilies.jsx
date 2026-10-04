@@ -171,8 +171,8 @@ const FamilyHeader = ({ family, count, admins, onRename, onDelete }) => {
   return (
     <div className="admin-family__head">
       <h2 className="admin-family__title">{family.label}</h2>
-      <span className="plan-badge plan-badge--ok">{count} משתתפים</span>
-      {admins > 0 && <span className="plan-badge">{admins} מנהלים</span>}
+      <span className="plan-badge plan-badge--ok">{count === 1 ? 'משתתף אחד' : `${count} משתתפים`}</span>
+      {admins > 0 && <span className="plan-badge">{admins === 1 ? 'מנהל אחד' : `${admins} מנהלים`}</span>}
       <span className="admin-family__actions">
         <button type="button" className="link-button" onClick={() => setEditing(true)}>✏️ שינוי שם</button>
         {count === 0 && (
@@ -329,7 +329,7 @@ const AdminFamilies = () => {
                     ) : (
                       <div className="admin-family__head">
                         <h2 className="admin-family__title">ללא משפחה</h2>
-                        <span className="plan-badge">{members.length} משתתפים</span>
+                        <span className="plan-badge">{members.length === 1 ? 'משתתף אחד' : `${members.length} משתתפים`}</span>
                       </div>
                     )}
 

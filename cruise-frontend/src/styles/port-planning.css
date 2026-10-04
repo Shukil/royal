@@ -66,6 +66,11 @@
 }
 
 /* כמה זמן באמת יש */
+.time-budget__how {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.9rem;
+}
 .time-budget__note {
   display: block;
   margin-top: 0.2rem;
