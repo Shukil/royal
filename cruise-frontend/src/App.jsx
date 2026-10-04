@@ -34,6 +34,7 @@ const Updates = lazy(() => import('./Updates'));
 const Profile = lazy(() => import('./Profile'));
 const AdminFamilies = lazy(() => import('./AdminFamilies'));
 const AdminAnnouncements = lazy(() => import('./AdminAnnouncements'));
+const Documents = lazy(() => import('./Documents'));
 // החיפוש טוען את תוכן כל הדפים, אז גם הוא נטען רק כשנכנסים אליו
 const Search = lazy(() => import('./Search'));
 
@@ -212,6 +213,7 @@ const AppLayout = () => {
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/updates" element={<Updates />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/documents" element={<Documents />} />
             <Route path="/admin/families" element={<AdminFamilies />} />
             <Route path="/admin/announcements" element={<AdminAnnouncements />} />
             <Route path="/search" element={<Search />} />

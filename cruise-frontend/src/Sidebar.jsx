@@ -14,6 +14,7 @@ const menuItems = [
   { path: '/cabin', label: 'פרטי חדר', icon: '🛏️' },
   { path: '/personal-checklist', label: 'צ\'ק ליסט אישי', icon: '🎒' },
   { path: '/cabin-checklist', label: 'צ\'ק ליסט חדר', icon: '📋' },
+  { path: '/documents', label: 'המסמכים שלי', icon: '🗂️' },
   { path: '/guides', label: 'מדריכי יעדים', icon: '🧭' },
   { path: '/emergency', label: 'חירום ומידע חשוב', icon: '🆘' },
 ];
