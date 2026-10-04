@@ -118,3 +118,32 @@ test('מנהל משפחה חייב להיות במשפחה, ויציאה מהמ�
   const res = await boss.as('patch', `/api/admin/users/${loner.user.id}`).send({ family: null });
   assert.equal(res.body.user.isAdmin, false);
 });
+
+test('תיקון שם ומחיקת משתמש', async () => {
+  const boss = await admin();
+  const typo = await signUp({ firstName: 'דנייאל', lastName: 'בדיקה' });
+
+  assert.equal((await boss.as('patch', `/api/admin/users/${typo.user.id}`).send({ firstName: '  ' })).status, 400);
+  const fixed = await boss.as('patch', `/api/admin/users/${typo.user.id}`).send({ firstName: 'דניאל' });
+  assert.equal(fixed.status, 200);
+  assert.equal(fixed.body.user.firstName, 'דניאל');
+
+  // אירוע שהוא יצר, ואירוע של מישהו אחר שהוא מוזמן אליו
+  const ev = await typo.as('post', '/api/events').send({ type: 'personal', title: 'שלי', date: '2027-08-03', time: '10:00' });
+  const other = await signUp();
+  const shared = await other.as('post', '/api/events')
+    .send({ type: 'custom', title: 'משותף', date: '2027-08-04', time: '10:00', invitees: [typo.user.id] });
+  await typo.as('put', `/api/events/${shared.body.id}/rsvp`).send({ status: 'yes' });
+
+  // אי אפשר למחוק את עצמך או מנהל אתר
+  assert.equal((await boss.as('delete', `/api/admin/users/${boss.user.id}`)).status, 400);
+  assert.equal((await boss.as('delete', `/api/admin/users/${typo.user.id}`)).status, 200);
+
+  assert.equal((await typo.as('get', '/api/auth/me')).status, 401);
+  assert.equal((await other.as('get', `/api/events/${ev.body.id}`)).status, 404);
+  const after = await other.as('get', `/api/events/${shared.body.id}`);
+  assert.deepEqual(after.body.invitees, []);
+  assert.equal(after.body.counts.yes, 1); // רק היוצר
+  const list = await boss.as('get', '/api/admin/families');
+  assert.ok(!list.body.users.some((u) => u.id === typo.user.id));
+});
