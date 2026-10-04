@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import api, { errorMessage } from './api';
-import { EVENT_TYPES, emptyForm, formatDate } from './eventTypes';
+import { CATEGORIES, EVENT_TYPES, emptyForm, formatDate } from './eventTypes';
 
 // טופס אירוע, ליצירה (בלו״ז) ולעריכה (בדף האירוע). eventId קיים רק בעריכה.
 // people: התשובה מ-/events/people (מוזמנים אפשריים, המשפחה שלי וטווח התאריכים)
@@ -93,6 +93,31 @@ const EventForm = ({ people, initial = emptyForm, eventId = null, submitLabel, o
             );
           })}
         </fieldset>
+
+        <fieldset className="category-picker">
+          <legend className="field__label">מה זה?</legend>
+          {Object.entries(CATEGORIES).map(([key, c]) => (
+            <label key={key} className={`category-option${form.category === key ? ' is-on' : ''}`}>
+              <input type="radio" name="category" value={key} checked={form.category === key} onChange={update('category')} />
+              <span>{c.icon} {c.label}</span>
+            </label>
+          ))}
+        </fieldset>
+
+        {form.category !== 'general' && (
+          <div className="field">
+            <label className="field__label" htmlFor="ev-confirmation">מספר אישור ההזמנה (לא חובה)</label>
+            <input
+              id="ev-confirmation"
+              className="input"
+              dir="ltr"
+              maxLength={60}
+              placeholder="מהאפליקציה של Royal Caribbean"
+              value={form.confirmation}
+              onChange={update('confirmation')}
+            />
+          </div>
+        )}
 
         <div className="field">
           <label className="field__label" htmlFor="ev-title">שם האירוע</label>

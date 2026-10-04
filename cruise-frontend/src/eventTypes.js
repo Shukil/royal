@@ -31,6 +31,15 @@ export const formatDay = (date) => {
   return `${weekday} ${String(d).padStart(2, '0')}.${String(m).padStart(2, '0')}`;
 };
 
+// הזמנות על הספינה: סוג האירוע מוסיף אייקון בלו״ז ובמסך "היום", ושדה למספר האישור
+export const CATEGORIES = {
+  general: { label: 'אירוע רגיל', icon: '' },
+  dining: { label: 'מסעדה', icon: '🍽️' },
+  show: { label: 'מופע', icon: '🎭' },
+  activity: { label: 'פעילות', icon: '🏄' },
+};
+export const categoryIcon = (ev) => CATEGORIES[ev.category]?.icon || '';
+
 // טופס האירוע (EventForm.jsx): אירוע חדש
 export const emptyForm = {
   type: 'all',
@@ -42,6 +51,8 @@ export const emptyForm = {
   location: '',
   description: '',
   invitees: [],
+  category: 'general',
+  confirmation: '',
 };
 
 // השדות של אירוע קיים, למילוי טופס העריכה
@@ -55,4 +66,6 @@ export const formFromEvent = (ev) => ({
   location: ev.location || '',
   description: ev.description || '',
   invitees: ev.invitees || [],
+  category: ev.category || 'general',
+  confirmation: ev.confirmation || '',
 });

@@ -75,3 +75,25 @@ test('אירוע אישי לא נראה למשתמשים אחרים', async () =
   const list = await other.as('get', '/api/events');
   assert.ok(!list.body.events.some((e) => e.id === body.id));
 });
+
+test('הזמנה על הספינה: סוג ומספר אישור נשמרים ומתעדכנים', async () => {
+  const owner = await signUp();
+  const fields = eventBody({ type: 'personal', title: 'Chops Grille', category: 'dining', confirmation: 'RC-12345' });
+  const { body } = await owner.as('post', '/api/events').send(fields);
+
+  const ev = await owner.as('get', `/api/events/${body.id}`);
+  assert.equal(ev.body.category, 'dining');
+  assert.equal(ev.body.confirmation, 'RC-12345');
+  const list = await owner.as('get', '/api/events');
+  assert.equal(list.body.events.find((e) => e.id === body.id).category, 'dining');
+
+  await owner.as('put', `/api/events/${body.id}`).send({ ...fields, category: 'show', confirmation: '' });
+  const edited = await owner.as('get', `/api/events/${body.id}`);
+  assert.equal(edited.body.category, 'show');
+  assert.equal(edited.body.confirmation, '');
+
+  assert.equal((await owner.as('post', '/api/events').send(eventBody({ category: 'spa' }))).status, 400);
+  // בלי סוג: אירוע רגיל
+  const plain = await owner.as('post', '/api/events').send(eventBody({ type: 'personal' }));
+  assert.equal((await owner.as('get', `/api/events/${plain.body.id}`)).body.category, 'general');
+});

@@ -15,6 +15,9 @@ const eventSchema = new mongoose.Schema({
   time: { type: String, default: '', match: /^(\d{2}:\d{2})?$/ },
   endTime: { type: String, default: '', match: /^(\d{2}:\d{2})?$/ },
   type: { type: String, enum: ['all', 'family', 'personal', 'custom'], required: true },
+  // סוג ההזמנה על הספינה: מסעדה, מופע או פעילות (general = אירוע רגיל), ומספר האישור של ההזמנה
+  category: { type: String, enum: ['general', 'dining', 'show', 'activity'], default: 'general' },
+  confirmation: { type: String, default: '', trim: true },
   family: { type: String, default: null },
   // ריק באירועים הקבועים של הטיול (טיסות, תחילת ההפלגה)
   createdBy: { type: ObjectId, ref: 'User', default: null },
