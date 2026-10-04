@@ -24,7 +24,7 @@
   font-size: 1.6rem;
   font-weight: 800;
   line-height: 1.25;
-  color: var(--navy-800);
+  color: var(--heading);
 }
 .driver-card__address,
 .driver-card__en {

@@ -86,7 +86,7 @@
 }
 .install__steps li::marker {
   font-weight: 800;
-  color: var(--navy-600);
+  color: var(--heading);
 }
 .install__glyph {
   width: 1.3em;

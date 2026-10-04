@@ -211,7 +211,7 @@
 .modal__title {
   margin-top: 0.5rem;
   font-size: 1.45rem;
-  color: var(--navy-800);
+  color: var(--heading);
 }
 .modal__text {
   margin-top: 0.6rem;

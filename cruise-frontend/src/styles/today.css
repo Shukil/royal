@@ -28,7 +28,7 @@
 }
 .today__place {
   margin: 0;
-  color: var(--navy-800);
+  color: var(--heading);
   font-size: clamp(1.9rem, 6vw, 2.8rem);
   line-height: 1.15;
   display: flex;
@@ -45,11 +45,11 @@
   padding: 0.9rem 1.1rem;
   border-radius: var(--radius-md);
   border-inline-start: 5px solid var(--navy-600);
-  background: #eaf1fb;
+  background: var(--info-bg);
 }
 .today__status-title {
   font-size: 1.25rem;
-  color: var(--navy-800);
+  color: var(--heading);
 }
 .today__status--ok {
   border-color: var(--success);
@@ -256,7 +256,7 @@
 .today__subtitle {
   margin: 0;
   font-size: 1.15rem;
-  color: var(--navy-800);
+  color: var(--heading);
 }
 .today__empty {
   margin: 0;

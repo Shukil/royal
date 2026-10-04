@@ -8,7 +8,7 @@ const toTime = (m) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m
 
 // טווחים של מספרים או שעות ("08:00–20:00", "25–35 €") מתהפכים בתוך טקסט בעברית.
 // עוטפים כל טווח כזה בכיוון שמאל-לימין, כדי שיוצג בסדר הנכון
-const RANGE_RE = /(d[d:.,]*s*[–-]s*d[d:.,]*)/;
+const RANGE_RE = /(\d[\d:.,]*\s*[–-]\s*\d[\d:.,]*)/;
 const Ltr = ({ text }) =>
   String(text).split(RANGE_RE).map((part, i) => (i % 2 ? <span key={i} dir="ltr">{part}</span> : part));
 

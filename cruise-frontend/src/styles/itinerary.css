@@ -65,7 +65,7 @@
 }
 .port__title {
   font-size: 1.4rem;
-  color: var(--navy-800);
+  color: var(--heading);
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -90,7 +90,7 @@
 }
 .port__label {
   font-size: 1rem;
-  color: var(--navy-800);
+  color: var(--heading);
   margin-bottom: 0.35rem;
 }
 .port__link {

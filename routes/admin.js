@@ -106,7 +106,7 @@ router.patch('/users/:id', async (req, res) => {
   // תיקון שם (למשל טעות בהרשמה). השם לא משפיע על החדר או על המשפחה, שנשמרים בנפרד
   for (const field of ['firstName', 'lastName']) {
     if (!(field in req.body)) continue;
-    const value = String(req.body[field] ?? '').trim().replace(/s+/g, ' ');
+    const value = String(req.body[field] ?? '').trim().replace(/\s+/g, ' ');
     if (!value) return res.status(400).json({ message: 'יש למלא שם פרטי ושם משפחה' });
     if (value.length > MAX_NAME) return res.status(400).json({ message: `השם יכול להכיל עד ${MAX_NAME} תווים` });
     user[field] = value;

@@ -43,7 +43,7 @@ export const cabins = {
 // החדר של המשתמש המחובר, עם השמות של מי שגר בו. null אם עוד לא שויך לחדר
 export const findCabin = (user) => {
   const number = user?.cabinNumber;
-  if (!number || !/^d+$/.test(number)) return null;
+  if (!number || !/^\d+$/.test(number)) return null;
   const details = cabins[number];
   return { number, guests: user.cabinGuests || [], known: Boolean(details), ...details };
 };
