@@ -121,7 +121,7 @@ const Countdown = () => {
             </div>
             <div className="pass__field">
               <dt>החדר שלך</dt>
-              <dd>{cabin ? `${cabin.number} · ${cabin.type}` : 'ייקבע בהמשך'}</dd>
+              <dd>{cabin ? [cabin.number, cabin.type].filter(Boolean).join(' · ') : 'ייקבע בהמשך'}</dd>
             </div>
           </dl>
         </aside>

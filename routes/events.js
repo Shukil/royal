@@ -4,7 +4,7 @@ const Event = require('../models/Event');
 const EventComment = require('../models/EventComment');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
-const { FAMILIES, familyOf } = require('../utils/family');
+const { familyLabels, familyLabel } = require('../utils/families');
 const { TRIP_RANGE, SYSTEM_EVENTS } = require('../utils/trip');
 const { notify } = require('../utils/push');
 const router = express.Router();
@@ -16,15 +16,14 @@ const MAX_TEXT = 3000;
 const MAX_LOCATION = 200;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
-const NAME_FIELDS = 'firstName lastName';
+const NAME_FIELDS = 'firstName lastName family';
 const NOT_FOUND = { message: 'האירוע לא נמצא' };
 // "יוצר" האירועים הקבועים של הטיול
 const SYSTEM_AUTHOR = { id: null, name: 'לו״ז הטיול', family: null };
-const FAMILY_LABELS = Object.fromEntries(Object.entries(FAMILIES).map(([k, f]) => [k, f.label]));
 
 const isId = (id) => mongoose.Types.ObjectId.isValid(id);
 const fullName = (u) => (u ? `${u.firstName} ${u.lastName}` : 'משתמש שנמחק');
-const person = (u) => ({ id: String(u._id), name: fullName(u), family: familyOf(u.lastName) });
+const person = (u) => ({ id: String(u._id), name: fullName(u), family: u.family || null });
 // "17.08 · 19:30" לגוף ההתראה
 const whenText = (ev) => [ev.date.split('-').reverse().slice(0, 2).join('.'), ev.allDay ? 'כל היום' : ev.time].filter(Boolean).join(' · ');
 const sameId = (a, b) => Boolean(a) && Boolean(b) && String(a._id || a) === String(b._id || b);
@@ -38,7 +37,7 @@ router.use(async (req, res, next) => {
   const me = await User.findById(req.userId).select(NAME_FIELDS).lean();
   if (!me) return res.status(401).json({ message: 'יש להתחבר' });
   req.me = me;
-  req.myFamily = familyOf(me.lastName);
+  req.myFamily = me.family || null;
   next();
 });
 
@@ -59,7 +58,7 @@ const audienceOf = async (event) => {
     return User.find({ _id: { $in: ids } }).select(NAME_FIELDS).lean();
   }
   const users = await User.find().select(NAME_FIELDS).lean();
-  return event.type === 'family' ? users.filter((u) => familyOf(u.lastName) === event.family) : users;
+  return event.type === 'family' ? users.filter((u) => u.family === event.family) : users;
 };
 
 const summary = (event, me) => {
@@ -79,7 +78,7 @@ const summary = (event, me) => {
     location: event.location || '',
     type: event.type,
     family: event.family,
-    familyLabel: event.family ? FAMILY_LABELS[event.family] ?? null : null,
+    familyLabel: familyLabel(event.family),
     isSystem: Boolean(event.systemKey),
     createdBy: event.createdBy ? person(event.createdBy) : SYSTEM_AUTHOR,
     isMine: sameId(event.createdBy, me._id),
@@ -119,7 +118,7 @@ const busyInvitees = async (users, slot, exceptId) => {
   const overlapping = (await eventsOn(slot.date, exceptId)).filter((ev) => overlaps(spanOf(ev), wanted));
   return users
     .map((u) => {
-      const family = familyOf(u.lastName);
+      const family = u.family || null;
       const clashes = overlapping.filter(
         (ev) => canSee(ev, u, family) && !ev.rsvps.some((r) => sameId(r.user, u._id) && r.status === 'no'),
       );
@@ -138,7 +137,7 @@ const sharedConflicts = async (slot, type, family, myFamily, exceptId) => {
     .filter((ev) => overlaps(spanOf(ev), wanted) && (ev.type === 'all' || type === 'all' || ev.family === family))
     .map((ev) => ({
       id: String(ev._id),
-      group: ev.type === 'all' ? 'אירוע לכולם' : FAMILY_LABELS[ev.family] || 'אירוע משפחתי',
+      group: ev.type === 'all' ? 'אירוע לכולם' : familyLabel(ev.family) || 'אירוע משפחתי',
       // את שם האירוע מציגים רק אם המשתמש מוזמן אליו בעצמו
       title: ev.type === 'all' || ev.family === myFamily ? ev.title : null,
       when: whenLabel(ev),
@@ -169,7 +168,7 @@ router.post('/availability', async (req, res) => {
 // בני משפחה ומשתמשים (לבחירת מוזמנים), וטווח התאריכים המותר
 router.get('/people', async (req, res) => {
   const users = await User.find().select(NAME_FIELDS).sort({ firstName: 1 }).lean();
-  res.json({ range: TRIP_RANGE, me: person(req.me), families: FAMILY_LABELS, people: users.map(person) });
+  res.json({ range: TRIP_RANGE, me: person(req.me), families: familyLabels(), people: users.map(person) });
 });
 
 // כל האירועים שהמשתמש המחובר מוזמן אליהם

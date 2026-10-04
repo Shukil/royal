@@ -29,3 +29,4 @@
 @import './styles/tasks.css'; /* משימות (Tasks.jsx) */
 @import './styles/search.css'; /* חיפוש (Search.jsx) */
 @import './styles/updates.css'; /* עדכוני האתר (Updates.jsx) */
+@import './styles/admin.css'; /* ניהול משפחות (AdminFamilies.jsx) */

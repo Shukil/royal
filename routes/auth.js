@@ -6,8 +6,8 @@ const auth = require('../middleware/auth');
 const { signToken } = require('../middleware/auth');
 const { loginLimits, forgotPasswordLimits, registerLimits, changePasswordLimits } = require('../middleware/rateLimits');
 const { sendResetEmail } = require('../utils/mailer');
-const { cabinFor, guestsOf, roster } = require('../utils/cabins');
-const { FAMILIES, familyOf } = require('../utils/family');
+const { cabinFor, UNASSIGNED } = require('../utils/cabins');
+const { familyLabel, familyForNewUser, isAdminUser } = require('../utils/families');
 const router = express.Router();
 
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
@@ -38,9 +38,19 @@ const isInviteCode = (code) => {
   return crypto.timingSafeEqual(digest(normalizeCode(code)), digest(expected));
 };
 
-// פרטי המשתמש שהאתר שומר. החדר, השותפים לחדר והמשפחה נקבעים כאן בלבד
-const userPayload = (user) => {
-  const family = familyOf(user.lastName);
+// כל החדרים ומי גר בכל אחד (שמות פרטיים), לפי מה שנשמר במסד
+const cabinRoster = async () => {
+  const users = await User.find({ cabinNumber: { $nin: [null, '', UNASSIGNED] } })
+    .select('firstName cabinNumber').sort({ firstName: 1 }).lean();
+  const byCabin = {};
+  for (const u of users) (byCabin[u.cabinNumber] ||= []).push(u.firstName);
+  return byCabin;
+};
+
+// פרטי המשתמש שהאתר שומר. החדר, השותפים לחדר, המשפחה וההרשאות נקבעים כאן בלבד
+// (ומשתנים בדף ניהול המשפחות, routes/admin.js)
+const userPayload = async (user) => {
+  const cabins = await cabinRoster();
   return {
     id: user._id,
     name: `${user.firstName} ${user.lastName}`,
@@ -48,11 +58,12 @@ const userPayload = (user) => {
     lastName: user.lastName,
     email: user.email,
     cabinNumber: user.cabinNumber,
-    cabinGuests: guestsOf(user.cabinNumber),
+    cabinGuests: cabins[user.cabinNumber] || [],
     // כל החדרים, כדי שטבלת החדרים תעבוד גם בלי אינטרנט
-    cabins: roster(),
-    family,
-    familyLabel: family ? FAMILIES[family].label : null,
+    cabins,
+    family: user.family || null,
+    familyLabel: familyLabel(user.family),
+    isAdmin: isAdminUser(user),
     // קוד ההרשמה, כדי שכל מי שכבר רשום יוכל להעביר אותו לבני משפחה (דף "הפרופיל שלי")
     inviteCode: process.env.INVITE_CODE || null,
   };
@@ -80,7 +91,9 @@ router.post('/register', registerLimits, async (req, res) => {
       lastName,
       email,
       password: await bcrypt.hash(password, BCRYPT_ROUNDS),
+      // ניחוש ראשוני; מנהל יכול לשנות בדף ניהול המשפחות
       cabinNumber: cabinFor(firstName),
+      family: await familyForNewUser(lastName),
     });
     res.status(201).json({ message: 'נרשמת בהצלחה!', cabin: user.cabinNumber });
   } catch (error) {
@@ -98,28 +111,15 @@ router.post('/login', loginLimits, async (req, res) => {
   const isMatch = await bcrypt.compare(String(req.body.password || ''), user.password);
   if (!isMatch) return res.status(400).json({ message: BAD_LOGIN });
 
-  // שיוך מחדש לפי השם הפרטי, כך שעדכון של רשימת החדרים חל גם על משתמשים קיימים
-  const cabinNumber = cabinFor(user.firstName);
-  if (user.cabinNumber !== cabinNumber) {
-    user.cabinNumber = cabinNumber;
-    await user.save();
-  }
-
-  res.json({ token: signToken(user), user: userPayload(user) });
+  res.json({ token: signToken(user), user: await userPayload(user) });
 });
 
-// הפרטים העדכניים של המשתמש המחובר. האתר קורא לזה בכל טעינה, כך ששינוי ברשימת החדרים
-// או המשפחות מגיע גם למי שכבר מחובר
+// הפרטים העדכניים של המשתמש המחובר. האתר קורא לזה בכל טעינה, כך ששינוי בדף ניהול המשפחות
+// (חדר, משפחה, מנהל) מגיע גם למי שכבר מחובר
 router.get('/me', auth, async (req, res) => {
-  const user = await User.findById(req.userId);
+  const user = await User.findById(req.userId).lean();
   if (!user) return res.status(401).json({ message: 'יש להתחבר' });
-
-  const cabinNumber = cabinFor(user.firstName);
-  if (user.cabinNumber !== cabinNumber) {
-    user.cabinNumber = cabinNumber;
-    await user.save();
-  }
-  res.json({ user: userPayload(user) });
+  res.json({ user: await userPayload(user) });
 });
 
 // החלפת סיסמה מתוך האתר. כל המכשירים האחרים מתנתקים, והמכשיר הנוכחי מקבל טוקן חדש

@@ -3,14 +3,14 @@ const mongoose = require('mongoose');
 const PortDay = require('../models/PortDay');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
-const { FAMILIES, familyOf } = require('../utils/family');
+const { familyLabels } = require('../utils/families');
 const { PORT_DAYS } = require('../utils/trip');
 const { notify } = require('../utils/push');
 const router = express.Router();
 
 const MAX_PLACE = 120;
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
-const NAME_FIELDS = 'firstName lastName';
+const NAME_FIELDS = 'firstName lastName family';
 const fullName = (u) => `${u.firstName} ${u.lastName}`;
 
 router.use(auth);
@@ -38,11 +38,11 @@ const dayResponse = async (date, me) => {
   return {
     me: String(me._id),
     meeting: doc?.meeting?.place ? doc.meeting : null,
-    families: Object.fromEntries(Object.entries(FAMILIES).map(([k, f]) => [k, f.label])),
+    families: familyLabels(),
     people: users.map((u) => ({
       id: String(u._id),
       name: fullName(u),
-      family: familyOf(u.lastName),
+      family: u.family || null,
       aboard: aboard.get(String(u._id)) || null,
     })),
   };
