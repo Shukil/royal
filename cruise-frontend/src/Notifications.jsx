@@ -17,6 +17,7 @@ const Notifications = () => {
   const [state, setState] = useState('loading');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [testResult, setTestResult] = useState('');
 
   useEffect(() => {
     let alive = true;
@@ -63,6 +64,26 @@ const Notifications = () => {
     }
   };
 
+  // התראת ניסיון לעצמי. מוודאים קודם שהמנוי של הטלפון הזה רשום בשרת
+  const sendTest = async () => {
+    setBusy(true);
+    setError('');
+    setTestResult('');
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.getSubscription();
+      if (sub) await api.post('/push/subscribe', { subscription: sub.toJSON() });
+      const { data } = await api.post('/push/test');
+      if (!data.enabled) setTestResult('ההתראות כבויות בשרת.');
+      else if (data.sent > 0) setTestResult(`נשלחה התראה ל-${data.sent} מכשירים. אם היא לא הופיעה תוך כמה שניות, כדאי לבדוק בהגדרות הטלפון שההתראות לאפליקציה מותרות.`);
+      else setTestResult(`השליחה נכשלה${data.failed.length ? ` (קוד ${data.failed.join(', ')})` : ''}. אפשר לנסות לכבות ולהפעיל שוב את ההתראות.`);
+    } catch (err) {
+      setError(errorMessage(err, 'שליחת הניסיון נכשלה. צריך חיבור לאינטרנט.'));
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const disable = async () => {
     setBusy(true);
     setError('');
@@ -98,8 +119,12 @@ const Notifications = () => {
         <button type="button" className="btn btn--gold btn--sm" onClick={enable} disabled={busy}>הפעלת התראות</button>
       )}
       {state === 'on' && (
-        <button type="button" className="btn btn--outline btn--sm" onClick={disable} disabled={busy}>כיבוי</button>
+        <span className="notify__actions">
+          <button type="button" className="btn btn--gold btn--sm" onClick={sendTest} disabled={busy}>שלחו לי התראת ניסיון</button>
+          <button type="button" className="btn btn--outline btn--sm" onClick={disable} disabled={busy}>כיבוי</button>
+        </span>
       )}
+      {testResult && <p className="field__hint notify__error" role="status">{testResult}</p>}
       {error && <p className="alert alert--error notify__error" role="alert">{error}</p>}
     </div>
   );

@@ -169,3 +169,11 @@ test('החלפת סיסמה שומרת על "השאר אותי מחובר"', asy
     .send({ currentPassword: password, newPassword: 'another123' });
   assert.ok(minutesLeft(changed.body.token) > 29 * 24 * 60);
 });
+
+test('התראת ניסיון: כשההתראות כבויות בשרת עונים בהתאם', async () => {
+  const { as } = await signUp();
+  const res = await as('post', '/api/push/test');
+  assert.equal(res.status, 200);
+  assert.equal(res.body.enabled, false);
+  assert.equal((await api().post('/api/push/test')).status, 401);
+});
