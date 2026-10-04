@@ -1,0 +1,159 @@
+/* ===== תכנון יום נמל במדריכים (PortPlanning.jsx) ===== */
+
+/* כרטיס לנהג: טקסט גדול וברור, בשפה המקומית ובאנגלית */
+.driver-card {
+  display: grid;
+  gap: 0.9rem;
+  justify-items: start;
+  padding: 1.1rem 1.2rem;
+  border: 2px solid var(--navy-800);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+.driver-card__text {
+  text-align: left;
+  width: 100%;
+}
+.driver-card__text p {
+  margin: 0 0 0.4rem;
+}
+.driver-card__ask {
+  font-size: 1.05rem;
+}
+.driver-card__place {
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--navy-800);
+}
+.driver-card__address,
+.driver-card__en {
+  color: var(--muted);
+}
+.driver-card__ship {
+  font-weight: 600;
+}
+.driver-card--full {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  padding: 1.5rem;
+  background: #fff;
+  color: #021d49;
+}
+.driver-card--full .driver-card__text {
+  max-width: 40rem;
+}
+.driver-card--full .driver-card__ask {
+  font-size: 1.5rem;
+}
+.driver-card--full .driver-card__place {
+  font-size: clamp(2rem, 8vw, 3.25rem);
+  color: #021d49;
+}
+.driver-card--full .driver-card__address,
+.driver-card--full .driver-card__en {
+  font-size: 1.2rem;
+  color: #4d5b7c;
+}
+.driver-card--full .driver-card__ship {
+  font-size: 1.1rem;
+}
+
+/* כמה זמן באמת יש */
+.time-budget__note {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.time-budget__leave {
+  font-weight: 800;
+  font-size: 1.1rem;
+  white-space: nowrap;
+}
+
+/* כרטיסים ושעות */
+.tickets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 0.75rem;
+}
+.ticket {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+.ticket.is-closed {
+  border-color: var(--danger);
+}
+.ticket__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+.ticket__head .plan-badge {
+  margin-inline-start: 0;
+}
+.ticket__facts {
+  margin: 0;
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.92rem;
+}
+.ticket__facts div {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  gap: 0.5rem;
+}
+.ticket__facts dt {
+  color: var(--muted);
+}
+.ticket__facts dd {
+  margin: 0;
+}
+.ticket__link {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.88rem;
+}
+
+/* סיור של הספינה או לבד */
+.ship-or-self {
+  padding: 1rem 1.2rem;
+  border-radius: var(--radius-md);
+  border-inline-start: 5px solid var(--line);
+  background: var(--paper);
+}
+.ship-or-self--ship {
+  border-inline-start-color: var(--navy-600);
+}
+.ship-or-self--self {
+  border-inline-start-color: var(--success);
+}
+.ship-or-self--either {
+  border-inline-start-color: var(--gold);
+}
+.ship-or-self__verdict {
+  margin: 0 0 0.4rem;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+.ship-or-self__points {
+  margin: 0.5rem 0 0.75rem;
+  padding-inline-start: 1.2rem;
+}
+.ship-or-self__points li {
+  margin-bottom: 0.3rem;
+}
