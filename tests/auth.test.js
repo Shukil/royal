@@ -122,3 +122,50 @@ test('דף העדכונים רק למנהלים', async () => {
   const admin = await signUp({ email: 'admin@test.com' });
   assert.equal((await admin.as('get', '/api/updates')).status, 200);
 });
+
+// ===== משך ההתחברות =====
+const jwt = require('jsonwebtoken');
+const minutesLeft = (token) => (jwt.decode(token).exp * 1000 - Date.now()) / 60000;
+
+test('בלי "השאר אותי מחובר" הטוקן תקף ל-15 דקות, ועם הסימון ל-30 יום', async () => {
+  const { email, password, token } = await signUp();
+  assert.ok(minutesLeft(token) > 14 && minutesLeft(token) <= 15);
+
+  const remembered = await api().post('/api/auth/login').send({ email, password, remember: true });
+  assert.ok(minutesLeft(remembered.body.token) > 29 * 24 * 60);
+});
+
+test('חידוש טוקן קצר נותן עוד 15 דקות; טוקן ארוך לא מתחדש', async () => {
+  const { email, password, as } = await signUp();
+  const refreshed = await as('post', '/api/auth/refresh');
+  assert.equal(refreshed.status, 200);
+  assert.ok(minutesLeft(refreshed.body.token) > 14);
+  assert.equal(jwt.decode(refreshed.body.token).r, false);
+
+  const remembered = await api().post('/api/auth/login').send({ email, password, remember: true });
+  const res = await api().post('/api/auth/refresh').set('Authorization', `Bearer ${remembered.body.token}`);
+  assert.equal(res.body.token, null);
+});
+
+test('טוקן שפג תוקפו נדחה ולא מתחדש', async () => {
+  const { user } = await signUp();
+  const expired = jwt.sign({ userId: user.id, v: 0, r: false, exp: Math.floor(Date.now() / 1000) - 60 }, process.env.JWT_SECRET);
+  assert.equal((await api().get('/api/auth/me').set('Authorization', `Bearer ${expired}`)).status, 401);
+  assert.equal((await api().post('/api/auth/refresh').set('Authorization', `Bearer ${expired}`)).status, 401);
+});
+
+test('טוקנים ישנים (בלי סימון) נחשבים "השאר אותי מחובר", ולא מנותקים', async () => {
+  const { user } = await signUp();
+  const legacy = jwt.sign({ userId: user.id, v: 0 }, process.env.JWT_SECRET, { expiresIn: '30d' });
+  const res = await api().post('/api/auth/refresh').set('Authorization', `Bearer ${legacy}`);
+  assert.equal(res.status, 200);
+  assert.equal(res.body.token, null);
+});
+
+test('החלפת סיסמה שומרת על "השאר אותי מחובר"', async () => {
+  const { email, password } = await signUp();
+  const login = await api().post('/api/auth/login').send({ email, password, remember: true });
+  const changed = await api().put('/api/auth/password').set('Authorization', `Bearer ${login.body.token}`)
+    .send({ currentPassword: password, newPassword: 'another123' });
+  assert.ok(minutesLeft(changed.body.token) > 29 * 24 * 60);
+});

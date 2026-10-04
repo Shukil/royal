@@ -54,7 +54,10 @@ export const saveUser = (user) => {
   write(USER_KEY, JSON.stringify(user));
   changed();
 };
-export const saveToken = (token) => write(TOKEN_KEY, token);
+export const saveToken = (token) => {
+  write(TOKEN_KEY, token);
+  changed();
+};
 
 export const clearSession = () => {
   try {
@@ -78,6 +81,18 @@ const subscribe = (onChange) => {
   };
 };
 export const useUser = () => useSyncExternalStore(subscribe, getUser, () => null);
+export const useToken = () => useSyncExternalStore(subscribe, getToken, () => null);
+
+// מה שכתוב בתוך הטוקן: מתי הוא פג (exp, במילישניות) והאם סימנו "השאר אותי מחובר" (remember).
+// טוקנים ישנים בלי הסימון היו של 30 יום, אז הם נחשבים "השאר אותי מחובר" (כמו בשרת)
+export const tokenInfo = (token) => {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+    return { exp: payload.exp * 1000, remember: payload.r !== false };
+  } catch {
+    return null;
+  }
+};
 
 // שם פרטי ושם משפחה, גם למשתמשים שנשמרו לפני שהשדות האלה נוספו (רק name מלא)
 export const firstNameOf = (user) => (user?.firstName || user?.name?.split(' ')[0] || '').trim();

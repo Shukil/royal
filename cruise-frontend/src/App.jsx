@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useLayoutEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation, useNavigationType } from 'react-router-dom';
+import { BrowserRouter as Router, Navigate, Routes, Route, useLocation, useNavigationType } from 'react-router-dom';
 import Home from './Home';
 import Schedule from './Schedule';
 import EventPage from './EventPage';
@@ -25,12 +25,12 @@ import Updates from './Updates';
 import Profile from './Profile';
 import AdminFamilies from './AdminFamilies';
 import api from './api';
-import { clearSession, getToken, saveUser } from './session';
+import { clearSession, getToken, saveToken, saveUser, tokenInfo, useToken, useUser } from './session';
 
 // החיפוש טוען את תוכן כל הדפים, אז הוא נטען רק כשנכנסים אליו
 const Search = lazy(() => import('./Search'));
 
-// עמודים שמוצגים בלי התפריט הצדדי
+// עמודים שמוצגים בלי התפריט הצדדי. רק הם פתוחים למי שלא מחובר; כל השאר מעבירים להתחברות
 const AUTH_PATHS = ['/login', '/register', '/forgot-password', '/reset-password'];
 
 // מעבר לדף חדש מתחיל מראש הדף. לא בקישור לעוגן בתוך הדף (#), ולא בחזרה אחורה,
@@ -77,11 +77,68 @@ const useFreshSession = () => {
   }, []);
 };
 
+// ===== ניתוק אחרי 15 דקות בלי פעילות =====
+// בלי "השאר אותי מחובר" הטוקן תקף ל-15 דקות. כל עוד משתמשים באתר (לחיצה, הקלדה, גלילה) ונשארו
+// פחות מ-10 דקות, מבקשים מהשרת טוקן חדש ל-15 דקות נוספות. בלי פעילות הטוקן פג והמשתמש מתנתק,
+// גם אם הדף פשוט נשאר פתוח. עם "השאר אותי מחובר" הטוקן תקף ל-30 יום ולא מתחדש
+const RENEW_WHEN_LEFT = 10 * 60 * 1000;
+const MAX_TIMEOUT = 2 ** 31 - 1; // setTimeout לא מקבל יותר מכ-24 יום
+const ACTIVITY_EVENTS = ['pointerdown', 'keydown', 'scroll', 'touchstart'];
+
+const useSessionTimeout = (token) => {
+  useEffect(() => {
+    const info = token && tokenInfo(token);
+    if (!info) return undefined;
+
+    const expireIfDue = () => {
+      if (Date.now() >= info.exp) clearSession();
+    };
+    // הטיימר עשוי להתעכב כשהטלפון ברקע, אז בודקים שוב כשחוזרים לאתר
+    const timer = setTimeout(expireIfDue, Math.min(Math.max(0, info.exp - Date.now()), MAX_TIMEOUT));
+    const onVisible = () => document.visibilityState === 'visible' && expireIfDue();
+    document.addEventListener('visibilitychange', onVisible);
+
+    let renewing = false;
+    const onActivity = () => {
+      const left = info.exp - Date.now();
+      if (info.remember || renewing || left <= 0 || left > RENEW_WHEN_LEFT) return;
+      renewing = true;
+      api.post('/auth/refresh')
+        .then((res) => res.data.token && saveToken(res.data.token))
+        .catch(() => {})
+        .finally(() => {
+          renewing = false;
+        });
+    };
+    ACTIVITY_EVENTS.forEach((e) => window.addEventListener(e, onActivity, { passive: true, capture: true }));
+
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('visibilitychange', onVisible);
+      ACTIVITY_EVENTS.forEach((e) => window.removeEventListener(e, onActivity, { capture: true }));
+    };
+  }, [token]);
+};
+
 const AppLayout = () => {
   const location = useLocation();
   useScrollToTopOnNavigate();
   useFreshSession();
+  const user = useUser();
+  const token = useToken();
+  useSessionTimeout(token);
+  const loggedIn = Boolean(user && token);
   const hideSidebar = AUTH_PATHS.includes(location.pathname);
+
+  // מי שלא מחובר לא רואה שום דבר באתר חוץ מדפי ההתחברות. אחרי ההתחברות חוזרים לדף שביקשו
+  if (!loggedIn && !hideSidebar) {
+    const from = location.pathname + location.search + location.hash;
+    return <Navigate to="/login" replace state={from === '/' ? undefined : { from }} />;
+  }
+  // מי שכבר מחובר לא צריך את דפי ההתחברות וההרשמה
+  if (loggedIn && (location.pathname === '/login' || location.pathname === '/register')) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <>

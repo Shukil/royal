@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import AuthShell from './AuthShell';
 import api, { errorMessage } from './api';
 import { saveSession } from './session';
@@ -9,7 +9,11 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  // בלי הסימון: ניתוק אחרי 15 דקות בלי פעילות. עם הסימון: 30 יום
+  const [remember, setRemember] = useState(false);
   const navigate = useNavigate();
+  // הדף שניסו להיכנס אליו לפני ההתחברות (App.jsx)
+  const from = useLocation().state?.from || '/';
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -17,13 +21,13 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await api.post('/auth/login', { email, password });
+      const response = await api.post('/auth/login', { email, password, remember });
 
       // שמירת הטוקן ופרטי המשתמש בדפדפן
       saveSession(response.data.token, response.data.user);
 
-      // ניווט לעמוד הראשי (הספירה לאחור)
-      navigate('/');
+      // חזרה לדף שביקשו, או לדף הבית
+      navigate(from, { replace: true });
     } catch (err) {
       setError(errorMessage(err, 'שגיאה בהתחברות. אנא בדוק את הפרטים.'));
     } finally {
@@ -67,6 +71,16 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+        </div>
+
+        <div className="field">
+          <label className="check-row">
+            <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} aria-describedby="login-remember-hint" />
+            <span>השאר אותי מחובר</span>
+          </label>
+          <span id="login-remember-hint" className="field__hint">
+            בלי הסימון מתנתקים אחרי 15 דקות בלי שימוש. בטלפון האישי, ובמיוחד על הספינה בלי אינטרנט, כדאי לסמן.
+          </span>
         </div>
 
         <button type="submit" className="btn btn--primary btn--block" disabled={loading}>
