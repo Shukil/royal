@@ -111,7 +111,7 @@ router.post('/login', loginLimits, async (req, res) => {
   const isMatch = await bcrypt.compare(String(req.body.password || ''), user.password);
   if (!isMatch) return res.status(400).json({ message: BAD_LOGIN });
 
-  res.json({ token: signToken(user), user: await userPayload(user) });
+  res.json({ token: signToken(user, Boolean(req.body.remember)), user: await userPayload(user) });
 });
 
 // הפרטים העדכניים של המשתמש המחובר. האתר קורא לזה בכל טעינה, כך ששינוי בדף ניהול המשפחות
@@ -120,6 +120,14 @@ router.get('/me', auth, async (req, res) => {
   const user = await User.findById(req.userId).lean();
   if (!user) return res.status(401).json({ message: 'יש להתחבר' });
   res.json({ user: await userPayload(user) });
+});
+
+// חידוש הטוקן בזמן שמשתמשים באתר (רק כשלא סימנו "השאר אותי מחובר"): עוד 15 דקות מעכשיו.
+// טוקן שכבר פג לא מתחדש, וצריך להתחבר מחדש
+router.post('/refresh', auth, async (req, res) => {
+  if (req.remember) return res.json({ token: null });
+  const user = await User.findById(req.userId).select('tokenVersion').lean();
+  res.json({ token: signToken(user, false) });
 });
 
 // החלפת סיסמה מתוך האתר. כל המכשירים האחרים מתנתקים, והמכשיר הנוכחי מקבל טוקן חדש
@@ -136,7 +144,7 @@ router.put('/password', auth, changePasswordLimits, async (req, res) => {
   user.password = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
   user.tokenVersion = (user.tokenVersion || 0) + 1;
   await user.save();
-  res.json({ message: 'הסיסמה עודכנה. שאר המכשירים שלך נותקו.', token: signToken(user) });
+  res.json({ message: 'הסיסמה עודכנה. שאר המכשירים שלך נותקו.', token: signToken(user, req.remember) });
 });
 
 // בקשה לשחזור סיסמה

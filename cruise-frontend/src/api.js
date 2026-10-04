@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getToken } from './session';
+import { clearSession, getToken } from './session';
 
 // כתובת השרת. אפשר לשנות בלי לגעת בקוד דרך VITE_API_URL בקובץ .env של הפרונטנד
 export const API_BASE = import.meta.env.VITE_API_URL || 'https://royal-q8gn.onrender.com/api';
@@ -51,6 +51,9 @@ api.interceptors.response.use(
   },
   (error) => {
     finished();
+    // ההתחברות פגה או בוטלה (למשל אחרי 15 דקות בלי פעילות, או החלפת סיסמה במכשיר אחר): מתנתקים,
+    // והאתר מעביר לדף ההתחברות (App.jsx)
+    if (error.response?.status === 401 && getToken()) clearSession();
     return Promise.reject(error);
   },
 );
