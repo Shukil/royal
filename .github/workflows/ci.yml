@@ -1,0 +1,44 @@
+# בדיקות אוטומטיות בכל push ל-main ובכל Pull Request:
+# בדיקות השרת (npm test, מול מסד זמני בזיכרון), ובדיקת קוד ובנייה של האתר.
+# אם משהו נכשל, GitHub מסמן את ה-commit ב-❌ ושולח מייל
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  server:
+    name: בדיקות השרת
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      # הגרסה של MongoDB שמורידים לבדיקות נשמרת בין הרצות
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/mongodb-binaries
+          key: mongodb-binaries-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - run: npm ci
+      - run: npm test
+
+  frontend:
+    name: האתר (lint ובנייה)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cruise-frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: cruise-frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build

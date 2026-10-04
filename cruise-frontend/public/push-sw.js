@@ -2,7 +2,7 @@
 // השרת שולח { title, body, url }, ולחיצה על ההתראה פותחת את האתר בעמוד המתאים
 
 self.addEventListener('push', (event) => {
-  let data = {};
+  let data;
   try {
     data = event.data ? event.data.json() : {};
   } catch {
