@@ -48,4 +48,25 @@ const notify = ({ to = null, except = null, title, body, url = '/' }) => {
   })().catch((err) => console.error('Push failed', err));
 };
 
-module.exports = { publicKey, notify };
+// התראת ניסיון למשתמש אחד, שמחכה לתוצאה (כפתור "שלחו לי התראת ניסיון" בדף הלו"ז).
+// מחזיר כמה מכשירים קיבלו, ואת קודי השגיאה של מה שנכשל, כדי שאפשר יהיה להבין מה לא עובד
+const sendTest = async (user) => {
+  if (!enabled) return { enabled: false, sent: 0, failed: [] };
+  const subs = await PushSubscription.find({ user }).lean();
+  const payload = JSON.stringify({ title: '🔔 התראת ניסיון', body: 'ההתראות עובדות בטלפון הזה!', url: '/schedule' });
+  const failed = [];
+  let sent = 0;
+  await Promise.all(subs.map(async (s) => {
+    try {
+      await webpush.sendNotification({ endpoint: s.endpoint, keys: s.keys }, payload, { TTL: 60 * 60 });
+      sent += 1;
+    } catch (err) {
+      if (err.statusCode === 404 || err.statusCode === 410) await PushSubscription.deleteOne({ _id: s._id });
+      console.error('Push test failed', err.statusCode || err.message, err.body || '');
+      failed.push(err.statusCode || 'error');
+    }
+  }));
+  return { enabled: true, devices: subs.length, sent, failed };
+};
+
+module.exports = { publicKey, notify, sendTest };

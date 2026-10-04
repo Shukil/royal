@@ -1,7 +1,7 @@
 const express = require('express');
 const PushSubscription = require('../models/PushSubscription');
 const auth = require('../middleware/auth');
-const { publicKey } = require('../utils/push');
+const { publicKey, sendTest } = require('../utils/push');
 const router = express.Router();
 
 // המפתח הציבורי שהדפדפן צריך כדי להירשם להתראות (null = ההתראות כבויות בשרת)
@@ -23,6 +23,11 @@ router.post('/subscribe', async (req, res) => {
     { upsert: true },
   );
   res.json({ ok: true });
+});
+
+// התראת ניסיון לכל המכשירים של המשתמש המחובר
+router.post('/test', async (req, res) => {
+  res.json(await sendTest(req.userId));
 });
 
 // ביטול ההתראות בטלפון/בדפדפן הזה

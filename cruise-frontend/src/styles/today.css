@@ -90,6 +90,11 @@
   margin: 0;
   font-size: 0.92rem;
 }
+.notify__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
 .notify__error {
   flex-basis: 100%;
   margin: 0;
