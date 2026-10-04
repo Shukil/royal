@@ -1,0 +1,30 @@
+/* ===== Odyssey info ===== */
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-inline-start: 2px solid var(--line);
+}
+.timeline__item {
+  position: relative;
+  display: grid;
+  gap: 0.15rem;
+  padding: 0 1.25rem 1.1rem;
+  line-height: 1.6;
+}
+.timeline__item::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: -7px;
+  top: 0.35rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-soft);
+}
+.timeline__date {
+  color: var(--sea-dark);
+  font-weight: 700;
+  font-size: 0.9rem;
+}

@@ -1,7 +1,10 @@
+import { useSyncExternalStore } from 'react';
+
 // פרטי ההתחברות שנשמרים בדפדפן. כל הגישה ל-localStorage עוברת כאן,
 // ועטופה ב-try/catch כי בחלון פרטי או כשהאחסון חסום הגישה עלולה לזרוק שגיאה
 const TOKEN_KEY = 'token';
 const USER_KEY = 'user';
+const CHANGE = 'session-change';
 
 const read = (key) => {
   try {
@@ -11,24 +14,47 @@ const read = (key) => {
   }
 };
 
-export const getToken = () => read(TOKEN_KEY);
-
-export const getUser = () => {
+const write = (key, value) => {
   try {
-    return JSON.parse(read(USER_KEY) || 'null');
-  } catch {
-    return null;
-  }
-};
-
-export const saveSession = (token, user) => {
-  try {
-    localStorage.setItem(TOKEN_KEY, token);
-    localStorage.setItem(USER_KEY, JSON.stringify(user));
+    localStorage.setItem(key, value);
   } catch {
     // בלי אחסון המשתמש פשוט לא יישאר מחובר
   }
 };
+
+// מודיע לרכיבים שמשתמשים ב-useUser שהפרטים השתנו
+const changed = () => window.dispatchEvent(new Event(CHANGE));
+
+export const getToken = () => read(TOKEN_KEY);
+
+// אותו אובייקט כל עוד הטקסט השמור לא השתנה (useSyncExternalStore דורש את זה)
+let cachedRaw;
+let cachedUser = null;
+export const getUser = () => {
+  const raw = read(USER_KEY);
+  if (raw !== cachedRaw) {
+    cachedRaw = raw;
+    try {
+      cachedUser = JSON.parse(raw || 'null');
+    } catch {
+      cachedUser = null;
+    }
+  }
+  return cachedUser;
+};
+
+export const saveSession = (token, user) => {
+  write(TOKEN_KEY, token);
+  write(USER_KEY, JSON.stringify(user));
+  changed();
+};
+
+// פרטים עדכניים מהשרת (/auth/me) או טוקן חדש אחרי החלפת סיסמה, בלי להתחבר מחדש
+export const saveUser = (user) => {
+  write(USER_KEY, JSON.stringify(user));
+  changed();
+};
+export const saveToken = (token) => write(TOKEN_KEY, token);
 
 export const clearSession = () => {
   try {
@@ -39,7 +65,19 @@ export const clearSession = () => {
   }
   // הנתונים מהשרת שנשמרו לשימוש בלי אינטרנט (vite.config.js) שייכים למשתמש שהתנתק
   if (typeof caches !== 'undefined') caches.delete('api').catch(() => {});
+  changed();
 };
+
+// המשתמש המחובר, ומתעדכן כשהפרטים משתנים (גם בלשונית אחרת)
+const subscribe = (onChange) => {
+  window.addEventListener(CHANGE, onChange);
+  window.addEventListener('storage', onChange);
+  return () => {
+    window.removeEventListener(CHANGE, onChange);
+    window.removeEventListener('storage', onChange);
+  };
+};
+export const useUser = () => useSyncExternalStore(subscribe, getUser, () => null);
 
 // שם פרטי ושם משפחה, גם למשתמשים שנשמרו לפני שהשדות האלה נוספו (רק name מלא)
 export const firstNameOf = (user) => (user?.firstName || user?.name?.split(' ')[0] || '').trim();

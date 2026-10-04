@@ -1,0 +1,23 @@
+/* ===== Official deck plan link (ship page) ===== */
+.deck-plan {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-block: 1.5rem 2rem;
+  padding: 1.1rem 1.25rem;
+  border-radius: var(--radius-lg);
+  background: var(--navy-800);
+  color: #fff;
+  border-inline-start: 6px solid var(--gold);
+}
+.deck-plan__title {
+  font-size: 1.25rem;
+}
+.deck-plan__text {
+  margin-top: 0.3rem;
+  max-width: 52ch;
+  color: #c7d5f9;
+  line-height: 1.6;
+}

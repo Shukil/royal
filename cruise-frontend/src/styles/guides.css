@@ -1,0 +1,60 @@
+/* ===== Destination guides ===== */
+.guide-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  gap: 0.75rem;
+}
+.guide-card {
+  display: grid;
+  gap: 0.2rem;
+  height: 100%;
+  padding: 1.1rem;
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--sea);
+  border-radius: var(--radius-md);
+  color: var(--ink);
+  text-decoration: none;
+}
+.guide-card:hover {
+  border-color: var(--sea);
+}
+.guide-card:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
+}
+.guide-card__emoji {
+  font-size: 1.8rem;
+}
+.guide-card__name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--navy-800);
+}
+.guide-card__day {
+  color: var(--sea-dark);
+  font-size: 0.85rem;
+}
+.guide-card__lead {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.guide-nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.flag {
+  display: inline-block;
+  width: 1.35em;
+  height: 0.9em;
+  vertical-align: -0.05em;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(2, 29, 73, 0.15);
+  flex: none;
+}

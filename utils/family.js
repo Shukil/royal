@@ -1,5 +1,5 @@
 // שיוך משפחה לפי שם המשפחה. בן שהם / בן שוהם הם חלק ממשפחת עגייב
-// (חייב להתאים ל-cruise-frontend/src/family.js)
+// זו הרשימה היחידה: האתר מקבל את המשפחה מהשרת (userPayload ב-routes/auth.js)
 const normalizeName = (s) => String(s || '').replace(/[-־]/g, ' ').replace(/\s+/g, ' ').trim();
 
 const FAMILIES = {

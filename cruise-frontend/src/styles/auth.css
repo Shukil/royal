@@ -1,0 +1,62 @@
+/* ===== Auth ===== */
+.auth {
+  width: 100%;
+  max-width: 420px;
+}
+.auth__brand {
+  text-align: center;
+  color: var(--navy-800);
+  margin-bottom: 1.5rem;
+  direction: ltr;
+}
+.auth__brand .royal-logo__mark {
+  width: 3.2rem;
+  height: 3.2rem;
+}
+.auth__brand .royal-logo__word {
+  font-size: 1.45rem;
+}
+.auth__brand .brand__ship {
+  font-size: 1.6rem;
+}
+.auth .card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.auth__title {
+  font-size: 1.6rem;
+  color: var(--navy-800);
+}
+.auth__switch {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.auth__switch a {
+  font-weight: 700;
+}
+.auth__text {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+@media (max-width: 380px) {
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+}
+.field__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.field__link {
+  font-size: 0.88rem;
+  font-weight: 500;
+}

@@ -1,8 +1,7 @@
 // פרטי החדרים של הקבוצה ב-Odyssey of the Seas.
 // המידע על סוג החדר נלקח מאתרי מפות הסיפונים (iCruise, CruiseMapper);
 // הגודל הוא ממוצע לקטגוריה ולא מדידה של החדר הספציפי.
-// שיוך האורחים חייב להתאים ל-utils/cabins.js בשרת.
-import { firstNameOf } from './session';
+// מי גר באיזה חדר נקבע רק בשרת (utils/cabins.js), ומגיע עם פרטי המשתמש (cabinNumber, cabinGuests).
 
 const INTERIOR = {
   category: '4V',
@@ -31,18 +30,14 @@ const BALCONY = {
 export const DECK = 10;
 
 export const cabins = {
-  '10545': { guests: ['שוקי', 'דניאל'], ...INTERIOR },
-  '10543': { guests: ['גל', 'יובל'], ...INTERIOR },
-  '10541': { guests: ['חיים', 'רחל'], ...INTERIOR },
-  '10558': { guests: ['אורלי', 'עמית'], ...BALCONY },
+  '10545': INTERIOR,
+  '10543': INTERIOR,
+  '10541': INTERIOR,
+  '10558': BALCONY,
 };
 
-// מאתר את החדר לפי השם הפרטי של המשתמש (או לפי מספר החדר שנשמר בהתחברות)
+// החדר של המשתמש המחובר, עם השמות של מי שגר בו
 export const findCabin = (user) => {
-  if (!user) return null;
-  const firstName = firstNameOf(user);
-  const byName = Object.entries(cabins).find(([, c]) => c.guests.includes(firstName));
-  if (byName) return { number: byName[0], ...byName[1] };
-  if (cabins[user.cabinNumber]) return { number: user.cabinNumber, ...cabins[user.cabinNumber] };
-  return null;
+  const details = cabins[user?.cabinNumber];
+  return details ? { number: user.cabinNumber, guests: user.cabinGuests || [], ...details } : null;
 };

@@ -1,0 +1,96 @@
+/* כפתור ההתקנה בתחתית התפריט, מעל שם המשתמש (Sidebar.jsx) */
+.install-link {
+  margin-top: auto;
+  margin-bottom: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--radius-md);
+  border: 1.5px dashed rgba(255, 255, 255, 0.35);
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.4rem;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.install-link > span:last-child {
+  display: grid;
+  font-size: 0.95rem;
+  line-height: 1.3;
+}
+.install-link small {
+  color: #adbdd6;
+  font-size: 0.8rem;
+}
+.install-link:hover,
+.install-link[aria-current='page'] {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--gold);
+}
+.install-link:focus-visible {
+  box-shadow: 0 0 0 3px var(--cyan);
+}
+.install-link + .sidebar__footer {
+  margin-top: 0;
+}
+
+/* דף ההתקנה (Install.jsx) */
+.install__status {
+  margin: 0 0 1.25rem;
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+}
+.install__status--ok {
+  background: var(--success-bg);
+  color: var(--success);
+}
+.install__quick {
+  display: grid;
+  justify-items: start;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  background: var(--gold-soft);
+}
+.install__quick p {
+  margin: 0;
+}
+.install__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+.install__tab {
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.install__tab.is-on {
+  border-color: var(--navy-800);
+  background: var(--navy-800);
+  color: #fff;
+  font-weight: 700;
+}
+.install__steps {
+  margin: 0;
+  padding-inline-start: 1.4rem;
+  display: grid;
+  gap: 0.6rem;
+}
+.install__steps li::marker {
+  font-weight: 800;
+  color: var(--navy-600);
+}
+.install__glyph {
+  width: 1.3em;
+  height: 1.3em;
+  vertical-align: -0.3em;
+  color: #0a84ff;
+}

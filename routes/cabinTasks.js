@@ -58,4 +58,13 @@ router.put('/:id', async (req, res) => {
   res.json(task);
 });
 
+// מחיקת משימה. הרשימה משותפת לחדר, אז כל מי שגר בחדר יכול למחוק
+router.delete('/:id', async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(404).json({ message: 'המשימה לא נמצאה' });
+
+  const deleted = await CabinTask.findOneAndDelete({ _id: req.params.id, cabinNumber: req.me.cabinNumber }).lean();
+  if (!deleted) return res.status(404).json({ message: 'המשימה לא נמצאה' });
+  res.json({ ok: true });
+});
+
 module.exports = router;

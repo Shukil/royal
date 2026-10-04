@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import api, { errorMessage } from './api';
-import { EVENT_TYPES, RSVP_LABELS, formatDay, formatWhen, mapsUrl } from './eventTypes';
+import { EVENT_TYPES, RSVP_LABELS, formatDay, formatWhen, formFromEvent, mapsUrl } from './eventTypes';
 import { getToken } from './session';
 import { downloadIcs, googleCalendarUrl } from './calendar';
+import EventForm from './EventForm';
 
 // אייקונים קטנים לכפתורי היומן
 const GoogleIcon = () => (
@@ -113,6 +114,9 @@ const EventPage = () => {
   const [status, setStatus] = useState(getToken() ? 'loading' : 'guest');
   const [error, setError] = useState('');
   const [replyingTo, setReplyingTo] = useState(null);
+  // עריכה: רשימת המוזמנים האפשריים נטענת רק כשפותחים את הטופס
+  const [editing, setEditing] = useState(false);
+  const [people, setPeople] = useState(null);
 
   const load = useCallback(() => {
     if (!getToken()) return;
@@ -156,6 +160,16 @@ const EventPage = () => {
     } catch (err) {
       setError(errorMessage(err, 'שליחת התגובה נכשלה.'));
       return false;
+    }
+  };
+
+  const startEdit = async () => {
+    setError('');
+    try {
+      if (!people) setPeople((await api.get('/events/people')).data);
+      setEditing(true);
+    } catch (err) {
+      setError(errorMessage(err, 'לא הצלחנו לפתוח את העריכה. נסה שוב.'));
     }
   };
 
@@ -224,6 +238,25 @@ const EventPage = () => {
 
         <div className="card__body">
           {error && <p className="alert alert--error" role="alert">{error}</p>}
+
+          {editing && (
+            <section className="section" aria-labelledby="edit-title">
+              <div className="event-page__edit-head">
+                <h2 id="edit-title" className="section__title">עריכת האירוע</h2>
+                <button type="button" className="btn btn--ghost btn--sm" onClick={() => setEditing(false)}>ביטול</button>
+              </div>
+              <p className="field__hint">המוזמנים יקבלו התראה על השינוי. אישורי ההגעה והתגובות נשמרים.</p>
+              <EventForm
+                people={people}
+                initial={formFromEvent(event)}
+                eventId={id}
+                onSaved={() => {
+                  setEditing(false);
+                  load();
+                }}
+              />
+            </section>
+          )}
 
           <div className="add-to-cal" role="group" aria-label="הוספה ליומן">
             <span className="add-to-cal__label">הוספה ליומן:</span>
@@ -303,10 +336,15 @@ const EventPage = () => {
             )}
           </section>
 
-          {event.isMine && (
-            <button type="button" className="link-button event-page__delete" onClick={remove}>
-              מחיקת האירוע
-            </button>
+          {event.isMine && !editing && (
+            <div className="event-page__owner">
+              <button type="button" className="btn btn--outline btn--sm" onClick={startEdit}>
+                ✏️ עריכת האירוע
+              </button>
+              <button type="button" className="link-button event-page__delete" onClick={remove}>
+                מחיקת האירוע
+              </button>
+            </div>
           )}
         </div>
       </article>

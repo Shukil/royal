@@ -1,4 +1,4 @@
-import { lazy, Suspense, useLayoutEffect } from 'react';
+import { lazy, Suspense, useEffect, useLayoutEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigationType } from 'react-router-dom';
 import Home from './Home';
 import Schedule from './Schedule';
@@ -22,6 +22,9 @@ import ResetPassword from './ResetPassword';
 import Plan from './Plan';
 import Tasks from './Tasks';
 import Updates from './Updates';
+import Profile from './Profile';
+import api from './api';
+import { clearSession, getToken, saveUser } from './session';
 
 // החיפוש טוען את תוכן כל הדפים, אז הוא נטען רק כשנכנסים אליו
 const Search = lazy(() => import('./Search'));
@@ -55,9 +58,28 @@ const useScrollToTopOnNavigate = () => {
   }, [pathname, hash, navigationType]);
 };
 
+// בכל טעינה של האתר: פרטי המשתמש העדכניים מהשרת (חדר, משפחה), שגם מעירים את השרת מוקדם.
+// טוקן שכבר לא תקף (למשל אחרי החלפת סיסמה במכשיר אחר) מנתק את המכשיר הזה.
+// בלי התחברות רק מעירים את השרת, כדי שההתחברות עצמה תהיה מהירה
+const useFreshSession = () => {
+  useEffect(() => {
+    if (!navigator.onLine) return;
+    if (!getToken()) {
+      api.get('/health').catch(() => {});
+      return;
+    }
+    api.get('/auth/me')
+      .then((res) => saveUser(res.data.user))
+      .catch((err) => {
+        if (err.response?.status === 401) clearSession();
+      });
+  }, []);
+};
+
 const AppLayout = () => {
   const location = useLocation();
   useScrollToTopOnNavigate();
+  useFreshSession();
   const hideSidebar = AUTH_PATHS.includes(location.pathname);
 
   return (
@@ -89,6 +111,7 @@ const AppLayout = () => {
           <Route path="/plan" element={<Plan />} />
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/updates" element={<Updates />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/search" element={<Suspense fallback={<p className="empty">טוען…</p>}><Search /></Suspense>} />
         </Routes>
       </main>

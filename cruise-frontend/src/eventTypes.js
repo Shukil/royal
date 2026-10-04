@@ -30,3 +30,29 @@ export const formatDay = (date) => {
   const weekday = new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('he-IL', { weekday: 'long', timeZone: 'UTC' });
   return `${weekday} ${String(d).padStart(2, '0')}.${String(m).padStart(2, '0')}`;
 };
+
+// טופס האירוע (EventForm.jsx): אירוע חדש
+export const emptyForm = {
+  type: 'all',
+  title: '',
+  date: '2027-08-15',
+  allDay: false,
+  time: '10:00',
+  endTime: '',
+  location: '',
+  description: '',
+  invitees: [],
+};
+
+// השדות של אירוע קיים, למילוי טופס העריכה
+export const formFromEvent = (ev) => ({
+  type: ev.type,
+  title: ev.title,
+  date: ev.date,
+  allDay: ev.allDay,
+  time: ev.time || '10:00',
+  endTime: ev.endTime || '',
+  location: ev.location || '',
+  description: ev.description || '',
+  invitees: ev.invitees || [],
+});

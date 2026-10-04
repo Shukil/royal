@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import RoyalLogo from './RoyalLogo';
 import api from './api';
-import { clearSession, getToken, getUser } from './session';
+import { clearSession, getToken, useUser } from './session';
 import { isStandalone } from './installPrompt';
 
 const menuItems = [
@@ -63,7 +63,7 @@ const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const user = getUser();
+  const user = useUser();
   const isAdmin = useIsAdmin(getToken());
   const items = isAdmin ? [...menuItems, { path: '/updates', label: 'עדכוני האתר', icon: '🛠️' }] : menuItems;
 
@@ -160,7 +160,15 @@ const Sidebar = () => {
             <>
               <strong>{user.name}</strong>
               {user.cabinNumber && <span>חדר {user.cabinNumber}</span>}
-              <div>
+              <div className="sidebar__actions">
+                <Link
+                  to="/profile"
+                  className="link-button"
+                  aria-current={location.pathname === '/profile' ? 'page' : undefined}
+                  onClick={() => setOpen(false)}
+                >
+                  הפרופיל שלי
+                </Link>
                 <button type="button" className="link-button" onClick={handleLogout}>התנתקות</button>
               </div>
             </>
