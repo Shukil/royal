@@ -6,6 +6,11 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   password: { type: String, required: true },
   cabinNumber: { type: String, default: 'לא שויך' },
+  // המפתח של המשפחה (models/Family.js), או null. נקבע בהרשמה ומשתנה בדף ניהול המשפחות.
+  // אצל משתמשים מלפני שהשדה נוסף הוא חסר, ו-utils/families.js ממלא אותו פעם אחת
+  family: { type: String, default: undefined },
+  // מנהל משפחה: רואה את כל דפי המנהלים (בנוסף למנהלי האתר שב-ADMIN_EMAILS)
+  isAdmin: { type: Boolean, default: false },
 
   // צ'ק ליסט אישי. כל עוד המשתמש לא ערך אותו, השדה ריק ומוצגת רשימת ברירת המחדל
   personalChecklist: {

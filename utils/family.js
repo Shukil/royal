@@ -1,5 +1,6 @@
-// שיוך משפחה לפי שם המשפחה. בן שהם / בן שוהם הם חלק ממשפחת עגייב
-// זו הרשימה היחידה: האתר מקבל את המשפחה מהשרת (userPayload ב-routes/auth.js)
+// ניחוש ראשוני של המשפחה לפי שם המשפחה. בן שהם / בן שוהם הם חלק ממשפחת עגייב.
+// משמש רק להקמת המשפחות במסד בפעם הראשונה ולנרשמים חדשים; מעבר לזה המשפחות
+// והחברים בהן מנוהלים במסד, מדף ניהול המשפחות (utils/families.js, routes/admin.js)
 const normalizeName = (s) => String(s || '').replace(/[-־]/g, ' ').replace(/\s+/g, ' ').trim();
 
 const FAMILIES = {
@@ -14,4 +15,4 @@ const FAMILY_BY_LAST_NAME = new Map(
 
 const familyOf = (lastName) => FAMILY_BY_LAST_NAME.get(normalizeName(lastName)) ?? null;
 
-module.exports = { FAMILIES, familyOf };
+module.exports = { FAMILIES, familyOf, normalizeName };

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { cabins, DECK, findCabin } from './cabins';
+import { cabins, deckOf, findCabin } from './cabins';
 import { firstNameOf, useUser } from './session';
 
 const DECK_PLAN_URL = 'https://www.cruisedeckplans.com/DP/deckplans/deckbydeck.php?ship=Odyssey-of-the-Seas&deck=10';
@@ -27,7 +27,7 @@ const CabinDetails = () => {
 
           {user && !cabin && (
             <p className="alert alert--error" role="alert">
-              לא מצאנו חדר ששויך לשם {firstName}. ודא שנרשמת עם השם הפרטי שלך.
+              עדיין לא שויכת לחדר. מנהלי הטיול משייכים את החדרים בדף ניהול המשפחות.
             </p>
           )}
 
@@ -35,7 +35,7 @@ const CabinDetails = () => {
             <>
               <section className="section">
                 <h2 className="section__title">
-                  {cabin.type} <span dir="ltr">({cabin.typeEn})</span>
+                  {cabin.known ? <>{cabin.type} <span dir="ltr">({cabin.typeEn})</span></> : `חדר ${cabin.number}`}
                 </h2>
 
                 <dl className="facts">
@@ -45,45 +45,53 @@ const CabinDetails = () => {
                   </div>
                   <div className="fact">
                     <dt>סיפון (Deck)</dt>
-                    <dd>{DECK}</dd>
+                    <dd>{deckOf(cabin.number) || '—'}</dd>
                   </div>
-                  <div className="fact">
-                    <dt>קטגוריה</dt>
-                    <dd dir="ltr">{cabin.category}</dd>
-                  </div>
+                  {cabin.known && (
+                    <div className="fact">
+                      <dt>קטגוריה</dt>
+                      <dd dir="ltr">{cabin.category}</dd>
+                    </div>
+                  )}
                   <div className="fact">
                     <dt>שותפים לחדר</dt>
-                    <dd>{roommates.length ? roommates.join(', ') : cabin.guests.join(' ו')}</dd>
+                    <dd>{roommates.length ? roommates.join(', ') : cabin.guests.join(' ו') || '—'}</dd>
                   </div>
-                  <div className="fact">
-                    <dt>גודל החדר</dt>
-                    <dd>{cabin.size}</dd>
-                  </div>
+                  {cabin.known && (
+                    <div className="fact">
+                      <dt>גודל החדר</dt>
+                      <dd>{cabin.size}</dd>
+                    </div>
+                  )}
                   {cabin.balcony && (
                     <div className="fact">
                       <dt>מרפסת</dt>
                       <dd>{cabin.balcony}</dd>
                     </div>
                   )}
-                  <div className="fact">
-                    <dt>תפוסה מקסימלית</dt>
-                    <dd>עד {cabin.maxGuests} אורחים</dd>
-                  </div>
+                  {cabin.known && (
+                    <div className="fact">
+                      <dt>תפוסה מקסימלית</dt>
+                      <dd>עד {cabin.maxGuests} אורחים</dd>
+                    </div>
+                  )}
                 </dl>
 
-                <p className="prose">{cabin.note}</p>
+                {cabin.known && <p className="prose">{cabin.note}</p>}
               </section>
 
-              <section className="section">
-                <h2 className="section__title">מה יש בחדר</h2>
-                <ul className="amenities">
-                  <li>{cabin.beds}</li>
-                  {cabin.amenities.map((a) => <li key={a}>{a}</li>)}
-                </ul>
-                <p className="tip">
-                  הגודל הוא ממוצע לקטגוריה לפי אתרי מפות הסיפונים, והפרטים עשויים להשתנות. הפרטים המחייבים מופיעים באישור ההזמנה של Royal Caribbean.
-                </p>
-              </section>
+              {cabin.known && (
+                <section className="section">
+                  <h2 className="section__title">מה יש בחדר</h2>
+                  <ul className="amenities">
+                    <li>{cabin.beds}</li>
+                    {cabin.amenities.map((a) => <li key={a}>{a}</li>)}
+                  </ul>
+                  <p className="tip">
+                    הגודל הוא ממוצע לקטגוריה לפי אתרי מפות הסיפונים, והפרטים עשויים להשתנות. הפרטים המחייבים מופיעים באישור ההזמנה של Royal Caribbean.
+                  </p>
+                </section>
+              )}
             </>
           )}
 
@@ -99,11 +107,11 @@ const CabinDetails = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {Object.entries(cabins).map(([number, c]) => (
+                  {Object.entries(user?.cabins || {}).sort(([a], [b]) => a.localeCompare(b)).map(([number, guests]) => (
                     <tr key={number} aria-current={cabin?.number === number ? 'true' : undefined}>
                       <td>{number}</td>
-                      <td>{user?.cabins?.[number]?.join(' ו') || '—'}</td>
-                      <td>{c.type}</td>
+                      <td>{guests.join(' ו')}</td>
+                      <td>{cabins[number]?.type || '—'}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const Task = require('../models/Task');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
-const { familyOf } = require('../utils/family');
 const { SYSTEM_TASKS } = require('../utils/trip');
 const router = express.Router();
 
@@ -39,11 +38,11 @@ router.use(async (req, res, next) => {
 const listResponse = async (me) => {
   const [tasks, users] = await Promise.all([
     Task.find().sort({ due: 1, createdAt: 1 }).lean(),
-    User.find().select('firstName lastName').sort({ firstName: 1 }).lean(),
+    User.find().select('firstName lastName family').sort({ firstName: 1 }).lean(),
   ]);
   return {
     me: String(me._id),
-    people: users.map((u) => ({ id: String(u._id), name: fullName(u), family: familyOf(u.lastName) })),
+    people: users.map((u) => ({ id: String(u._id), name: fullName(u), family: u.family || null })),
     tasks: tasks.map(toTask),
   };
 };

@@ -44,6 +44,7 @@ app.use('/api/push', require('./routes/push'));
 app.use('/api/plan', require('./routes/plan'));
 app.use('/api/tasks', require('./routes/tasks'));
 app.use('/api/updates', require('./routes/updates'));
+app.use('/api/admin', require('./routes/admin'));
 
 // שגיאות מכל הנתיבים
 app.use(require('./middleware/errors'));

@@ -1,0 +1,129 @@
+/* ===== ניהול משפחות (AdminFamilies.jsx) ===== */
+.admin-status:empty {
+  display: none;
+}
+.admin-summary {
+  margin: 0 0 1.25rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.admin-family {
+  margin-bottom: 1.75rem;
+  padding: 1rem 1.1rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+.admin-family__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin-bottom: 0.9rem;
+}
+.admin-family__head .input {
+  flex: 1 1 14rem;
+}
+.admin-family__title {
+  margin: 0;
+  font-size: 1.2rem;
+}
+.admin-family__head .plan-badge {
+  margin-inline-start: 0;
+}
+.admin-family__actions {
+  display: flex;
+  gap: 1rem;
+  margin-inline-start: auto;
+  font-size: 0.9rem;
+}
+.admin-family__delete {
+  color: var(--danger);
+}
+
+.admin-members {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+/* שם | חדר | משפחה | מנהל. במסך צר: השם בשורה משלו והשדות מתחתיו */
+.admin-member {
+  display: grid;
+  grid-template-columns: minmax(10rem, 2fr) 7rem minmax(9rem, 1.3fr) auto;
+  align-items: center;
+  gap: 0.5rem 0.9rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  transition: opacity 0.15s ease;
+}
+.admin-member.is-busy {
+  opacity: 0.6;
+}
+.admin-member__who {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.admin-member__me {
+  color: var(--muted);
+  font-weight: 400;
+}
+.admin-member__email {
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.admin-member__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.admin-member__label {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+.admin-member__admin {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.admin-member__admin input {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+.admin-member__admin.is-locked {
+  color: var(--muted);
+  cursor: default;
+}
+.input--compact {
+  min-height: 40px;
+  padding: 0.4rem 0.6rem;
+}
+@media (max-width: 640px) {
+  .admin-member {
+    grid-template-columns: 6.5rem 1fr;
+  }
+  .admin-member__who,
+  .admin-member__admin {
+    grid-column: 1 / -1;
+  }
+}
+
+.admin-add {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+  margin: 0 0 2rem;
+}
+.admin-add .field {
+  flex: 1 1 16rem;
+}

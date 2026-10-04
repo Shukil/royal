@@ -30,13 +30,20 @@ test('בלי INVITE_CODE בשרת ההרשמה סגורה', async () => {
 });
 
 test('התחברות מחזירה חדר, שותפים ומשפחה מהשרת', async () => {
+  await signUp({ firstName: 'דניאל', lastName: 'בדיקה' });
   const { user, as } = await signUp({ firstName: 'שוקי', lastName: 'זינגר' });
+  // ניחוש ראשוני בהרשמה: חדר לפי השם הפרטי, משפחה לפי שם המשפחה
   assert.equal(user.cabinNumber, '10545');
-  assert.deepEqual(user.cabinGuests, ['שוקי', 'דניאל']);
+  assert.deepEqual(user.cabinGuests, ['דניאל', 'שוקי']);
   assert.equal(user.family, 'singer');
   assert.equal(user.familyLabel, 'משפחת זינגר');
-  assert.deepEqual(user.cabins['10558'], ['אורלי', 'עמית']);
+  assert.deepEqual(user.cabins['10545'], ['דניאל', 'שוקי']);
+  assert.equal(user.isAdmin, false);
   assert.equal(user.inviteCode, 'Odyssey2027');
+
+  // נרשם חדש עם אותו שם משפחה מצטרף לאותה משפחה
+  const relative = await signUp({ firstName: 'נועה', lastName: 'זינגר' });
+  assert.equal(relative.user.family, 'singer');
 
   const me = await as('get', '/api/auth/me');
   assert.equal(me.status, 200);
@@ -110,7 +117,7 @@ test('בדיקת חיים מחזירה את מצב המסד', async () => {
 test('דף העדכונים רק למנהלים', async () => {
   const user = await signUp();
   assert.equal((await user.as('get', '/api/updates')).status, 404);
-  assert.equal((await user.as('get', '/api/updates/access')).body.admin, false);
+  assert.equal((await user.as('get', '/api/auth/me')).body.user.isAdmin, false);
 
   const admin = await signUp({ email: 'admin@test.com' });
   assert.equal((await admin.as('get', '/api/updates')).status, 200);

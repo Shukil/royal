@@ -1,7 +1,8 @@
 // פרטי החדרים של הקבוצה ב-Odyssey of the Seas.
 // המידע על סוג החדר נלקח מאתרי מפות הסיפונים (iCruise, CruiseMapper);
 // הגודל הוא ממוצע לקטגוריה ולא מדידה של החדר הספציפי.
-// מי גר באיזה חדר נקבע רק בשרת (utils/cabins.js), ומגיע עם פרטי המשתמש (cabinNumber, cabinGuests).
+// מי גר באיזה חדר נשמר בשרת ומנוהל בדף ניהול המשפחות; הוא מגיע עם פרטי המשתמש (cabinNumber, cabinGuests, cabins).
+// כאן רק הפרטים של סוגי החדרים שהוזמנו. חדר שלא ברשימה מוצג עם המספר והשותפים בלבד
 
 const INTERIOR = {
   category: '4V',
@@ -29,6 +30,9 @@ const BALCONY = {
 
 export const DECK = 10;
 
+// הסיפון לפי מספר החדר: כל הספרות חוץ משלוש האחרונות (10545 → 10)
+export const deckOf = (number) => (number.length > 3 ? number.slice(0, -3) : '');
+
 export const cabins = {
   '10545': INTERIOR,
   '10543': INTERIOR,
@@ -36,8 +40,10 @@ export const cabins = {
   '10558': BALCONY,
 };
 
-// החדר של המשתמש המחובר, עם השמות של מי שגר בו
+// החדר של המשתמש המחובר, עם השמות של מי שגר בו. null אם עוד לא שויך לחדר
 export const findCabin = (user) => {
-  const details = cabins[user?.cabinNumber];
-  return details ? { number: user.cabinNumber, guests: user.cabinGuests || [], ...details } : null;
+  const number = user?.cabinNumber;
+  if (!number || !/^d+$/.test(number)) return null;
+  const details = cabins[number];
+  return { number, guests: user.cabinGuests || [], known: Boolean(details), ...details };
 };

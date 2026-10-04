@@ -32,7 +32,8 @@ const forgotPasswordLimits = [
   limiter({ minutes: 60, limit: 20, key: ipOf, message: TRY_LATER(60) }),
 ];
 
-const registerLimits = [limiter({ minutes: 60, limit: 10, key: ipOf, message: TRY_LATER(60) })];
+// הרשמה: קוד ההזמנה הוא ההגנה העיקרית. המגבלה נדיבה, כי משפחה שלמה עשויה להירשם יחד מאותו Wi-Fi
+const registerLimits = [limiter({ minutes: 60, limit: 30, key: ipOf, message: TRY_LATER(60) })];
 
 // החלפת סיסמה מתוך האתר: ניחוש של הסיסמה הנוכחית
 const changePasswordLimits = [

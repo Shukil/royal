@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import RoyalLogo from './RoyalLogo';
-import api from './api';
-import { clearSession, getToken, useUser } from './session';
+import { clearSession, useUser } from './session';
 import { isStandalone } from './installPrompt';
 
 const menuItems = [
@@ -19,39 +18,12 @@ const menuItems = [
   { path: '/emergency', label: 'חירום ומידע חשוב', icon: '🆘' },
 ];
 
-// דף "עדכוני האתר" מוצג רק למנהלים. השרת קובע מי מנהל (ADMIN_EMAILS), והתשובה נשמרת לשיחה הנוכחית
-const ADMIN_KEY = 'isAdmin';
-const useIsAdmin = (token) => {
-  const [admin, setAdmin] = useState(() => {
-    try {
-      return Boolean(token) && sessionStorage.getItem(ADMIN_KEY) === token;
-    } catch {
-      return false;
-    }
-  });
-
-  useEffect(() => {
-    if (!token) return undefined;
-    let alive = true;
-    api.get('/updates/access')
-      .then((res) => {
-        if (!alive) return;
-        setAdmin(res.data.admin);
-        try {
-          if (res.data.admin) sessionStorage.setItem(ADMIN_KEY, token);
-          else sessionStorage.removeItem(ADMIN_KEY);
-        } catch {
-          // בלי אחסון פשוט בודקים שוב בכל טעינה
-        }
-      })
-      .catch(() => {});
-    return () => {
-      alive = false;
-    };
-  }, [token]);
-
-  return Boolean(token) && admin;
-};
+// דפי המנהלים מוצגים בתפריט רק למנהלים (מנהלי האתר ומנהלי המשפחות).
+// השרת קובע מי מנהל, וזה מגיע עם פרטי המשתמש (/auth/me בכל טעינה). השרת גם חוסם את הדפים עצמם
+const ADMIN_ITEMS = [
+  { path: '/admin/families', label: 'ניהול משפחות', icon: '👨‍👩‍👧' },
+  { path: '/updates', label: 'עדכוני האתר', icon: '🛠️' },
+];
 
 const Brand = () => (
   <Link to="/" className="brand" aria-label="Royal Caribbean · Odyssey of the Seas - דף הבית">
@@ -64,8 +36,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const user = useUser();
-  const isAdmin = useIsAdmin(getToken());
-  const items = isAdmin ? [...menuItems, { path: '/updates', label: 'עדכוני האתר', icon: '🛠️' }] : menuItems;
+  const items = user?.isAdmin ? [...menuItems, ...ADMIN_ITEMS] : menuItems;
 
   // סגירה עם Escape
   useEffect(() => {

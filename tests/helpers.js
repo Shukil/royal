@@ -18,6 +18,7 @@ let mongo;
 before(async () => {
   mongo = await MongoMemoryServer.create();
   await mongoose.connect(mongo.getUri());
+  await require('../utils/families').setupFamilies();
   await require('../routes/events').seedSystemEvents();
 });
 after(async () => {

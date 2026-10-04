@@ -23,6 +23,7 @@ import Plan from './Plan';
 import Tasks from './Tasks';
 import Updates from './Updates';
 import Profile from './Profile';
+import AdminFamilies from './AdminFamilies';
 import api from './api';
 import { clearSession, getToken, saveUser } from './session';
 
@@ -112,6 +113,7 @@ const AppLayout = () => {
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/updates" element={<Updates />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/admin/families" element={<AdminFamilies />} />
           <Route path="/search" element={<Suspense fallback={<p className="empty">טוען…</p>}><Search /></Suspense>} />
         </Routes>
       </main>
