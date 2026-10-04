@@ -23,6 +23,19 @@
 .fact--wide {
   grid-column: 1 / -1;
 }
+/* טקסט באנגלית (מייל, קוד) בתוך דף מימין לשמאל: מיושר לימין כמו השאר, ונשבר אם הוא ארוך */
+.fact__ltr {
+  display: block;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.fact__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
 .currency__list {
   list-style: none;
   margin: 0.3rem 0 0;

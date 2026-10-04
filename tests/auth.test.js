@@ -36,6 +36,7 @@ test('התחברות מחזירה חדר, שותפים ומשפחה מהשרת',
   assert.equal(user.family, 'singer');
   assert.equal(user.familyLabel, 'משפחת זינגר');
   assert.deepEqual(user.cabins['10558'], ['אורלי', 'עמית']);
+  assert.equal(user.inviteCode, 'Odyssey2027');
 
   const me = await as('get', '/api/auth/me');
   assert.equal(me.status, 200);

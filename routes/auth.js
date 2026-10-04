@@ -53,6 +53,8 @@ const userPayload = (user) => {
     cabins: roster(),
     family,
     familyLabel: family ? FAMILIES[family].label : null,
+    // קוד ההרשמה, כדי שכל מי שכבר רשום יוכל להעביר אותו לבני משפחה (דף "הפרופיל שלי")
+    inviteCode: process.env.INVITE_CODE || null,
   };
 };
 

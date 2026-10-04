@@ -12,6 +12,18 @@ const Profile = () => {
   const [error, setError] = useState('');
   const [done, setDone] = useState('');
   const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  // קישור הרשמה שהקוד כבר בתוכו (Register.jsx ממלא אותו מהכתובת)
+  const copyInviteLink = async () => {
+    const link = `${window.location.origin}/register?code=${encodeURIComponent(user.inviteCode)}`;
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+    } catch {
+      window.prompt('העתיקו את הקישור:', link);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,9 +76,9 @@ const Profile = () => {
                 <dt>שם</dt>
                 <dd>{user.name}</dd>
               </div>
-              <div className="fact">
+              <div className="fact fact--wide">
                 <dt>אימייל</dt>
-                <dd dir="ltr">{user.email}</dd>
+                <dd className="fact__ltr" dir="ltr">{user.email}</dd>
               </div>
               <div className="fact">
                 <dt>חדר</dt>
@@ -76,6 +88,17 @@ const Profile = () => {
                 <dt>משפחה</dt>
                 <dd>{user.familyLabel || 'לא משויך למשפחה'}</dd>
               </div>
+              {user.inviteCode && (
+                <div className="fact fact--wide">
+                  <dt>קוד הרשמה לבני משפחה</dt>
+                  <dd className="fact__row">
+                    <span className="fact__ltr" dir="ltr">{user.inviteCode}</span>
+                    <button type="button" className="btn btn--outline btn--sm" onClick={copyInviteLink}>
+                      {copied ? '✓ הקישור הועתק' : '🔗 העתקת קישור הרשמה'}
+                    </button>
+                  </dd>
+                </div>
+              )}
             </dl>
             <p className="field__hint">
               החדר נקבע לפי השם הפרטי והמשפחה לפי שם המשפחה. אם משהו כאן לא נכון, כדאי לפנות למארגני הטיול.
