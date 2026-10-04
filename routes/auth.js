@@ -64,8 +64,8 @@ const userPayload = async (user) => {
     family: user.family || null,
     familyLabel: familyLabel(user.family),
     isAdmin: isAdminUser(user),
-    // קוד ההרשמה, כדי שכל מי שכבר רשום יוכל להעביר אותו לבני משפחה (דף "הפרופיל שלי")
-    inviteCode: process.env.INVITE_CODE || null,
+    // קוד ההרשמה מוצג רק למנהלים (מנהלי האתר ומנהלי המשפחות), כדי שרק הם יעבירו אותו הלאה (דף "הפרופיל שלי")
+    inviteCode: isAdminUser(user) ? process.env.INVITE_CODE || null : null,
   };
 };
 

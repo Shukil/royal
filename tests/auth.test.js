@@ -39,7 +39,11 @@ test('התחברות מחזירה חדר, שותפים ומשפחה מהשרת',
   assert.equal(user.familyLabel, 'משפחת זינגר');
   assert.deepEqual(user.cabins['10545'], ['דניאל', 'שוקי']);
   assert.equal(user.isAdmin, false);
-  assert.equal(user.inviteCode, 'Odyssey2027');
+  // קוד ההרשמה רק למנהלים
+  assert.equal(user.inviteCode, null);
+  process.env.ADMIN_EMAILS = 'admin@test.com,boss@test.com';
+  const admin = await signUp({ email: 'boss@test.com', firstName: 'מנהל' });
+  assert.equal(admin.user.inviteCode, 'Odyssey2027');
 
   // נרשם חדש עם אותו שם משפחה מצטרף לאותה משפחה
   const relative = await signUp({ firstName: 'נועה', lastName: 'זינגר' });
