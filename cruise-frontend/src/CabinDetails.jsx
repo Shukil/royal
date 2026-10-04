@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
 import { cabins, DECK, findCabin } from './cabins';
-import { firstNameOf, getUser } from './session';
+import { firstNameOf, useUser } from './session';
 
 const DECK_PLAN_URL = 'https://www.cruisedeckplans.com/DP/deckplans/deckbydeck.php?ship=Odyssey-of-the-Seas&deck=10';
 
 const CabinDetails = () => {
-  const user = getUser();
+  const user = useUser();
   const cabin = findCabin(user);
   const firstName = firstNameOf(user);
   const roommates = cabin?.guests.filter((g) => g !== firstName) ?? [];
@@ -102,7 +102,7 @@ const CabinDetails = () => {
                   {Object.entries(cabins).map(([number, c]) => (
                     <tr key={number} aria-current={cabin?.number === number ? 'true' : undefined}>
                       <td>{number}</td>
-                      <td>{c.guests.join(' ו')}</td>
+                      <td>{user?.cabins?.[number]?.join(' ו') || '—'}</td>
                       <td>{c.type}</td>
                     </tr>
                   ))}

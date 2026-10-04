@@ -107,12 +107,16 @@ const spanOf = (ev) => {
 const overlaps = (a, b) => a[0] < b[1] && b[0] < a[1];
 const whenLabel = (ev) => (ev.allDay ? 'יום שלם' : ev.endTime ? `${ev.time}–${ev.endTime}` : ev.time);
 
+// האירועים של יום מסוים, בלי האירוע שעורכים עכשיו (שלא יתנגש בעצמו)
+const eventsOn = (date, exceptId, extra = {}) =>
+  Event.find({ date, ...extra, ...(exceptId ? { _id: { $ne: exceptId } } : {}) }).lean();
+
 // מחזיר את המשתמשים שיש להם כבר אירוע בלו"ז שחופף לזמן המבוקש.
 // אירועים שהמשתמש סימן בהם "לא מגיע" לא נחשבים. שם האירוע לא נחשף (הוא עשוי להיות אישי)
-const busyInvitees = async (users, slot) => {
+const busyInvitees = async (users, slot, exceptId) => {
   if (!users.length) return [];
   const wanted = spanOf(slot);
-  const overlapping = (await Event.find({ date: slot.date }).lean()).filter((ev) => overlaps(spanOf(ev), wanted));
+  const overlapping = (await eventsOn(slot.date, exceptId)).filter((ev) => overlaps(spanOf(ev), wanted));
   return users
     .map((u) => {
       const family = familyOf(u.lastName);
@@ -127,9 +131,9 @@ const busyInvitees = async (users, slot) => {
 // אירוע לכולם או משפחתי "מזמין" קבוצה שלמה, אז בודקים אותו מול האירועים המשותפים הקיימים:
 // אירוע לכולם מתנגש בכל אירוע לכולם ובכל אירוע משפחתי; אירוע משפחתי מתנגש באירוע לכולם
 // ובאירוע של אותה משפחה. אירועים אישיים של אחרים לא חוסמים אירועים קבוצתיים
-const sharedConflicts = async (slot, type, family, myFamily) => {
+const sharedConflicts = async (slot, type, family, myFamily, exceptId) => {
   const wanted = spanOf(slot);
-  const existing = await Event.find({ date: slot.date, type: { $in: ['all', 'family'] } }).lean();
+  const existing = await eventsOn(slot.date, exceptId, { type: { $in: ['all', 'family'] } });
   return existing
     .filter((ev) => overlaps(spanOf(ev), wanted) && (ev.type === 'all' || type === 'all' || ev.family === family))
     .map((ev) => ({
@@ -144,7 +148,8 @@ const sharedConflicts = async (slot, type, family, myFamily) => {
 const busyMessage = (busy) =>
   `לא ניתן לבצע את ההזמנה: ל${busy.map((b) => b.name).join(', ל')} כבר יש אירוע בלו״ז בזמן הזה`;
 
-// בדיקת זמינות לפני הזמנה (הטופס קורא לזה כשמסמנים מוזמן)
+// בדיקת זמינות לפני הזמנה (הטופס קורא לזה כשמסמנים מוזמן).
+// בעריכת אירוע נשלח גם exceptId, כדי שהאירוע עצמו לא ייחשב התנגשות
 router.post('/availability', async (req, res) => {
   const { date, allDay, time, endTime } = req.body;
   if (!DATE_RE.test(date || '') || (!allDay && !TIME_RE.test(time || ''))) {
@@ -157,7 +162,8 @@ router.post('/availability', async (req, res) => {
     endTime: allDay || !TIME_RE.test(endTime || '') ? '' : endTime,
   };
   const users = await User.find({ _id: { $in: idList(req.body.userIds) } }).select(NAME_FIELDS).lean();
-  res.json({ busy: await busyInvitees(users, slot) });
+  const exceptId = isId(req.body.exceptId) ? req.body.exceptId : null;
+  res.json({ busy: await busyInvitees(users, slot, exceptId) });
 });
 
 // בני משפחה ומשתמשים (לבחירת מוזמנים), וטווח התאריכים המותר
@@ -191,8 +197,9 @@ const validateEvent = ({ title, description, location, date, allDay, time, endTi
   return null;
 };
 
-// יצירת אירוע
-router.post('/', async (req, res) => {
+// קורא את שדות האירוע מהבקשה ובודק אותם ואת ההתנגשויות בלו"ז, גם ביצירה וגם בעריכה.
+// אם משהו לא תקין עונה בעצמו ומחזיר null; אחרת מחזיר את השדות לשמירה
+const prepareEvent = async (req, res, exceptId = null) => {
   const allDay = Boolean(req.body.allDay);
   const fields = {
     title: String(req.body.title || '').trim(),
@@ -205,38 +212,56 @@ router.post('/', async (req, res) => {
     type: req.body.type,
   };
   const invalid = validateEvent(fields, req.myFamily);
-  if (invalid) return res.status(400).json({ message: invalid });
+  if (invalid) {
+    res.status(400).json({ message: invalid });
+    return null;
+  }
 
   const { type } = fields;
+  fields.family = type === 'family' ? req.myFamily : null;
   if (type === 'all' || type === 'family') {
-    const family = type === 'family' ? req.myFamily : null;
-    const clashes = await sharedConflicts(fields, type, family, req.myFamily);
+    const clashes = await sharedConflicts(fields, type, fields.family, req.myFamily, exceptId);
     if (clashes.length) {
-      return res.status(409).json({
+      res.status(409).json({
         code: 'SHARED_CONFLICT',
         message: 'לא ניתן לבצע את ההזמנה: בזמן הזה כבר קיים אירוע שכולל את המוזמנים',
         clashes,
       });
+      return null;
     }
   }
 
-  let invitees = [];
+  fields.invitees = [];
   if (type === 'custom') {
     const ids = idList(req.body.invitees).filter((id) => !sameId(id, req.me._id));
-    if (!ids.length) return res.status(400).json({ message: 'יש לבחור לפחות מוזמן אחד' });
+    if (!ids.length) {
+      res.status(400).json({ message: 'יש לבחור לפחות מוזמן אחד' });
+      return null;
+    }
     const users = await User.find({ _id: { $in: ids } }).select(NAME_FIELDS).lean();
-    if (users.length !== ids.length) return res.status(400).json({ message: 'חלק מהמוזמנים לא נמצאו' });
+    if (users.length !== ids.length) {
+      res.status(400).json({ message: 'חלק מהמוזמנים לא נמצאו' });
+      return null;
+    }
 
-    const busy = await busyInvitees(users, fields);
-    if (busy.length) return res.status(409).json({ code: 'INVITEE_BUSY', message: busyMessage(busy), busy });
-    invitees = ids;
+    const busy = await busyInvitees(users, fields, exceptId);
+    if (busy.length) {
+      res.status(409).json({ code: 'INVITEE_BUSY', message: busyMessage(busy), busy });
+      return null;
+    }
+    fields.invitees = ids;
   }
+  return fields;
+};
+
+// יצירת אירוע
+router.post('/', async (req, res) => {
+  const fields = await prepareEvent(req, res);
+  if (!fields) return;
 
   const event = await Event.create({
     ...fields,
-    family: type === 'family' ? req.myFamily : null,
     createdBy: req.me._id,
-    invitees,
     // יוצר האירוע מגיע כברירת מחדל
     rsvps: [{ user: req.me._id, status: 'yes' }],
   });
@@ -279,6 +304,8 @@ router.get('/:id', async (req, res) => {
   res.json({
     ...summary(event, req.me),
     description: event.description,
+    // לטופס העריכה (רק יוצר האירוע עורך)
+    invitees: event.invitees.map((u) => String(u._id || u)),
     guests: audience.map((u) => ({ ...person(u), rsvp: rsvpByUser[String(u._id)] || null })),
     comments: comments.map((c) => ({
       id: String(c._id),
@@ -344,6 +371,44 @@ router.post('/:id/comments', async (req, res) => {
     author: person(req.me),
     createdAt: comment.createdAt,
   });
+});
+
+// עריכת אירוע (רק מי שיצר אותו; את האירועים הקבועים אי אפשר לערוך).
+// אישורי ההגעה והתגובות נשמרים, חוץ מאישורים של מי שכבר לא מוזמן
+router.put('/:id', async (req, res) => {
+  const event = await loadEvent(req, res);
+  if (!event) return;
+  if (event.systemKey) return res.status(403).json({ message: 'זה אירוע קבוע של הטיול ואי אפשר לערוך אותו' });
+  if (!sameId(event.createdBy, req.me._id)) return res.status(403).json({ message: 'רק מי שיצר את האירוע יכול לערוך אותו' });
+
+  const fields = await prepareEvent(req, res, event._id);
+  if (!fields) return;
+
+  const before = await audienceOf(event);
+  event.set(fields);
+  const after = await audienceOf(event);
+  const stillInvited = new Set(after.map((u) => String(u._id)));
+  event.rsvps = event.rsvps.filter((r) => stillInvited.has(String(r.user)));
+  await event.save();
+  res.json({ id: String(event._id) });
+
+  notify({
+    to: [...stillInvited],
+    except: req.me._id,
+    title: `✏️ אירוע עודכן: ${event.title}`,
+    body: `${whenText(event)} · עדכן/ה: ${fullName(req.me)}`,
+    url: `/schedule/${event._id}`,
+  });
+  const removed = before.filter((u) => !stillInvited.has(String(u._id)));
+  if (removed.length) {
+    notify({
+      to: removed.map((u) => u._id),
+      except: req.me._id,
+      title: `❌ אירוע בוטל: ${event.title}`,
+      body: `כבר לא מוזמנים אליו · עדכן/ה: ${fullName(req.me)}`,
+      url: '/schedule',
+    });
+  }
 });
 
 // מחיקת אירוע (רק מי שיצר אותו; את האירועים הקבועים אי אפשר למחוק)

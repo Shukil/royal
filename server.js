@@ -1,13 +1,6 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
 require('dotenv').config();
-
-const app = express();
-
-// Middlewares
-app.use(cors());
-app.use(express.json());
+const mongoose = require('mongoose');
+const app = require('./app');
 
 // משתנה חסר בסביבה (למשל ב-Render) — מדפיסים רק את שמות המשתנים הדומים, בלי ערכים
 if (!process.env.MONGO_URI) {
@@ -26,21 +19,6 @@ mongoose.connect(process.env.MONGO_URI)
     require('./utils/taskReminders').startTaskReminders();
   })
   .catch((err) => console.log('Failed to connect to MongoDB', err));
-
-// Routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/cabin-tasks', require('./routes/cabinTasks'));
-app.use('/api/personal-checklist', require('./routes/personalChecklist'));
-app.use('/api/events', require('./routes/events'));
-app.use('/api/ship-clock', require('./routes/shipClock'));
-app.use('/api/port-day', require('./routes/portDay'));
-app.use('/api/push', require('./routes/push'));
-app.use('/api/plan', require('./routes/plan'));
-app.use('/api/tasks', require('./routes/tasks'));
-app.use('/api/updates', require('./routes/updates'));
-
-// שגיאות מכל הנתיבים
-app.use(require('./middleware/errors'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

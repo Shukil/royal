@@ -1,0 +1,173 @@
+/* ===== Rome guide ===== */
+.toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+/* צ׳יפים סגולים כמו "Top Destinations" בבאנר של Royal Caribbean */
+.toc__link {
+  padding: 0.35rem 0.95rem;
+  background: var(--purple);
+  border-radius: var(--radius-pill);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+.toc__link:hover {
+  background: var(--purple-dark);
+  color: #fff;
+}
+.toc__link:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
+}
+#main [id] {
+  scroll-margin-top: calc(var(--topbar-h) + 1rem);
+}
+
+.subhead {
+  font-size: 1.1rem;
+  color: var(--navy-800);
+  margin: 1.5rem 0 0.75rem;
+}
+
+.routes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+.route {
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--sea);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+}
+.route__title {
+  font-size: 1.05rem;
+  color: var(--navy-800);
+  margin-bottom: 0.5rem;
+}
+.route__stops {
+  margin: 0 0 0.5rem;
+  padding-inline-start: 1.25rem;
+  line-height: 1.7;
+}
+.route__note {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.sites {
+  display: grid;
+  gap: 0.5rem;
+}
+.site {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+.site[open] {
+  border-color: var(--sea);
+}
+.site__summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.site__summary:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
+  border-radius: var(--radius-md);
+}
+.site__en {
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+.site__body {
+  padding: 0 1rem 1rem;
+  color: #2a3a5c;
+  line-height: 1.8;
+}
+
+.spots {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.75rem;
+}
+.spot {
+  display: grid;
+  gap: 0.2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+}
+.spot__name {
+  color: var(--ink);
+}
+.spot__where {
+  color: var(--sea-dark);
+  font-size: 0.85rem;
+}
+.spot__note {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.tip {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--gold-soft);
+  border-inline-start: 4px solid var(--gold);
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  margin-bottom: 1.25rem;
+}
+.metro {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.metro th,
+.metro td {
+  text-align: start;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+.metro th {
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+.line {
+  display: inline-block;
+  min-width: 2rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-align: center;
+}
+.line--a { background: #c62828; }
+.line--b { background: #1f4fa3; }
+.line--ab { background: var(--navy-600); }
+.metro tr[aria-current] td {
+  background: var(--gold-soft);
+  font-weight: 700;
+}

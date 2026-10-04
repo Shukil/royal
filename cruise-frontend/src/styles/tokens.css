@@ -1,0 +1,50 @@
+/* ===== Design tokens =====
+   הפלטה לפי מערכת העיצוב של royalcaribbean.com:
+   כחול מותג #021d49, כפתור ראשי #053b81, קישורים #1240b5,
+   כפתור הזמנה צהוב-כתום #ffb500, רקע משני #f1f6ff, כפתורים מעוגלים לגמרי */
+:root {
+  --navy-900: #010c1d;
+  --navy-800: #021d49;
+  --navy-600: #053b81;
+  --gold: #ffb500;
+  --gold-hover: #ff8000;
+  --gold-soft: #fff5d1;
+  --sea: #8833ff;
+  --sea-dark: #6a1fd6;
+  --cyan: #00d5ff;
+  --magenta: #ff0db2;
+  --magenta-dark: #e10099;
+  --orange: #ff6900;
+  --purple: #8833ff;
+  --purple-dark: #6a1fd6;
+  --purple-soft: #f1e8ff;
+  /* הגרדיאנט של באנרי הקמפיין: ורוד-מג׳נטה למעלה, כתום למטה */
+  --promo-gradient: linear-gradient(165deg, #ff0db2 0%, #ff3a78 48%, #ff6900 100%);
+
+  --paper: #f1f6ff;
+  --surface: #ffffff;
+  --ink: #021d49;
+  --muted: #4d5b7c;
+  --line: #d7dee9;
+
+  --success: #15803d;
+  --success-bg: #ecfdf3;
+  --warn: #9a4a06;
+  --danger: #b42318;
+  --danger-bg: #fde8e9;
+
+  /* Kapra ו-Proxima Nova הם גופנים מסחריים; Barlow Condensed ו-Heebo הם התחליפים הקרובים.
+     באותיות לטיניות מוצג Barlow Condensed, ובעברית Heebo */
+  --font-body: 'Heebo', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --font-display: 'Barlow Condensed', 'Heebo', system-ui, sans-serif;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 250px;
+  --shadow: 0 1px 2px rgba(2, 29, 73, 0.06), 0 6px 20px rgba(2, 29, 73, 0.08);
+
+  --sidebar-w: 264px;
+  --topbar-h: 60px;
+  --focus: 0 0 0 2px var(--surface), 0 0 0 4px #8833ff;
+}

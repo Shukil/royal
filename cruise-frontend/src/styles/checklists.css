@@ -1,0 +1,112 @@
+/* ===== Checklists ===== */
+.task-form {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: 0.75rem;
+  align-items: end;
+  margin-bottom: 1.75rem;
+}
+@media (max-width: 640px) {
+  .task-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+.progress {
+  margin-bottom: 1.25rem;
+}
+.progress__text {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+}
+.progress__bar {
+  height: 8px;
+  background: #e4ecf9;
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progress__fill {
+  height: 100%;
+  background: var(--success);
+  border-radius: inherit;
+  transition: width 0.3s ease;
+}
+
+.tasks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.task {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.task:has(input:focus-visible) {
+  border-color: var(--sea);
+  box-shadow: 0 0 0 3px rgba(22, 103, 184, 0.2);
+}
+.task.is-done {
+  background: var(--success-bg);
+  border-color: #abefc6;
+}
+.task__check {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin: 0.15rem 0 0;
+  accent-color: var(--success);
+  cursor: pointer;
+}
+.task__label {
+  flex: 1;
+  cursor: pointer;
+  min-width: 0;
+}
+.task__text {
+  font-weight: 500;
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+.task.is-done .task__text {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+.task__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.task__assignee {
+  color: var(--warn);
+  font-weight: 500;
+}
+.task__done-by {
+  color: var(--success);
+  font-weight: 500;
+}
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 2rem 1rem;
+  border: 1.5px dashed var(--line);
+  border-radius: var(--radius-md);
+}
+.empty .btn {
+  margin-top: 1rem;
+}

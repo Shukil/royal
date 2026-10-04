@@ -17,6 +17,9 @@ const userSchema = new mongoose.Schema({
   resetTokenHash: String,
   resetTokenExpires: Date,
 
+  // עולה בכל החלפת סיסמה, וכך מנתק את כל המכשירים האחרים (middleware/auth.js)
+  tokenVersion: { type: Number, default: 0 },
+
   createdAt: { type: Date, default: Date.now }
 });
 

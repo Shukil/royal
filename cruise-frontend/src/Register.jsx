@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import AuthShell from './AuthShell';
 import api, { errorMessage } from './api';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const Register = () => {
-  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', password: '' });
+  // אפשר לשלוח למשפחה קישור עם הקוד כבר בפנים: /register?code=...
+  const [params] = useSearchParams();
+  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', password: '', inviteCode: params.get('code') || '' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
@@ -100,6 +102,22 @@ const Register = () => {
             minLength="6"
           />
           <span id="reg-password-hint" className="field__hint">לפחות 6 תווים</span>
+        </div>
+
+        <div className="field">
+          <label className="field__label" htmlFor="reg-code">קוד הזמנה</label>
+          <input
+            id="reg-code"
+            className="input"
+            type="text"
+            dir="ltr"
+            autoComplete="off"
+            aria-describedby="reg-code-hint"
+            value={form.inviteCode}
+            onChange={update('inviteCode')}
+            required
+          />
+          <span id="reg-code-hint" className="field__hint">האתר רק למשפחה. את הקוד מקבלים ממארגני הטיול.</span>
         </div>
 
         <button type="submit" className="btn btn--gold btn--block" disabled={loading}>

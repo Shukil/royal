@@ -1,0 +1,49 @@
+/* מזג אוויר (Weather.jsx) */
+.weather {
+  display: grid;
+  gap: 0.6rem;
+}
+.weather__subtitle {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+.weather__facts {
+  margin: 0;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+.weather__tip {
+  margin: 0;
+}
+.weather__source {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.weather__days {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+.weather__day {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem 0.75rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+.weather__date {
+  font-weight: 700;
+}
+.weather__icon {
+  font-size: 1.3rem;
+}
+.weather-line {
+  margin: 0;
+  color: var(--muted);
+}

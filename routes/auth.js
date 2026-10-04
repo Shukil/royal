@@ -1,10 +1,13 @@
 const express = require('express');
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const auth = require('../middleware/auth');
+const { signToken } = require('../middleware/auth');
+const { loginLimits, forgotPasswordLimits, registerLimits, changePasswordLimits } = require('../middleware/rateLimits');
 const { sendResetEmail } = require('../utils/mailer');
-const { cabinFor } = require('../utils/cabins');
+const { cabinFor, guestsOf, roster } = require('../utils/cabins');
+const { FAMILIES, familyOf } = require('../utils/family');
 const router = express.Router();
 
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
@@ -25,13 +28,43 @@ const createToken = () => {
   return { token, hash: hashToken(token) };
 };
 
+// קוד ההזמנה להרשמה נשמר במשתנה הסביבה INVITE_CODE (המאגר ציבורי). בלי המשתנה ההרשמה סגורה.
+// ההשוואה לא תלויה ברישיות וברווחים, ונעשית בזמן קבוע כדי שאי אפשר יהיה לנחש אותה אות אחרי אות
+const normalizeCode = (code) => String(code || '').trim().toLowerCase();
+const isInviteCode = (code) => {
+  const expected = normalizeCode(process.env.INVITE_CODE);
+  if (!expected) return false;
+  const digest = (s) => crypto.createHash('sha256').update(s).digest();
+  return crypto.timingSafeEqual(digest(normalizeCode(code)), digest(expected));
+};
+
+// פרטי המשתמש שהאתר שומר. החדר, השותפים לחדר והמשפחה נקבעים כאן בלבד
+const userPayload = (user) => {
+  const family = familyOf(user.lastName);
+  return {
+    id: user._id,
+    name: `${user.firstName} ${user.lastName}`,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    cabinNumber: user.cabinNumber,
+    cabinGuests: guestsOf(user.cabinNumber),
+    // כל החדרים, כדי שטבלת החדרים תעבוד גם בלי אינטרנט
+    cabins: roster(),
+    family,
+    familyLabel: family ? FAMILIES[family].label : null,
+  };
+};
+
 // הרשמת נוסע חדש
-router.post('/register', async (req, res) => {
+router.post('/register', registerLimits, async (req, res) => {
   const firstName = String(req.body.firstName || '').trim();
   const lastName = String(req.body.lastName || '').trim();
   const email = normalizeEmail(req.body.email);
   const { password } = req.body;
 
+  if (!process.env.INVITE_CODE) return res.status(403).json({ message: 'ההרשמה סגורה כרגע. כדאי לפנות למארגני הטיול.' });
+  if (!isInviteCode(req.body.inviteCode)) return res.status(403).json({ message: 'קוד ההזמנה שגוי. את הקוד מקבלים ממארגני הטיול.' });
   if (!firstName || !lastName) return res.status(400).json({ message: 'יש למלא שם פרטי ושם משפחה' });
   if (!EMAIL_RE.test(email)) return res.status(400).json({ message: 'כתובת המייל אינה תקינה' });
   if (!isValidPassword(password)) return res.status(400).json({ message: SHORT_PASSWORD });
@@ -56,7 +89,7 @@ router.post('/register', async (req, res) => {
 });
 
 // התחברות
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimits, async (req, res) => {
   const user = await User.findOne({ email: normalizeEmail(req.body.email) });
   if (!user) return res.status(400).json({ message: BAD_LOGIN });
 
@@ -70,23 +103,42 @@ router.post('/login', async (req, res) => {
     await user.save();
   }
 
-  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+  res.json({ token: signToken(user), user: userPayload(user) });
+});
 
-  res.json({
-    token,
-    user: {
-      id: user._id,
-      name: user.name,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      cabinNumber: user.cabinNumber,
-    },
-  });
+// הפרטים העדכניים של המשתמש המחובר. האתר קורא לזה בכל טעינה, כך ששינוי ברשימת החדרים
+// או המשפחות מגיע גם למי שכבר מחובר
+router.get('/me', auth, async (req, res) => {
+  const user = await User.findById(req.userId);
+  if (!user) return res.status(401).json({ message: 'יש להתחבר' });
+
+  const cabinNumber = cabinFor(user.firstName);
+  if (user.cabinNumber !== cabinNumber) {
+    user.cabinNumber = cabinNumber;
+    await user.save();
+  }
+  res.json({ user: userPayload(user) });
+});
+
+// החלפת סיסמה מתוך האתר. כל המכשירים האחרים מתנתקים, והמכשיר הנוכחי מקבל טוקן חדש
+router.put('/password', auth, changePasswordLimits, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  if (!isValidPassword(newPassword)) return res.status(400).json({ message: SHORT_PASSWORD });
+
+  const user = await User.findById(req.userId);
+  if (!user) return res.status(401).json({ message: 'יש להתחבר' });
+  if (!(await bcrypt.compare(String(currentPassword || ''), user.password))) {
+    return res.status(400).json({ message: 'הסיסמה הנוכחית שגויה' });
+  }
+
+  user.password = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
+  user.tokenVersion = (user.tokenVersion || 0) + 1;
+  await user.save();
+  res.json({ message: 'הסיסמה עודכנה. שאר המכשירים שלך נותקו.', token: signToken(user) });
 });
 
 // בקשה לשחזור סיסמה
-router.post('/forgot-password', async (req, res) => {
+router.post('/forgot-password', forgotPasswordLimits, async (req, res) => {
   const user = await User.findOne({ email: normalizeEmail(req.body.email) });
 
   if (user) {
@@ -116,6 +168,8 @@ router.post('/reset-password', async (req, res) => {
   user.password = await bcrypt.hash(password, BCRYPT_ROUNDS);
   user.resetTokenHash = undefined;
   user.resetTokenExpires = undefined;
+  // מי שאיפס סיסמה כנראה חושש שמישהו אחר נכנס לחשבון: מנתקים את כל המכשירים
+  user.tokenVersion = (user.tokenVersion || 0) + 1;
   await user.save();
 
   res.json({ message: 'הסיסמה עודכנה בהצלחה! אפשר להתחבר עם הסיסמה החדשה.' });

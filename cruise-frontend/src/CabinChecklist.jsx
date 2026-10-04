@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from './api';
-import { getUser } from './session';
+import { useUser } from './session';
 
 const CabinChecklist = () => {
   const [tasks, setTasks] = useState([]);
@@ -9,7 +9,7 @@ const CabinChecklist = () => {
   const [assignee, setAssignee] = useState('');
 
   // פרטי המשתמש המחובר (השרת עצמו קובע את החדר והשם לפי ההתחברות)
-  const user = getUser();
+  const user = useUser();
   const cabinNumber = user?.cabinNumber;
 
   // טעינת המשימות של החדר מהשרת
@@ -33,6 +33,17 @@ const CabinChecklist = () => {
       fetchTasks(); // רענון הרשימה (כולל משימות ששותפים לחדר הוסיפו בינתיים)
     } catch (error) {
       console.error('שגיאה בהוספת משימה', error);
+    }
+  };
+
+  // מחיקת משימה (למשל עם טעות כתיב). הרשימה משותפת, אז מוחקים רק אחרי אישור
+  const deleteTask = async (task) => {
+    if (!window.confirm(`למחוק את המשימה "${task.text}"? היא תימחק גם לשותפים לחדר.`)) return;
+    try {
+      await api.delete(`/cabin-tasks/${task._id}`);
+      fetchTasks();
+    } catch (error) {
+      console.error('שגיאה במחיקת משימה', error);
     }
   };
 
@@ -143,6 +154,15 @@ const CabinChecklist = () => {
                       )}
                     </span>
                   </label>
+                  <button
+                    type="button"
+                    className="icon-btn icon-btn--danger"
+                    aria-label={`מחיקת המשימה: ${task.text}`}
+                    title="מחיקת המשימה"
+                    onClick={() => deleteTask(task)}
+                  >
+                    🗑️
+                  </button>
                 </li>
               ))}
             </ul>

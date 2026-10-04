@@ -45,9 +45,13 @@ export default defineConfig({
           {
             // נתונים מהשרת (לו״ז, חדר, צ׳ק ליסטים): קודם מהרשת, ואם אין חיבור - העותק האחרון.
             // רק GET נשמר; שמירת שינויים עדיין דורשת חיבור.
-            // דף עדכוני האתר לא נשמר: שרת רדום ב-Render מתעורר ביותר מ-10 שניות, ואז היה מוצג עותק ישן
+            // דף עדכוני האתר לא נשמר: שרת רדום ב-Render מתעורר ביותר מ-10 שניות, ואז היה מוצג עותק ישן.
+            // גם בדיקת החיים (/api/health) לא נשמרת: היא קיימת רק כדי להעיר את השרת
             urlPattern: ({ url }) =>
-              url.pathname.startsWith('/api/') && !url.pathname.startsWith('/api/auth/') && !url.pathname.startsWith('/api/updates'),
+              url.pathname.startsWith('/api/') &&
+              !url.pathname.startsWith('/api/auth/') &&
+              !url.pathname.startsWith('/api/updates') &&
+              url.pathname !== '/api/health',
             handler: 'NetworkFirst',
             options: {
               cacheName: 'api',

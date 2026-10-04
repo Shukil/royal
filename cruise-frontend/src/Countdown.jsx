@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { findCabin } from './cabins';
-import { familyOf } from './family';
-import { getUser, lastNameOf } from './session';
+import { useUser } from './session';
 
 // כל הזמנים בשעון רומא (CEST, UTC+2), כך שהספירה נכונה מכל מקום
 const cruise = {
@@ -68,10 +67,10 @@ const Countdown = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const user = getUser();
+  const user = useUser();
   const cabin = findCabin(user);
-  // כל משפחה רואה רק את הטיסה שלה
-  const myFamily = familyOf(lastNameOf(user));
+  // כל משפחה רואה רק את הטיסה שלה (המשפחה נקבעת בשרת)
+  const myFamily = user?.family;
   const myFlight = myFamily && flights.find((f) => f.id === myFamily);
   const cruiseLeft = split(cruise.target, now);
 

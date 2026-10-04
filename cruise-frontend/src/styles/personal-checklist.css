@@ -1,0 +1,62 @@
+/* ===== Editable personal checklist ===== */
+.task-form--single {
+  grid-template-columns: 1fr auto;
+}
+@media (max-width: 640px) {
+  .task-form--single {
+    grid-template-columns: 1fr;
+  }
+}
+.task__actions {
+  display: flex;
+  gap: 0.25rem;
+  flex: none;
+}
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  font-size: 1rem;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.icon-btn:hover {
+  background: var(--paper);
+  border-color: var(--line);
+}
+.icon-btn--danger:hover {
+  background: var(--danger-bg);
+  border-color: #fecdca;
+}
+.icon-btn:focus-visible,
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
+}
+.task__edit {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  width: 100%;
+}
+.task__edit .input {
+  flex: 1 1 200px;
+}
+.btn--ghost {
+  background: none;
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+.btn--ghost:hover {
+  background: var(--paper);
+}
+.checklist-reset {
+  display: block;
+  margin: 1.5rem auto 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
