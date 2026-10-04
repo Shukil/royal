@@ -1,35 +1,38 @@
 import { lazy, Suspense, useEffect, useLayoutEffect } from 'react';
 import { BrowserRouter as Router, Navigate, Routes, Route, useLocation, useNavigationType } from 'react-router-dom';
 import Home from './Home';
-import Schedule from './Schedule';
-import EventPage from './EventPage';
 import Login from './Login';
-import Register from './Register';
 import Sidebar from './Sidebar';
 import OfflineBanner from './OfflineBanner';
-import CabinDetails from './CabinDetails';
-import PersonalChecklist from './PersonalChecklist';
-import CabinChecklist from './CabinChecklist';
-import RomeGuide from './RomeGuide';
-import OdysseyInfo from './OdysseyInfo';
-import Itinerary from './Itinerary';
-import Guides from './Guides';
-import DestinationGuide from './DestinationGuide';
-import Emergency from './Emergency';
-import Install from './Install';
-import ForgotPassword from './ForgotPassword';
-import ResetPassword from './ResetPassword';
-import Plan from './Plan';
-import Tasks from './Tasks';
-import Updates from './Updates';
-import Profile from './Profile';
-import AdminFamilies from './AdminFamilies';
 import api from './api';
 import {
   clearSession, getLastActivity, getToken, saveLastActivity, saveToken, saveUser, tokenInfo, useToken, useUser,
 } from './session';
 
-// החיפוש טוען את תוכן כל הדפים, אז הוא נטען רק כשנכנסים אליו
+// כל דף נטען רק כשנכנסים אליו, כדי שהכניסה הראשונה תהיה מהירה גם באינטרנט האיטי של הספינה.
+// דף הבית וההתחברות נטענים מיד, כי הם הדפים הראשונים שרואים. האפליקציה המותקנת שומרת מראש
+// את כל הדפים (vite.config.js), כך שגם בלי אינטרנט הם נפתחים
+const Schedule = lazy(() => import('./Schedule'));
+const EventPage = lazy(() => import('./EventPage'));
+const Register = lazy(() => import('./Register'));
+const CabinDetails = lazy(() => import('./CabinDetails'));
+const PersonalChecklist = lazy(() => import('./PersonalChecklist'));
+const CabinChecklist = lazy(() => import('./CabinChecklist'));
+const RomeGuide = lazy(() => import('./RomeGuide'));
+const OdysseyInfo = lazy(() => import('./OdysseyInfo'));
+const Itinerary = lazy(() => import('./Itinerary'));
+const Guides = lazy(() => import('./Guides'));
+const DestinationGuide = lazy(() => import('./DestinationGuide'));
+const Emergency = lazy(() => import('./Emergency'));
+const Install = lazy(() => import('./Install'));
+const ForgotPassword = lazy(() => import('./ForgotPassword'));
+const ResetPassword = lazy(() => import('./ResetPassword'));
+const Plan = lazy(() => import('./Plan'));
+const Tasks = lazy(() => import('./Tasks'));
+const Updates = lazy(() => import('./Updates'));
+const Profile = lazy(() => import('./Profile'));
+const AdminFamilies = lazy(() => import('./AdminFamilies'));
+// החיפוש טוען את תוכן כל הדפים, אז גם הוא נטען רק כשנכנסים אליו
 const Search = lazy(() => import('./Search'));
 
 // עמודים שמוצגים בלי התפריט הצדדי. רק הם פתוחים למי שלא מחובר; כל השאר מעבירים להתחברות
@@ -183,31 +186,33 @@ const AppLayout = () => {
       {/* אזור התוכן הראשי - לוקח בחשבון את רוחב התפריט */}
       <main id="main" tabIndex={-1} className={hideSidebar ? 'app-main app-main--bare' : 'app-main'}>
         <OfflineBanner />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/schedule" element={<Schedule />} />
-          <Route path="/schedule/:id" element={<EventPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/cabin" element={<CabinDetails />} />
-          <Route path="/personal-checklist" element={<PersonalChecklist />} />
-          <Route path="/rome-guide" element={<RomeGuide />} />
-          <Route path="/odyssey" element={<OdysseyInfo />} />
-          <Route path="/itinerary" element={<Itinerary />} />
-          <Route path="/guides" element={<Guides />} />
-          <Route path="/guide/:id" element={<DestinationGuide />} />
-          <Route path="/cabin-checklist" element={<CabinChecklist />} />
-          <Route path="/emergency" element={<Emergency />} />
-          <Route path="/install" element={<Install />} />
-          <Route path="/plan" element={<Plan />} />
-          <Route path="/tasks" element={<Tasks />} />
-          <Route path="/updates" element={<Updates />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/admin/families" element={<AdminFamilies />} />
-          <Route path="/search" element={<Suspense fallback={<p className="empty">טוען…</p>}><Search /></Suspense>} />
-        </Routes>
+        <Suspense fallback={<p className="empty" role="status">טוען…</p>}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/schedule" element={<Schedule />} />
+            <Route path="/schedule/:id" element={<EventPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/cabin" element={<CabinDetails />} />
+            <Route path="/personal-checklist" element={<PersonalChecklist />} />
+            <Route path="/rome-guide" element={<RomeGuide />} />
+            <Route path="/odyssey" element={<OdysseyInfo />} />
+            <Route path="/itinerary" element={<Itinerary />} />
+            <Route path="/guides" element={<Guides />} />
+            <Route path="/guide/:id" element={<DestinationGuide />} />
+            <Route path="/cabin-checklist" element={<CabinChecklist />} />
+            <Route path="/emergency" element={<Emergency />} />
+            <Route path="/install" element={<Install />} />
+            <Route path="/plan" element={<Plan />} />
+            <Route path="/tasks" element={<Tasks />} />
+            <Route path="/updates" element={<Updates />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/admin/families" element={<AdminFamilies />} />
+            <Route path="/search" element={<Search />} />
+          </Routes>
+        </Suspense>
       </main>
     </>
   );
