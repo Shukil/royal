@@ -41,8 +41,7 @@ const CHANGELOG = [
           {
             title: '💓 בדיקת חיים לשרת',
             what: 'כתובת ‎/api/health שמחזירה אם השרת והמסד עובדים.',
-            status: 'setup',
-            note: 'כדי שהשרת לא יירדם בכלל: להגדיר ב-cron-job.org (חינם) קריאה לכתובת ‎https://royal-q8gn.onrender.com/api/health כל 10 דקות.',
+            note: 'מוגדר ב-cron-job.org: קריאה לכתובת ‎https://royal-q8gn.onrender.com/api/health כל 10 דקות, כך שהשרת לא נרדם.',
           },
         ],
       },
