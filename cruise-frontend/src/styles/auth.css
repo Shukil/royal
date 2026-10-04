@@ -5,7 +5,7 @@
 }
 .auth__brand {
   text-align: center;
-  color: var(--navy-800);
+  color: var(--heading);
   margin-bottom: 1.5rem;
   direction: ltr;
 }
@@ -26,7 +26,7 @@
 }
 .auth__title {
   font-size: 1.6rem;
-  color: var(--navy-800);
+  color: var(--heading);
 }
 .auth__switch {
   text-align: center;

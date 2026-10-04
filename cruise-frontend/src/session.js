@@ -88,11 +88,17 @@ export const useToken = () => useSyncExternalStore(subscribe, getToken, () => nu
 export const tokenInfo = (token) => {
   try {
     const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
-    return { exp: payload.exp * 1000, remember: payload.r !== false };
+    return { exp: payload.exp * 1000, issued: payload.iat * 1000, remember: payload.r !== false };
   } catch {
     return null;
   }
 };
+
+// הפעילות האחרונה באתר במכשיר הזה (לניתוק אחרי 15 דקות בלי שימוש, App.jsx).
+// נשמרת כדי שגם סגירה ופתיחה של האפליקציה בלי אינטרנט לא יאפסו את הספירה
+const ACTIVITY_KEY = 'lastActivity';
+export const getLastActivity = () => Number(read(ACTIVITY_KEY)) || 0;
+export const saveLastActivity = (time) => write(ACTIVITY_KEY, String(time));
 
 // שם פרטי ושם משפחה, גם למשתמשים שנשמרו לפני שהשדות האלה נוספו (רק name מלא)
 export const firstNameOf = (user) => (user?.firstName || user?.name?.split(' ')[0] || '').trim();

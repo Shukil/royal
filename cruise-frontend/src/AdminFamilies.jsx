@@ -8,9 +8,19 @@ const NO_FAMILY = '';
 
 // שורה של משתמש: חדר, משפחה ומנהל משפחה. כל שינוי נשמר מיד בשרת.
 // המפתח של השורה כולל את מספר החדר, כך ששדה החדר מתאפס לערך מהשרת אחרי כל שמירה
-const MemberRow = ({ member, families, isMe, onSave }) => {
+const MemberRow = ({ member, families, isMe, onSave, onDelete }) => {
   const [cabin, setCabin] = useState(member.cabinNumber);
   const [busy, setBusy] = useState(false);
+  // תיקון שם: נפתח בלחיצה על ✏️
+  const [naming, setNaming] = useState(null);
+
+  const saveName = async (e) => {
+    e.preventDefault();
+    setBusy(true);
+    const ok = await onSave(member, { firstName: naming.firstName, lastName: naming.lastName });
+    setBusy(false);
+    if (ok) setNaming(null);
+  };
 
   const save = async (changes) => {
     setBusy(true);
@@ -28,13 +38,61 @@ const MemberRow = ({ member, families, isMe, onSave }) => {
 
   return (
     <li className={`admin-member${busy ? ' is-busy' : ''}`}>
-      <div className="admin-member__who">
-        <strong>
-          {member.firstName} {member.lastName}
-          {isMe && <span className="admin-member__me"> (אני)</span>}
-        </strong>
-        <span className="admin-member__email" dir="ltr">{member.email}</span>
-      </div>
+      {naming ? (
+        <form className="admin-member__who admin-member__rename" onSubmit={saveName}>
+          <label className="visually-hidden" htmlFor={`first-${member.id}`}>שם פרטי</label>
+          <input
+            id={`first-${member.id}`}
+            className="input input--compact"
+            maxLength={40}
+            value={naming.firstName}
+            onChange={(e) => setNaming((n) => ({ ...n, firstName: e.target.value }))}
+            autoFocus
+            required
+          />
+          <label className="visually-hidden" htmlFor={`last-${member.id}`}>שם משפחה</label>
+          <input
+            id={`last-${member.id}`}
+            className="input input--compact"
+            maxLength={40}
+            value={naming.lastName}
+            onChange={(e) => setNaming((n) => ({ ...n, lastName: e.target.value }))}
+            required
+          />
+          <span className="admin-member__rename-actions">
+            <button type="submit" className="btn btn--primary btn--sm" disabled={busy}>שמירה</button>
+            <button type="button" className="btn btn--ghost btn--sm" onClick={() => setNaming(null)}>ביטול</button>
+          </span>
+        </form>
+      ) : (
+        <div className="admin-member__who">
+          <strong>
+            {member.firstName} {member.lastName}
+            {isMe && <span className="admin-member__me"> (אני)</span>}
+            <button
+              type="button"
+              className="admin-member__icon"
+              aria-label={`תיקון השם של ${member.firstName} ${member.lastName}`}
+              title="תיקון שם"
+              onClick={() => setNaming({ firstName: member.firstName, lastName: member.lastName })}
+            >
+              ✏️
+            </button>
+            {!isMe && !member.siteAdmin && (
+              <button
+                type="button"
+                className="admin-member__icon"
+                aria-label={`מחיקת ${member.firstName} ${member.lastName}`}
+                title="מחיקת המשתמש"
+                onClick={() => onDelete(member)}
+              >
+                🗑️
+              </button>
+            )}
+          </strong>
+          <span className="admin-member__email" dir="ltr">{member.email}</span>
+        </div>
+      )}
 
       <label className="admin-member__field">
         <span className="admin-member__label">חדר</span>
@@ -113,8 +171,8 @@ const FamilyHeader = ({ family, count, admins, onRename, onDelete }) => {
   return (
     <div className="admin-family__head">
       <h2 className="admin-family__title">{family.label}</h2>
-      <span className="plan-badge plan-badge--ok">{count} משתתפים</span>
-      {admins > 0 && <span className="plan-badge">{admins} מנהלים</span>}
+      <span className="plan-badge plan-badge--ok">{count === 1 ? 'משתתף אחד' : `${count} משתתפים`}</span>
+      {admins > 0 && <span className="plan-badge">{admins === 1 ? 'מנהל אחד' : `${admins} מנהלים`}</span>}
       <span className="admin-family__actions">
         <button type="button" className="link-button" onClick={() => setEditing(true)}>✏️ שינוי שם</button>
         {count === 0 && (
@@ -170,6 +228,18 @@ const AdminFamilies = () => {
     } catch (err) {
       fail(err, 'השמירה נכשלה. נסה שוב.');
       return false;
+    }
+  };
+
+  const deleteMember = async (member) => {
+    const name = `${member.firstName} ${member.lastName}`;
+    if (!window.confirm(`למחוק את ${name}? נמחקים גם האירועים שיצר/ה והמשימות האישיות. אי אפשר לבטל.`)) return;
+    try {
+      await api.delete(`/admin/users/${member.id}`);
+      setData((d) => ({ ...d, users: d.users.filter((u) => u.id !== member.id) }));
+      say(`${name} נמחק/ה`);
+    } catch (err) {
+      fail(err, 'המחיקה נכשלה.');
     }
   };
 
@@ -259,7 +329,7 @@ const AdminFamilies = () => {
                     ) : (
                       <div className="admin-family__head">
                         <h2 className="admin-family__title">ללא משפחה</h2>
-                        <span className="plan-badge">{members.length} משתתפים</span>
+                        <span className="plan-badge">{members.length === 1 ? 'משתתף אחד' : `${members.length} משתתפים`}</span>
                       </div>
                     )}
 
@@ -268,7 +338,7 @@ const AdminFamilies = () => {
                     ) : (
                       <ul className="admin-members">
                         {members.map((m) => (
-                          <MemberRow key={`${m.id}-${m.cabinNumber}`} member={m} families={families} isMe={m.id === data.me} onSave={saveMember} />
+                          <MemberRow key={`${m.id}-${m.cabinNumber}`} member={m} families={families} isMe={m.id === data.me} onSave={saveMember} onDelete={deleteMember} />
                         ))}
                       </ul>
                     )}

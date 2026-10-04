@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import api, { errorMessage } from './api';
-import { EVENT_TYPES, RSVP_LABELS, formatDay, formatWhen, formFromEvent, mapsUrl } from './eventTypes';
+import { CATEGORIES, EVENT_TYPES, RSVP_LABELS, formatDay, formatWhen, formFromEvent, mapsUrl } from './eventTypes';
 import { getToken } from './session';
 import { downloadIcs, googleCalendarUrl } from './calendar';
 import EventForm from './EventForm';
@@ -219,6 +219,12 @@ const EventPage = () => {
         <header className="card__header event-page__header">
           <span className="event-badge event-badge--on-dark">{typeLabel}</span>
           <h1 className="card__title">{event.title}</h1>
+          {event.category !== 'general' && CATEGORIES[event.category] && (
+            <p className="card__lead">
+              {CATEGORIES[event.category].icon} הזמנה על הספינה: {CATEGORIES[event.category].label}
+              {event.confirmation && <> · מספר אישור <span dir="ltr">{event.confirmation}</span></>}
+            </p>
+          )}
           <p className="card__lead">
             📅 {formatDay(event.date)}.{event.date.slice(0, 4)} · 🕒{' '}
             <span dir={event.allDay ? undefined : 'ltr'}>{formatWhen(event)}</span>

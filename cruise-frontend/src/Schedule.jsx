@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api, { errorMessage } from './api';
-import { EVENT_TYPES, RSVP_LABELS, formatDay, formatWhen } from './eventTypes';
+import { EVENT_TYPES, RSVP_LABELS, categoryIcon, formatDay, formatWhen } from './eventTypes';
 import { getToken } from './session';
 import Notifications from './Notifications';
 import EventForm from './EventForm';
@@ -185,6 +185,7 @@ const Schedule = () => {
                         <td className="schedule__time" dir={ev.allDay ? undefined : 'ltr'}>{formatWhen(ev)}</td>
                         <td>
                           <Link to={`/schedule/${ev.id}`} className="schedule__title" onClick={(e) => e.stopPropagation()}>
+                            {categoryIcon(ev) && <span aria-hidden="true">{categoryIcon(ev)} </span>}
                             {ev.title}
                           </Link>
                           {ev.location && <span className="schedule__location">📍 {ev.location}</span>}

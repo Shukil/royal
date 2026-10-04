@@ -4,6 +4,12 @@
 .event--family { --ev: #ff6900; --ev-soft: #fff0e5; --ev-text: #b34700; }
 .event--personal { --ev: #007291; --ev-soft: #e0f4f8; --ev-text: #005a72; }
 .event--custom { --ev: #ff0db2; --ev-soft: #ffe6f6; --ev-text: #b8007f; }
+@media (prefers-color-scheme: dark) {
+  .event--all { --ev-soft: #24174a; --ev-text: #c9a8ff; }
+  .event--family { --ev-soft: #3a1d08; --ev-text: #ffb27a; }
+  .event--personal { --ev-soft: #08303a; --ev-text: #6fd3ec; }
+  .event--custom { --ev-soft: #3a0b2c; --ev-text: #ff8ad6; }
+}
 
 .page--wide {
   max-width: 1000px;
@@ -133,7 +139,7 @@
 }
 .invitee:has(input:checked) {
   border-color: #ff0db2;
-  background: #ffe6f6;
+  background: var(--pink-soft);
 }
 .invitee input {
   accent-color: #ff0db2;
@@ -161,7 +167,7 @@
   padding: 1.1rem 0.25rem 0.2rem;
   font-family: var(--font-display);
   font-size: 1.15rem;
-  color: var(--navy-800);
+  color: var(--heading);
 }
 .schedule__row {
   cursor: pointer;

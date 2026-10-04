@@ -144,7 +144,7 @@ export const portInfo = {
       ask: 'Per favore, mi porti alla Stazione Marittima, al terminal delle navi da crociera.',
       askEn: 'Please take me to the Stazione Marittima cruise terminal.',
       address: 'Molo Angioino, Piazza Municipio, 80133 Napoli',
-      note: 'מול טירת קסטל נואובו. מוניות רשמיות בנאפולי לבנות, ויש להן מחירים קבועים לנמל: כדאי לבקש "tariffa predeterminata".',
+      note: 'מול טירת קסטל נואובו. מוניות רשמיות בנאפולי לבנות, ויש להן מחירים קבועים לנמל: כדאי לבקש מחיר קבוע (tariffa predeterminata).',
     },
     timing: {
       offFrom: 30,

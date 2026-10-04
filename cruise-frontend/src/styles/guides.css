@@ -31,7 +31,7 @@
 .guide-card__name {
   font-size: 1.2rem;
   font-weight: 700;
-  color: var(--navy-800);
+  color: var(--heading);
 }
 .guide-card__day {
   color: var(--sea-dark);

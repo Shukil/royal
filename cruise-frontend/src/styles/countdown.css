@@ -155,7 +155,7 @@
 }
 .flights__title {
   font-size: 1.2rem;
-  color: var(--navy-800);
+  color: var(--heading);
   margin-bottom: 0.75rem;
 }
 .flights__grid {

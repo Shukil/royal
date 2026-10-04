@@ -10,6 +10,8 @@ const { notify } = require('../utils/push');
 const router = express.Router();
 
 const TYPES = ['all', 'family', 'personal', 'custom'];
+const CATEGORIES = ['general', 'dining', 'show', 'activity'];
+const MAX_CONFIRMATION = 60;
 const RSVP = ['yes', 'maybe', 'no'];
 const MAX_TITLE = 120;
 const MAX_TEXT = 3000;
@@ -77,6 +79,7 @@ const summary = (event, me) => {
     endTime: event.endTime || '',
     location: event.location || '',
     type: event.type,
+    category: event.category || 'general',
     family: event.family,
     familyLabel: familyLabel(event.family),
     isSystem: Boolean(event.systemKey),
@@ -182,7 +185,7 @@ router.get('/', async (req, res) => {
 });
 
 // בדיקת השדות של אירוע חדש. מחזיר הודעת שגיאה, או null אם הכול תקין
-const validateEvent = ({ title, description, location, date, allDay, time, endTime, type }, myFamily) => {
+const validateEvent = ({ title, description, location, date, allDay, time, endTime, type, category, confirmation }, myFamily) => {
   if (!title) return 'יש לתת לאירוע שם';
   if (title.length > MAX_TITLE) return `שם האירוע יכול להכיל עד ${MAX_TITLE} תווים`;
   if (description.length > MAX_TEXT) return 'התיאור ארוך מדי';
@@ -192,6 +195,8 @@ const validateEvent = ({ title, description, location, date, allDay, time, endTi
   if (!allDay && !TIME_RE.test(time)) return 'יש לבחור שעה, או לסמן אירוע של יום שלם';
   if (endTime && (!TIME_RE.test(endTime) || endTime <= time)) return 'שעת הסיום צריכה להיות אחרי שעת ההתחלה';
   if (!TYPES.includes(type)) return 'סוג האירוע אינו תקין';
+  if (!CATEGORIES.includes(category)) return 'סוג ההזמנה אינו תקין';
+  if (confirmation.length > MAX_CONFIRMATION) return 'מספר האישור ארוך מדי';
   if (type === 'family' && !myFamily) return 'שם המשפחה שלך לא משויך למשפחה, אז אי אפשר ליצור אירוע משפחתי';
   return null;
 };
@@ -209,6 +214,8 @@ const prepareEvent = async (req, res, exceptId = null) => {
     time: allDay ? '' : String(req.body.time || ''),
     endTime: allDay ? '' : String(req.body.endTime || ''),
     type: req.body.type,
+    category: req.body.category || 'general',
+    confirmation: String(req.body.confirmation || '').trim(),
   };
   const invalid = validateEvent(fields, req.myFamily);
   if (invalid) {
@@ -303,6 +310,7 @@ router.get('/:id', async (req, res) => {
   res.json({
     ...summary(event, req.me),
     description: event.description,
+    confirmation: event.confirmation || '',
     // לטופס העריכה (רק יוצר האירוע עורך)
     invitees: event.invitees.map((u) => String(u._id || u)),
     guests: audience.map((u) => ({ ...person(u), rsvp: rsvpByUser[String(u._id)] || null })),

@@ -14,6 +14,7 @@ const menuItems = [
   { path: '/cabin', label: 'פרטי חדר', icon: '🛏️' },
   { path: '/personal-checklist', label: 'צ\'ק ליסט אישי', icon: '🎒' },
   { path: '/cabin-checklist', label: 'צ\'ק ליסט חדר', icon: '📋' },
+  { path: '/documents', label: 'המסמכים שלי', icon: '🗂️' },
   { path: '/guides', label: 'מדריכי יעדים', icon: '🧭' },
   { path: '/emergency', label: 'חירום ומידע חשוב', icon: '🆘' },
 ];
@@ -21,6 +22,7 @@ const menuItems = [
 // דפי המנהלים מוצגים בתפריט רק למנהלים (מנהלי האתר ומנהלי המשפחות).
 // השרת קובע מי מנהל, וזה מגיע עם פרטי המשתמש (/auth/me בכל טעינה). השרת גם חוסם את הדפים עצמם
 const ADMIN_ITEMS = [
+  { path: '/admin/announcements', label: 'הודעה לכולם', icon: '📢' },
   { path: '/admin/families', label: 'ניהול משפחות', icon: '👨‍👩‍👧' },
   { path: '/updates', label: 'עדכוני האתר', icon: '🛠️' },
 ];

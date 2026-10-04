@@ -6,6 +6,12 @@ import { SHIP } from './portInfo';
 const toMinutes = (t) => Number(t.slice(0, 2)) * 60 + Number(t.slice(3, 5));
 const toTime = (m) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
 
+// טווחים של מספרים או שעות ("08:00–20:00", "25–35 €") מתהפכים בתוך טקסט בעברית.
+// עוטפים כל טווח כזה בכיוון שמאל-לימין, כדי שיוצג בסדר הנכון
+const RANGE_RE = /(\d[\d:.,]*\s*[–-]\s*\d[\d:.,]*)/;
+const Ltr = ({ text }) =>
+  String(text).split(RANGE_RE).map((part, i) => (i % 2 ? <span key={i} dir="ltr">{part}</span> : part));
+
 // ===== כרטיס לנהג המונית =====
 // מראים לנהג את המסך: לאן לנסוע, בשפה המקומית ובאנגלית. במסך מלא הטקסט גדול, וקל להראות אותו מהמושב האחורי
 export const DriverCard = ({ driver, day }) => {
@@ -40,7 +46,7 @@ export const DriverCard = ({ driver, day }) => {
           📱 להראות לנהג במסך מלא
         </button>
       </div>
-      <p className="field__hint">{driver.note}</p>
+      <p className="field__hint"><Ltr text={driver.note} /></p>
 
       {full && (
         <div className="driver-card--full" role="dialog" aria-modal="true" aria-label="כרטיס לנהג">
@@ -84,18 +90,17 @@ export const TimeBudget = ({ timing, day }) => {
           <thead>
             <tr>
               <th scope="col">מאיפה חוזרים</th>
-              <th scope="col">איך</th>
-              <th scope="col">לצאת משם עד</th>
+              <th scope="col">לצאת עד</th>
             </tr>
           </thead>
           <tbody>
             {timing.trips.map((t) => (
               <tr key={t.from}>
                 <td>
-                  {t.from}
-                  {t.note && <span className="time-budget__note">{t.note}</span>}
+                  <strong>{t.from}</strong>
+                  <span className="time-budget__how">{t.how}{t.back > 0 && ` · כ-${t.back} דק׳`}</span>
+                  {t.note && <span className="time-budget__note"><Ltr text={t.note} /></span>}
                 </td>
-                <td>{t.how}{t.back > 0 && ` · כ-${t.back} דק׳`}</td>
                 <td className="time-budget__leave" dir="ltr">{toTime(boardBy - (t.margin ?? timing.margin) - t.back)}</td>
               </tr>
             ))}
@@ -123,8 +128,8 @@ export const Tickets = ({ tickets, day }) => (
               ) : null}
             </div>
             <dl className="ticket__facts">
-              <div><dt>מחיר</dt><dd>{t.price}</dd></div>
-              {t.hours && <div><dt>שעות</dt><dd>{t.hours}</dd></div>}
+              <div><dt>מחיר</dt><dd><Ltr text={t.price} /></dd></div>
+              {t.hours && <div><dt>שעות</dt><dd><Ltr text={t.hours} /></dd></div>}
               {t.closed && <div><dt>סגור</dt><dd>ימי {t.closed.join(', ')}</dd></div>}
               <div><dt>כרטיסים</dt><dd>{t.book}</dd></div>
             </dl>

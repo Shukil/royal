@@ -6,7 +6,7 @@ import Weather from './Weather';
 import TravelWarning from './TravelWarning';
 import PortDay from './PortDay';
 import { TodayPlan, TodayTasks } from './TodayPlan';
-import { RSVP_LABELS, formatWhen } from './eventTypes';
+import { RSVP_LABELS, formatWhen, categoryIcon } from './eventTypes';
 import { getToken } from './session';
 import { at, clockAt, tzMinutes } from './tripDays';
 
@@ -270,6 +270,7 @@ const Today = ({ day, next, now, preview }) => {
                 <Link to={`/schedule/${ev.id}`} className={`today__event event--${ev.type}`}>
                   <span className="today__event-time" dir={ev.allDay ? undefined : 'ltr'}>{formatWhen(ev)}</span>
                   <span className="today__event-title">
+                    {categoryIcon(ev) && <span aria-hidden="true">{categoryIcon(ev)} </span>}
                     {ev.title}
                     {ev.location && <span className="today__event-where">📍 {ev.location}</span>}
                   </span>

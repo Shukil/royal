@@ -72,6 +72,28 @@
   color: var(--muted);
   font-weight: 400;
 }
+.admin-member__icon {
+  margin-inline-start: 0.35rem;
+  padding: 0.1rem 0.25rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  font-size: 0.85rem;
+  cursor: pointer;
+  opacity: 0.65;
+}
+.admin-member__icon:hover,
+.admin-member__icon:focus-visible {
+  opacity: 1;
+  background: var(--surface);
+}
+.admin-member__rename {
+  gap: 0.35rem;
+}
+.admin-member__rename-actions {
+  display: flex;
+  gap: 0.4rem;
+}
 .admin-member__email {
   color: var(--muted);
   font-size: 0.85rem;

@@ -4,6 +4,10 @@ const mongoose = require('mongoose');
 const User = require('../models/User');
 const Family = require('../models/Family');
 const Event = require('../models/Event');
+const EventComment = require('../models/EventComment');
+const Task = require('../models/Task');
+const PortDay = require('../models/PortDay');
+const PushSubscription = require('../models/PushSubscription');
 const auth = require('../middleware/auth');
 const { loadAdmin, requireAdmin } = require('../middleware/admin');
 const { UNASSIGNED } = require('../utils/cabins');
@@ -14,6 +18,7 @@ const router = express.Router();
 router.use(auth, loadAdmin, requireAdmin);
 
 const MAX_LABEL = 60;
+const MAX_NAME = 40;
 const CABIN_RE = /^\d{3,6}$/;
 const USER_FIELDS = 'firstName lastName email cabinNumber family isAdmin createdAt';
 
@@ -91,12 +96,21 @@ router.delete('/families/:key', async (req, res) => {
   res.json(await overview());
 });
 
-// עדכון של משתמש: חדר, משפחה ומנהל משפחה. שולחים רק את השדות שמשתנים
+// עדכון של משתמש: שם, חדר, משפחה ומנהל משפחה. שולחים רק את השדות שמשתנים
 router.patch('/users/:id', async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(404).json({ message: 'המשתמש לא נמצא' });
   const user = await User.findById(req.params.id);
   if (!user) return res.status(404).json({ message: 'המשתמש לא נמצא' });
   const wasAdmin = isAdminUser(user);
+
+  // תיקון שם (למשל טעות בהרשמה). השם לא משפיע על החדר או על המשפחה, שנשמרים בנפרד
+  for (const field of ['firstName', 'lastName']) {
+    if (!(field in req.body)) continue;
+    const value = String(req.body[field] ?? '').trim().replace(/\s+/g, ' ');
+    if (!value) return res.status(400).json({ message: 'יש למלא שם פרטי ושם משפחה' });
+    if (value.length > MAX_NAME) return res.status(400).json({ message: `השם יכול להכיל עד ${MAX_NAME} תווים` });
+    user[field] = value;
+  }
 
   if ('cabinNumber' in req.body) {
     const cabin = String(req.body.cabinNumber ?? '').trim();
@@ -125,6 +139,31 @@ router.patch('/users/:id', async (req, res) => {
 
   await user.save();
   res.json({ user: userRow(user) });
+});
+
+// מחיקת משתמש (למשל מי שנרשם בטעות). נמחקים גם האירועים שהוא יצר, המשימות שהוקצו רק לו
+// וההרשמה שלו להתראות; הוא יוצא מרשימות המוזמנים ואישורי ההגעה. תגובות שכתב נשארות בשם "משתמש שנמחק".
+// אי אפשר למחוק את עצמך או מנהל אתר (ADMIN_EMAILS)
+router.delete('/users/:id', async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(404).json({ message: 'המשתמש לא נמצא' });
+  const user = await User.findById(req.params.id).lean();
+  if (!user) return res.status(404).json({ message: 'המשתמש לא נמצא' });
+  if (String(user._id) === String(req.me._id)) return res.status(400).json({ message: 'אי אפשר למחוק את עצמך' });
+  if (isSiteAdmin(user)) return res.status(400).json({ message: 'אי אפשר למחוק מנהל אתר' });
+
+  const id = user._id;
+  const ownEvents = await Event.find({ createdBy: id, systemKey: { $exists: false } }).select('_id').lean();
+  const ownEventIds = ownEvents.map((e) => e._id);
+  await Promise.all([
+    EventComment.deleteMany({ event: { $in: ownEventIds } }),
+    Event.deleteMany({ _id: { $in: ownEventIds } }),
+    Event.updateMany({}, { $pull: { invitees: id, rsvps: { user: id } } }),
+    Task.deleteMany({ assignee: id }),
+    PortDay.updateMany({}, { $pull: { aboard: { user: id } } }),
+    PushSubscription.deleteMany({ user: id }),
+  ]);
+  await User.deleteOne({ _id: id });
+  res.json({ ok: true });
 });
 
 module.exports = router;

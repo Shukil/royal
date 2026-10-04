@@ -29,7 +29,7 @@
 
 .subhead {
   font-size: 1.1rem;
-  color: var(--navy-800);
+  color: var(--heading);
   margin: 1.5rem 0 0.75rem;
 }
 
@@ -46,7 +46,7 @@
 }
 .route__title {
   font-size: 1.05rem;
-  color: var(--navy-800);
+  color: var(--heading);
   margin-bottom: 0.5rem;
 }
 .route__stops {

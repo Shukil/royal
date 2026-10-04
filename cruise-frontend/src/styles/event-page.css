@@ -211,7 +211,7 @@
 .modal__title {
   margin-top: 0.5rem;
   font-size: 1.45rem;
-  color: var(--navy-800);
+  color: var(--heading);
 }
 .modal__text {
   margin-top: 0.6rem;
@@ -281,4 +281,40 @@
   width: 1.15rem;
   height: 1.15rem;
   flex: none;
+}
+
+/* סוג ההזמנה בטופס האירוע (EventForm.jsx) */
+.category-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  border: 0;
+}
+.category-picker legend {
+  margin-bottom: 0.4rem;
+}
+.category-option {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  cursor: pointer;
+  font-size: 0.92rem;
+}
+.category-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.category-option.is-on {
+  border-color: var(--navy-600);
+  background: var(--navy-600);
+  color: #fff;
+}
+.category-option:has(input:focus-visible) {
+  box-shadow: var(--focus);
 }

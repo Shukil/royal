@@ -26,6 +26,11 @@
   --ink: #021d49;
   --muted: #4d5b7c;
   --line: #d7dee9;
+  /* כותרות וטקסט מודגש: כחול המותג, ובמצב כהה כמעט לבן */
+  --heading: var(--navy-800);
+  --track: #e4ecf9;
+  --info-bg: #eaf1fb;
+  --pink-soft: #ffe6f6;
 
   --success: #15803d;
   --success-bg: #ecfdf3;
@@ -47,4 +52,32 @@
   --sidebar-w: 264px;
   --topbar-h: 60px;
   --focus: 0 0 0 2px var(--surface), 0 0 0 4px #8833ff;
+}
+
+/* ===== מצב כהה =====
+   לפי הגדרת המכשיר (מצב כהה בטלפון או במחשב). הכחול הכהה של המותג נשאר, והרקעים הבהירים
+   מתחלפים בגוונים כהים של אותו כחול */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --paper: #081226;
+    --surface: #0f1c35;
+    --ink: #e6edf8;
+    --muted: #a5b4cf;
+    --line: #26375a;
+    --heading: #f1f6ff;
+    --track: #26375a;
+    --info-bg: #13274a;
+    --pink-soft: #3a1030;
+
+    --gold-soft: #3a2f0d;
+    --purple-soft: #2a1f4a;
+    --success: #4ade80;
+    --success-bg: #0f2a1d;
+    --warn: #fbbf6a;
+    --danger: #f87171;
+    --danger-bg: #3a1519;
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.45), 0 6px 20px rgba(0, 0, 0, 0.35);
+  }
 }

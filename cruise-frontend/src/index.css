@@ -31,3 +31,5 @@
 @import './styles/search.css'; /* חיפוש (Search.jsx) */
 @import './styles/updates.css'; /* עדכוני האתר (Updates.jsx) */
 @import './styles/admin.css'; /* ניהול משפחות (AdminFamilies.jsx) */
+@import './styles/announcements.css'; /* הודעות מהמנהלים (AnnouncementBanner.jsx) */
+@import './styles/documents.css'; /* המסמכים שלי (Documents.jsx) */
