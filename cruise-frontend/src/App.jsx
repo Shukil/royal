@@ -25,7 +25,9 @@ import Updates from './Updates';
 import Profile from './Profile';
 import AdminFamilies from './AdminFamilies';
 import api from './api';
-import { clearSession, getToken, saveToken, saveUser, tokenInfo, useToken, useUser } from './session';
+import {
+  clearSession, getLastActivity, getToken, saveLastActivity, saveToken, saveUser, tokenInfo, useToken, useUser,
+} from './session';
 
 // החיפוש טוען את תוכן כל הדפים, אז הוא נטען רק כשנכנסים אליו
 const Search = lazy(() => import('./Search'));
@@ -79,10 +81,14 @@ const useFreshSession = () => {
 
 // ===== ניתוק אחרי 15 דקות בלי פעילות =====
 // בלי "השאר אותי מחובר" הטוקן תקף ל-15 דקות. כל עוד משתמשים באתר (לחיצה, הקלדה, גלילה) ונשארו
-// פחות מ-10 דקות, מבקשים מהשרת טוקן חדש ל-15 דקות נוספות. בלי פעילות הטוקן פג והמשתמש מתנתק,
-// גם אם הדף פשוט נשאר פתוח. עם "השאר אותי מחובר" הטוקן תקף ל-30 יום ולא מתחדש
+// פחות מ-10 דקות, מבקשים מהשרת טוקן חדש ל-15 דקות נוספות. עם "השאר אותי מחובר" הטוקן תקף ל-30 יום.
+// בלי אינטרנט (על הספינה) אי אפשר לחדש את הטוקן, אז סופרים 15 דקות מהפעילות האחרונה במכשיר עצמו:
+// מי שמשתמש באתר בלי חיבור לא מתנתק באמצע ויכול להמשיך לראות את המידע השמור. כשהחיבור חוזר,
+// טוקן שפג בינתיים כבר לא תקף בשרת, ואז מתחברים מחדש
+const IDLE_LIMIT = 15 * 60 * 1000;
 const RENEW_WHEN_LEFT = 10 * 60 * 1000;
-const MAX_TIMEOUT = 2 ** 31 - 1; // setTimeout לא מקבל יותר מכ-24 יום
+const CHECK_EVERY = 30 * 1000;
+const SAVE_ACTIVITY_EVERY = 15 * 1000;
 const ACTIVITY_EVENTS = ['pointerdown', 'keydown', 'scroll', 'touchstart'];
 
 const useSessionTimeout = (token) => {
@@ -90,18 +96,13 @@ const useSessionTimeout = (token) => {
     const info = token && tokenInfo(token);
     if (!info) return undefined;
 
-    const expireIfDue = () => {
-      if (Date.now() >= info.exp) clearSession();
-    };
-    // הטיימר עשוי להתעכב כשהטלפון ברקע, אז בודקים שוב כשחוזרים לאתר
-    const timer = setTimeout(expireIfDue, Math.min(Math.max(0, info.exp - Date.now()), MAX_TIMEOUT));
-    const onVisible = () => document.visibilityState === 'visible' && expireIfDue();
-    document.addEventListener('visibilitychange', onVisible);
-
+    // הפעילות האחרונה: מה שנשמר במכשיר, אבל לא לפני ההתחברות הנוכחית
+    let lastActivity = Math.max(getLastActivity(), info.issued || 0);
     let renewing = false;
-    const onActivity = () => {
+
+    const renewIfNeeded = () => {
       const left = info.exp - Date.now();
-      if (info.remember || renewing || left <= 0 || left > RENEW_WHEN_LEFT) return;
+      if (info.remember || renewing || !navigator.onLine || left <= 0 || left > RENEW_WHEN_LEFT) return;
       renewing = true;
       api.post('/auth/refresh')
         .then((res) => res.data.token && saveToken(res.data.token))
@@ -110,11 +111,45 @@ const useSessionTimeout = (token) => {
           renewing = false;
         });
     };
+
+    const check = () => {
+      const now = Date.now();
+      if (info.remember) {
+        if (now >= info.exp) clearSession();
+        return;
+      }
+      // 15 דקות בלי שימוש: מתנתקים, גם בלי אינטרנט
+      if (now - lastActivity >= IDLE_LIMIT) {
+        clearSession();
+        return;
+      }
+      // עם חיבור, טוקן שפג כבר לא יעבוד בשרת
+      if (navigator.onLine && now >= info.exp) clearSession();
+    };
+
+    const onActivity = () => {
+      const now = Date.now();
+      if (now - lastActivity > SAVE_ACTIVITY_EVERY) saveLastActivity(now);
+      lastActivity = now;
+      renewIfNeeded();
+    };
+    // חזרה לאתר או חזרת החיבור: בודקים מיד (טיימרים מתעכבים כשהטלפון ברקע), ומחדשים אם צריך
+    const onReturn = () => {
+      if (document.visibilityState !== 'visible') return;
+      check();
+      renewIfNeeded();
+    };
+
+    check();
+    const timer = setInterval(check, CHECK_EVERY);
+    document.addEventListener('visibilitychange', onReturn);
+    window.addEventListener('online', onReturn);
     ACTIVITY_EVENTS.forEach((e) => window.addEventListener(e, onActivity, { passive: true, capture: true }));
 
     return () => {
-      clearTimeout(timer);
-      document.removeEventListener('visibilitychange', onVisible);
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', onReturn);
+      window.removeEventListener('online', onReturn);
       ACTIVITY_EVENTS.forEach((e) => window.removeEventListener(e, onActivity, { capture: true }));
     };
   }, [token]);
