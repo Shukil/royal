@@ -21,6 +21,7 @@ const menuItems = [
 // דפי המנהלים מוצגים בתפריט רק למנהלים (מנהלי האתר ומנהלי המשפחות).
 // השרת קובע מי מנהל, וזה מגיע עם פרטי המשתמש (/auth/me בכל טעינה). השרת גם חוסם את הדפים עצמם
 const ADMIN_ITEMS = [
+  { path: '/admin/announcements', label: 'הודעה לכולם', icon: '📢' },
   { path: '/admin/families', label: 'ניהול משפחות', icon: '👨‍👩‍👧' },
   { path: '/updates', label: 'עדכוני האתר', icon: '🛠️' },
 ];

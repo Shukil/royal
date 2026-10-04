@@ -4,6 +4,7 @@ import Home from './Home';
 import Login from './Login';
 import Sidebar from './Sidebar';
 import OfflineBanner from './OfflineBanner';
+import AnnouncementBanner from './AnnouncementBanner';
 import api from './api';
 import {
   clearSession, getLastActivity, getToken, saveLastActivity, saveToken, saveUser, tokenInfo, useToken, useUser,
@@ -32,6 +33,7 @@ const Tasks = lazy(() => import('./Tasks'));
 const Updates = lazy(() => import('./Updates'));
 const Profile = lazy(() => import('./Profile'));
 const AdminFamilies = lazy(() => import('./AdminFamilies'));
+const AdminAnnouncements = lazy(() => import('./AdminAnnouncements'));
 // החיפוש טוען את תוכן כל הדפים, אז גם הוא נטען רק כשנכנסים אליו
 const Search = lazy(() => import('./Search'));
 
@@ -186,6 +188,7 @@ const AppLayout = () => {
       {/* אזור התוכן הראשי - לוקח בחשבון את רוחב התפריט */}
       <main id="main" tabIndex={-1} className={hideSidebar ? 'app-main app-main--bare' : 'app-main'}>
         <OfflineBanner />
+        {loggedIn && <AnnouncementBanner />}
         <Suspense fallback={<p className="empty" role="status">טוען…</p>}>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -210,6 +213,7 @@ const AppLayout = () => {
             <Route path="/updates" element={<Updates />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/admin/families" element={<AdminFamilies />} />
+            <Route path="/admin/announcements" element={<AdminAnnouncements />} />
             <Route path="/search" element={<Search />} />
           </Routes>
         </Suspense>
