@@ -13,6 +13,7 @@
 @import './styles/odyssey.css'; /* על האודיסי (OdysseyInfo.jsx) */
 @import './styles/itinerary.css'; /* המסלול (Itinerary.jsx) */
 @import './styles/guides.css'; /* מדריכי יעדים (Guides.jsx, DestinationGuide.jsx) */
+@import './styles/port-planning.css'; /* תכנון יום נמל במדריכים (PortPlanning.jsx) */
 @import './styles/personal-checklist.css'; /* צ׳ק ליסט אישי (PersonalChecklist.jsx) */
 @import './styles/photos.css'; /* תמונות וגלריה (Gallery.jsx) */
 @import './styles/home.css'; /* דף הבית: סצנות בגלילה והמסלול (Home.jsx) */

@@ -10,6 +10,8 @@ import TravelWarning from './TravelWarning';
 import Phrasebook from './Phrasebook';
 import { guideLanguage, languages } from './phrases';
 import { tripDays } from './tripDays';
+import { portInfo } from './portInfo';
+import { DriverCard, ShipOrSelf, Tickets, TimeBudget } from './PortPlanning';
 
 const GuideMap = lazy(() => import('./GuideMap'));
 
@@ -18,6 +20,10 @@ const WARNING_COUNTRY = { santorini: 'gr', mykonos: 'gr', kusadasi: 'tr', naples
 
 const toc = [
   { id: 'port', label: 'הנמל' },
+  { id: 'time', label: 'כמה זמן יש' },
+  { id: 'ship-tour', label: 'סיור או לבד' },
+  { id: 'tickets', label: 'כרטיסים ושעות' },
+  { id: 'driver', label: 'כרטיס לנהג' },
   { id: 'about', label: 'על היעד' },
   { id: 'weather', label: 'מזג אוויר' },
   { id: 'photos', label: 'תמונות' },
@@ -36,7 +42,10 @@ const DestinationGuide = () => {
   if (!d) return <Navigate to="/guides" replace />;
 
   const pics = photos[id];
-  const planDate = tripDays.find((t) => t.guide.to === `/guide/${id}` && t.boardBy)?.date;
+  // יום הנמל במסלול: שעת עגינה, All Aboard ויום בשבוע
+  const day = tripDays.find((t) => t.guide.to === `/guide/${id}` && t.boardBy);
+  const planDate = day?.date;
+  const info = portInfo[id];
   const index = guideOrder.indexOf(id);
   const prev = guideOrder[index - 1];
   const next = guideOrder[index + 1];
@@ -72,6 +81,35 @@ const DestinationGuide = () => {
             </ul>
             {pics?.port && <Photo photo={pics.port} className="photo--wide" />}
           </section>
+
+          {info && day && (
+            <section className="section" id="time">
+              <h2 className="section__title">⏰ כמה זמן באמת יש</h2>
+              <TimeBudget timing={info.timing} day={day} />
+            </section>
+          )}
+
+          {info && (
+            <section className="section" id="ship-tour">
+              <h2 className="section__title">🧭 סיור של הספינה או לבד?</h2>
+              <ShipOrSelf ship={info.ship} />
+            </section>
+          )}
+
+          {info && (
+            <section className="section" id="tickets">
+              <h2 className="section__title">🎟️ כרטיסים, מחירים ושעות</h2>
+              <Tickets tickets={info.tickets} day={day} />
+            </section>
+          )}
+
+          {info && (
+            <section className="section" id="driver">
+              <h2 className="section__title">🚕 כרטיס לנהג: חזרה לספינה</h2>
+              <p className="prose">מראים את המסך לנהג המונית. עובד גם בלי אינטרנט.</p>
+              <DriverCard driver={info.driver} day={day} />
+            </section>
+          )}
 
           <section className="section" id="about">
             <h2 className="section__title">על {d.name} בקצרה</h2>
