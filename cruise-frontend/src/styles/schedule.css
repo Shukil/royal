@@ -268,3 +268,65 @@
 .legend__item--any.is-on {
   color: var(--selected-ink);
 }
+
+/* ===== הלו״ז בטלפון =====
+   טבלה של חמש עמודות לא נכנסת במסך צר, אז כל אירוע הופך לכרטיס:
+   שעה וסוג בשורה הראשונה, שם האירוע מתחת, ובתחתית מי יצר ואישור ההגעה */
+@media (max-width: 640px) {
+  .schedule,
+  .schedule tbody,
+  .schedule tr,
+  .schedule th,
+  .schedule td {
+    display: block;
+  }
+  .schedule thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .schedule .schedule__row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 0.35rem 0.75rem;
+    margin-bottom: 0.5rem;
+    padding: 0.8rem 0.9rem;
+    background: var(--ev-soft);
+    border-inline-start: 5px solid var(--ev);
+    border-radius: var(--radius-md);
+  }
+  .schedule__row td,
+  .schedule__row td:first-child,
+  .schedule__row td:last-child {
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: 0;
+  }
+  .schedule__row td:nth-child(1) {
+    grid-area: 1 / 1;
+    text-align: right;
+  }
+  .schedule__row td:nth-child(3) {
+    grid-area: 1 / 2;
+    justify-self: end;
+  }
+  .schedule__row td:nth-child(2) {
+    grid-area: 2 / 1 / 3 / 3;
+  }
+  .schedule__row td:nth-child(4) {
+    grid-area: 3 / 1;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .schedule__row td:nth-child(5) {
+    grid-area: 3 / 2;
+    justify-self: end;
+  }
+  .schedule__rsvp {
+    min-height: 32px;
+  }
+}

@@ -48,3 +48,9 @@
 .announcement__close:focus-visible {
   background: rgba(255, 255, 255, 0.25);
 }
+
+/* ברוחב של הדף, לא של כל המסך */
+.announcements {
+  max-width: 900px;
+  margin-inline: auto;
+}

@@ -343,3 +343,31 @@
   border-inline-start: 0;
   border-inline-end: 1px solid var(--line);
 }
+
+/* שם האונייה בקורל: במצב כהה גוון בהיר יותר, כדי שיישאר קריא על הסרגל הכהה */
+@media (prefers-color-scheme: dark) {
+  .brand__ship {
+    color: #ff9a78;
+  }
+}
+/* שטח לחיצה נוח גם לקישור הקטן */
+.topbar__logout {
+  min-height: 24px;
+  padding-block: 2px;
+}
+.topnav__button,
+.topnav__link,
+.nav__link,
+.topbar__icon,
+.menu-button {
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+/* מסכים בינוניים: פחות רווחים כדי שהסרגל לא יגלוש */
+@media (max-width: 1180px) {
+  .topnav__button {
+    padding-inline: 0.6rem;
+  }
+  .topbar {
+    gap: 0.5rem;
+  }
+}
