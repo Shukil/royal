@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Backpack, ConciergeBell, Landmark, Map as MapIcon } from 'lucide-react';
 import { findCabin } from './cabins';
 import { useUser } from './session';
 import { photos } from './photos';
@@ -179,10 +180,10 @@ const Countdown = () => {
       </section>
 
       <nav className="quick-links" aria-label="קיצורי דרך">
-        <Link to="/cabin-checklist" className="quick-link"><span aria-hidden="true">📋</span>צ'ק ליסט חדר</Link>
-        <Link to="/personal-checklist" className="quick-link"><span aria-hidden="true">🎒</span>מה לארוז</Link>
-        <Link to="/rome-guide" className="quick-link"><span aria-hidden="true">🏛️</span>מדריך לרומא</Link>
-        <Link to="/itinerary" className="quick-link"><span aria-hidden="true">🗺️</span>המסלול שלנו</Link>
+        <Link to="/cabin-checklist" className="quick-link"><ConciergeBell size={22} strokeWidth={1.9} aria-hidden="true" />צ'ק ליסט חדר</Link>
+        <Link to="/personal-checklist" className="quick-link"><Backpack size={22} strokeWidth={1.9} aria-hidden="true" />מה לארוז</Link>
+        <Link to="/rome-guide" className="quick-link"><Landmark size={22} strokeWidth={1.9} aria-hidden="true" />מדריך לרומא</Link>
+        <Link to="/itinerary" className="quick-link"><MapIcon size={22} strokeWidth={1.9} aria-hidden="true" />המסלול שלנו</Link>
       </nav>
     </div>
   );

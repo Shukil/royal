@@ -1,46 +1,51 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import {
+  Backpack, BedDouble, CalendarDays, ClipboardList, Compass, ConciergeBell, FolderOpen, LifeBuoy, ListChecks,
+  Map as MapIcon, Megaphone, Ship, Smartphone, Users, Wrench,
+} from 'lucide-react';
 import RoyalLogo from './RoyalLogo';
 import { clearSession, useUser } from './session';
 import { isStandalone } from './installPrompt';
 
 // הניווט של האתר: סרגל עליון. במחשב הקבוצות נפתחות כתפריטים מהסרגל;
 // בטלפון כפתור התפריט פותח מגירה מהצד עם אותן קבוצות.
-// התפריט מחולק לקבוצות לפי נושא, כדי שיהיה קל למצוא דף בלי לקרוא רשימה ארוכה אחת
+// התפריט מחולק לקבוצות לפי נושא, כדי שיהיה קל למצוא דף בלי לקרוא רשימה ארוכה אחת.
+// האייקונים מצוירים בקו אחיד (lucide), כך שהם נראים אותו דבר בכל מכשיר, בניגוד לאימוג׳י
 const MENU_GROUPS = [
   {
     id: 'trip',
     title: 'הטיול',
     items: [
-      { path: '/schedule', label: 'לו״ז', icon: '📅' },
-      { path: '/plan', label: 'תוכנית הטיול', icon: '📋' },
-      { path: '/tasks', label: 'משימות', icon: '✅' },
-      { path: '/itinerary', label: 'המסלול שלנו', icon: '🗺️' },
-      { path: '/guides', label: 'מדריכי יעדים', icon: '🧭' },
+      { path: '/schedule', label: 'לו״ז', icon: CalendarDays },
+      { path: '/plan', label: 'תוכנית הטיול', icon: ClipboardList },
+      { path: '/tasks', label: 'משימות', icon: ListChecks },
+      { path: '/itinerary', label: 'המסלול שלנו', icon: MapIcon },
+      { path: '/guides', label: 'מדריכי יעדים', icon: Compass },
     ],
   },
   {
     id: 'ship',
     title: 'הספינה והחדר',
     items: [
-      { path: '/odyssey', label: 'על האודיסי', icon: '🚢' },
-      { path: '/cabin', label: 'פרטי חדר', icon: '🛏️' },
-      { path: '/cabin-checklist', label: 'צ\'ק ליסט חדר', icon: '🛎️' },
+      { path: '/odyssey', label: 'על האודיסי', icon: Ship },
+      { path: '/cabin', label: 'פרטי חדר', icon: BedDouble },
+      { path: '/cabin-checklist', label: 'צ\'ק ליסט חדר', icon: ConciergeBell },
     ],
   },
   {
     id: 'mine',
     title: 'שלי',
     items: [
-      { path: '/personal-checklist', label: 'צ\'ק ליסט אישי', icon: '🎒' },
-      { path: '/documents', label: 'המסמכים שלי', icon: '🗂️' },
-      { path: '/emergency', label: 'חירום ומידע חשוב', icon: '🆘' },
+      { path: '/personal-checklist', label: 'צ\'ק ליסט אישי', icon: Backpack },
+      { path: '/documents', label: 'המסמכים שלי', icon: FolderOpen },
+      { path: '/emergency', label: 'חירום ומידע חשוב', icon: LifeBuoy },
     ],
   },
 ];
 
 // דף ההסבר על התקנה כאפליקציה. לא מוצג כשהאתר כבר פתוח כאפליקציה
-const INSTALL_ITEM = { path: '/install', label: 'להתקין כאפליקציה', icon: '📲' };
+const INSTALL_ITEM = { path: '/install', label: 'להתקין כאפליקציה', icon: Smartphone };
 
 // דפי המנהלים מוצגים בתפריט רק למנהלים (מנהלי האתר ומנהלי המשפחות).
 // השרת קובע מי מנהל, וזה מגיע עם פרטי המשתמש (/auth/me בכל טעינה). השרת גם חוסם את הדפים עצמם
@@ -48,9 +53,9 @@ const ADMIN_GROUP = {
   id: 'admin',
   title: 'ניהול',
   items: [
-    { path: '/admin/announcements', label: 'הודעה לכולם', icon: '📢' },
-    { path: '/admin/families', label: 'ניהול משפחות', icon: '👨‍👩‍👧' },
-    { path: '/updates', label: 'עדכוני האתר', icon: '🛠️' },
+    { path: '/admin/announcements', label: 'הודעה לכולם', icon: Megaphone },
+    { path: '/admin/families', label: 'ניהול משפחות', icon: Users },
+    { path: '/updates', label: 'עדכוני האתר', icon: Wrench },
   ],
 };
 
@@ -109,7 +114,7 @@ const Sidebar = () => {
       aria-current={isActivePath(location.pathname, item.path) ? 'page' : undefined}
       onClick={closeAll} // סגירת התפריט אחרי מעבר עמוד
     >
-      <span className="nav__icon" aria-hidden="true">{item.icon}</span>
+      <item.icon className="nav__icon" size={20} strokeWidth={1.9} aria-hidden="true" />
       {item.label}
     </Link>
   );

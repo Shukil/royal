@@ -94,3 +94,9 @@
 .plan-link {
   margin: 0 0 1.25rem;
 }
+
+/* .tasks משמש גם לרשימה בצ׳ק ליסט החדר (checklists.css), ששם הריווח מאופס.
+   בדף המשימות זה גוף הדף, אז מחזירים לו את הריווח */
+.card__body.tasks {
+  padding: clamp(1.25rem, 4vw, 2rem);
+}
