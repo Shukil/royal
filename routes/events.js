@@ -35,9 +35,8 @@ const idList = (value) => [...new Set((Array.isArray(value) ? value : []).map(St
 router.use(auth);
 
 // טוען את המשתמש המחובר לכל בקשה
-router.use(async (req, res, next) => {
-  const me = await User.findById(req.userId).select(NAME_FIELDS).lean();
-  if (!me) return res.status(401).json({ message: 'יש להתחבר' });
+router.use((req, res, next) => {
+  const me = req.user;
   req.me = me;
   req.myFamily = me.family || null;
   next();

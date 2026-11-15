@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const CabinTask = require('../models/CabinTask');
-const User = require('../models/User');
 const auth = require('../middleware/auth');
 const { UNASSIGNED } = require('../utils/cabins');
 const router = express.Router();
@@ -12,9 +11,8 @@ const MAX_NAME = 60;
 // כל נתיבי המשימות דורשים התחברות, וכל משתמש עובד רק מול החדר שלו.
 // החדר והשם נלקחים מהמסד ולא ממה שהדפדפן שולח
 router.use(auth);
-router.use(async (req, res, next) => {
-  const me = await User.findById(req.userId).select('firstName lastName cabinNumber').lean();
-  if (!me) return res.status(401).json({ message: 'יש להתחבר' });
+router.use((req, res, next) => {
+  const me = req.user;
   req.me = { name: `${me.firstName} ${me.lastName}`, cabinNumber: me.cabinNumber || UNASSIGNED };
   next();
 });

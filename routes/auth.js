@@ -129,8 +129,7 @@ router.get('/me', auth, async (req, res) => {
 // טוקן שכבר פג לא מתחדש, וצריך להתחבר מחדש
 router.post('/refresh', auth, async (req, res) => {
   if (req.remember) return res.json({ token: null });
-  const user = await User.findById(req.userId).select('tokenVersion').lean();
-  res.json({ token: signToken(user, false) });
+  res.json({ token: signToken(req.user, false) });
 });
 
 // התנתקות מכל המכשירים (למשל אחרי שטלפון אבד): כל הטוקנים הקיימים מפסיקים לעבוד, כולל "השאר אותי מחובר"

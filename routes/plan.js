@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const PlanItem = require('../models/PlanItem');
-const User = require('../models/User');
 const auth = require('../middleware/auth');
 const { PLAN_DAYS } = require('../utils/trip');
 const router = express.Router();
@@ -30,9 +29,8 @@ const toItem = (i) => ({
 
 router.use(auth);
 
-router.use(async (req, res, next) => {
-  const me = await User.findById(req.userId).select('firstName lastName').lean();
-  if (!me) return res.status(401).json({ message: 'יש להתחבר' });
+router.use((req, res, next) => {
+  const me = req.user;
   req.myName = `${me.firstName} ${me.lastName}`;
   next();
 });

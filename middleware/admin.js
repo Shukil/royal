@@ -1,11 +1,9 @@
-const User = require('../models/User');
 const { isAdminUser, isSiteAdmin } = require('../utils/families');
 
 // אחרי middleware/auth.js: מסמן ב-req.isAdmin אם המשתמש מנהל (מנהל אתר או מנהל משפחה),
 // וב-req.isSiteAdmin אם הוא מנהל אתר (ADMIN_EMAILS), שרק לו מותרות פעולות על כל המשפחות
-const loadAdmin = async (req, res, next) => {
-  const me = await User.findById(req.userId).select('email isAdmin family').lean();
-  if (!me) return res.status(401).json({ message: 'יש להתחבר' });
+const loadAdmin = (req, res, next) => {
+  const me = req.user;
   req.me = me;
   req.isAdmin = isAdminUser(me);
   req.isSiteAdmin = isSiteAdmin(me);

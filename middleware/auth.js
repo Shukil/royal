@@ -16,6 +16,10 @@ const signToken = (user, remember) =>
     expiresIn: remember ? REMEMBER_TTL : SESSION_TTL,
   });
 
+// הפרטים הבסיסיים של המשתמש המחובר נטענים כאן פעם אחת לכל בקשה ונשמרים ב-req.user,
+// כדי שהנתיבים לא יפנו שוב למסד בשביל השם, המשפחה או החדר (בלי סיסמה ובלי הרשימה האישית)
+const USER_FIELDS = 'tokenVersion firstName lastName email family isAdmin cabinNumber';
+
 // מוודא שנשלח טוקן תקין (Authorization: Bearer <token>) ושומר את מזהה המשתמש ב-req.userId
 const auth = async (req, res, next) => {
   const header = req.headers.authorization || '';
@@ -31,10 +35,11 @@ const auth = async (req, res, next) => {
   }
 
   // טוקנים מלפני שנוספה הגרסה (בלי v) נחשבים גרסה 0
-  const user = await User.findById(payload.userId).select('tokenVersion').lean();
+  const user = await User.findById(payload.userId).select(USER_FIELDS).lean();
   if (!user || (payload.v || 0) !== (user.tokenVersion || 0)) return res.status(401).json(EXPIRED);
 
   req.userId = payload.userId;
+  req.user = user;
   // טוקנים מלפני שנוספה האפשרות (בלי r) היו של 30 יום, אז הם נחשבים "השאר אותי מחובר"
   req.remember = payload.r !== false;
   next();

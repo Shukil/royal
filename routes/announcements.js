@@ -35,7 +35,7 @@ router.post('/', requireAdmin, async (req, res) => {
   if (text.length > MAX_TEXT) return res.status(400).json({ message: `ההודעה יכולה להכיל עד ${MAX_TEXT} תווים` });
   if (!HOURS.includes(hours)) return res.status(400).json({ message: 'יש לבחור כמה זמן ההודעה תוצג' });
 
-  const me = await User.findById(req.userId).select('firstName lastName').lean();
+  const me = req.user;
   const name = `${me.firstName} ${me.lastName}`;
   const announcement = await Announcement.create({
     text,

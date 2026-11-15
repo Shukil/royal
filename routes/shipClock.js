@@ -30,8 +30,7 @@ router.put('/:date', async (req, res) => {
     return res.status(400).json({ message: 'הפרש השעות אינו תקין' });
   }
 
-  const me = await User.findById(req.userId).select('firstName lastName').lean();
-  if (!me) return res.status(401).json({ message: 'יש להתחבר' });
+  const me = req.user;
 
   if (shift === 0) {
     await ShipClock.deleteOne({ date });

@@ -28,9 +28,8 @@ const toTask = (t) => ({
 
 router.use(auth);
 
-router.use(async (req, res, next) => {
-  const me = await User.findById(req.userId).select('firstName lastName').lean();
-  if (!me) return res.status(401).json({ message: 'יש להתחבר' });
+router.use((req, res, next) => {
+  const me = req.user;
   req.me = me;
   next();
 });
