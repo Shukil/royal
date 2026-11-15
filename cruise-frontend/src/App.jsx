@@ -6,6 +6,7 @@ import Sidebar from './Sidebar';
 import OfflineBanner from './OfflineBanner';
 import AnnouncementBanner from './AnnouncementBanner';
 import api from './api';
+import { creditOf, pageTheme } from './pageTheme';
 import {
   clearSession, getLastActivity, getToken, saveLastActivity, saveToken, saveUser, tokenInfo, useToken, useUser,
 } from './session';
@@ -170,6 +171,11 @@ const AppLayout = () => {
   useSessionTimeout(token);
   const loggedIn = Boolean(user && token);
   const hideSidebar = AUTH_PATHS.includes(location.pathname);
+  // צבע ותמונה לכותרת הדף, לפי הכתובת (styles/card.css)
+  const theme = pageTheme(location.pathname);
+  const heroStyle = theme.hero
+    ? { '--hero': `url("${theme.hero.src}")`, '--hero-credit': JSON.stringify(creditOf(theme.hero)) }
+    : undefined;
 
   // מי שלא מחובר לא רואה שום דבר באתר חוץ מדפי ההתחברות. אחרי ההתחברות חוזרים לדף שביקשו
   if (!loggedIn && !hideSidebar) {
@@ -187,7 +193,14 @@ const AppLayout = () => {
       {!hideSidebar && <Sidebar />}
 
       {/* אזור התוכן הראשי - לוקח בחשבון את רוחב התפריט */}
-      <main id="main" tabIndex={-1} className={hideSidebar ? 'app-main app-main--bare' : 'app-main'}>
+      <main
+        id="main"
+        tabIndex={-1}
+        className={hideSidebar ? 'app-main app-main--bare' : 'app-main'}
+        data-group={theme.group}
+        data-hero={theme.hero ? '' : undefined}
+        style={heroStyle}
+      >
         <OfflineBanner />
         {loggedIn && <AnnouncementBanner />}
         <Suspense fallback={<p className="empty" role="status">טוען…</p>}>

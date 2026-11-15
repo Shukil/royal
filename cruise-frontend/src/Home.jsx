@@ -40,6 +40,7 @@ const stops = [
     };
   }),
 ];
+const photoOf = Object.fromEntries(stops.map((s) => [s.id, s.photo]));
 
 // כל הסצנות לפי הסדר. לכל סצנה שכבת רקע משלה
 const scenes = [
@@ -56,6 +57,9 @@ const smoothstep = (x) => {
 
 const Home = () => {
   const [active, setActive] = useState('countdown');
+  // תמונות הרקע של היעדים נטענות רק כשמתקרבים אליהן בגלילה (הסצנה הנוכחית והבאה אחריה),
+  // כדי שהכניסה לדף לא תוריד את כולן בבת אחת
+  const [reached, setReached] = useState(0);
   // בימי הטיול (12–22.08) החלק העליון מציג את מסך "היום" במקום הספירה לאחור
   const { now, preview } = useTripClock();
   const today = findTripDay(now);
@@ -76,15 +80,20 @@ const Home = () => {
       const center = window.scrollY + vh / 2;
       const zone = vh * 0.9;
       let current = scenes[0].id;
+      let currentIndex = 0;
       scenes.forEach((s, i) => {
         const node = document.getElementById(`scene-${s.id}`);
         const layer = layers.current[s.id];
         if (!node || !layer) return;
         const top = node.getBoundingClientRect().top + window.scrollY;
-        if (center >= top) current = s.id;
+        if (center >= top) {
+          current = s.id;
+          currentIndex = i;
+        }
         layer.style.opacity = i === 0 ? 1 : smoothstep((center - (top - zone / 2)) / zone);
       });
       setActive(current);
+      setReached((r) => Math.max(r, currentIndex));
     };
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -110,8 +119,11 @@ const Home = () => {
           <div
             key={s.id}
             ref={(node) => { layers.current[s.id] = node; }}
-            className={`home__layer home__layer--${s.id}`}
-            style={{ opacity: i === 0 ? 1 : 0 }}
+            className={`home__layer home__layer--${s.id}${photoOf[s.id] ? ' home__layer--photo' : ''}`}
+            style={{
+              opacity: i === 0 ? 1 : 0,
+              backgroundImage: photoOf[s.id] && i <= reached + 1 ? `url("${photoOf[s.id].src}")` : undefined,
+            }}
           />
         ))}
       </div>
@@ -177,14 +189,6 @@ const Home = () => {
       {stops.map((s, i) => (
         <section key={s.id} id={`scene-${s.id}`} className="scene scene--dest">
           <article className="dest">
-            <figure className="dest__photo">
-              <img src={s.photo.src} alt={s.photo.caption} loading="lazy" decoding="async" crossOrigin="anonymous" />
-              <figcaption>
-                <a href={s.photo.page} target="_blank" rel="noreferrer" dir="ltr">
-                  © {s.photo.credit} · {s.photo.license}
-                </a>
-              </figcaption>
-            </figure>
 
             <div className="dest__body">
               <p className="dest__step">עצירה {i + 1} מתוך {stops.length} · {s.day}</p>
@@ -206,6 +210,10 @@ const Home = () => {
                   <Link to="/itinerary" className="btn btn--outline">🗺️ המסלול המלא</Link>
                 )}
               </div>
+              {/* קרדיט לתמונת הרקע (דרישת הרישיון) */}
+              <a className="dest__credit" href={s.photo.page} target="_blank" rel="noreferrer">
+                © {s.photo.credit} · {s.photo.license}
+              </a>
             </div>
           </article>
         </section>

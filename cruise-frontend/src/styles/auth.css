@@ -60,3 +60,11 @@
   font-size: 0.88rem;
   font-weight: 500;
 }
+
+/* שם האונייה מתחת ללוגו בדפי ההתחברות */
+.auth__brand .brand__ship {
+  display: block;
+  margin-top: 0.5rem;
+  padding: 0;
+  border: 0;
+}

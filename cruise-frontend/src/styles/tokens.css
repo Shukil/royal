@@ -1,40 +1,43 @@
 /* ===== Design tokens =====
-   שלושה צבעים, כולם שטוחים (בלי גרדיאנטים): כחול כהה של הספינה, כחול ים לקישורים ולהדגשות,
-   וצהוב אחד לכפתור הראשי ולסימון הדף הנוכחי. הנראות היא של תוכנית הפלגה מודפסת:
-   קווים דקים במקום צללים, ופינות כמעט ישרות */
+   חופשה ים-תיכונית: הצבעים לקוחים מהיעדים עצמם. כחול קובלט של הכיפות בסנטוריני, טורקיז של מים רדודים,
+   קורל של שקיעה, צהוב של שמש, ורקע בגוון חול בהיר. הכחול הכהה נשאר רק לטקסט ולמעט משטחים כהים */
 :root {
-  --navy-900: #010c1d;
-  --navy-800: #021d49;
-  --navy-600: #053b81;
-  --gold: #ffb500;
-  --gold-hover: #eba300;
-  --gold-soft: #fff5d1;
-  --sea: #1a4fb4;
-  --sea-dark: #123a8a;
-  --sea-soft: #e8eefb;
-  /* הדגשה על הרקע הכחול הכהה (קישורים בתפריט, טבעת פוקוס): צהוב רך */
+  /* כחול ים עמוק: טקסט, ומעט משטחים כהים (כרטיס העלייה לספינה, הודעות) */
+  --navy-900: #0a1e38;
+  --navy-800: #0f2d52;
+  --navy-600: #17508f;
+  --gold: #ffb81c;
+  --gold-hover: #f2a600;
+  --gold-soft: #fff3cf;
+  --sea: #1463c4;
+  --sea-dark: #0e4a96;
+  --sea-soft: #e6f0fb;
+  --aqua: #0f8792;
+  --coral: #cf4a26;
+  --olive: #5d6b2b;
+  /* הדגשה על רקע כהה (קישורים, טבעת פוקוס): צהוב רך */
   --on-navy: #ffd166;
 
-  --paper: #f3f5f8;
+  --paper: #f7f2e8;
   --surface: #ffffff;
-  --ink: #021d49;
-  --muted: #4d5b7c;
-  --line: #d5dbe6;
-  /* כותרות וטקסט מודגש: כחול המותג, ובמצב כהה כמעט לבן */
+  --ink: #16324a;
+  --muted: #5b6b78;
+  --line: #e4dccb;
+  /* כותרות וטקסט מודגש: כחול ים עמוק, ובמצב כהה כמעט לבן */
   --heading: var(--navy-800);
-  /* צבעי טקסט שמתחלפים במצב כהה: טקסט רץ, קישורים, וטקסט מודגש בסגול (תאריכים, שעות).
+  /* צבעי טקסט שמתחלפים במצב כהה: טקסט רץ, קישורים, וטקסט מודגש בכחול (תאריכים, שעות).
      כחול הים (--sea) נשאר לרקעים עם טקסט לבן; על רקע כהה הוא כהה מדי לטקסט */
-  --prose: #2a3a5c;
+  --prose: #2c4257;
   --link: var(--sea);
   --link-hover: var(--sea-dark);
   --accent-text: var(--sea-dark);
-  /* רקע של פריט נבחר (לשונית, מסנן): כחול המותג, ובמצב כהה בהיר עם טקסט כהה */
+  /* רקע של פריט נבחר (לשונית, מסנן): כחול עמוק, ובמצב כהה בהיר עם טקסט כהה */
   --selected-bg: var(--navy-800);
   --selected-ink: #fff;
   --danger-line: #fecdca;
   --success-line: #abefc6;
-  --track: #e4ecf9;
-  --info-bg: #eaf1fb;
+  --track: #ece5d6;
+  --info-bg: #e6f0fb;
 
   --success: #15803d;
   --success-bg: #ecfdf3;
@@ -42,55 +45,64 @@
   --danger: #b42318;
   --danger-bg: #fde8e9;
 
-  /* כותרות: פרנק-ריל, האות של ספרים ועיתונים בעברית. טקסט: Assistant.
-     Barlow Condensed נשאר רק ללוגו ולכרטיס העלייה לספינה (שם האונייה והספרות של הספירה לאחור) */
-  --font-body: 'Assistant', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
-  --font-display: 'Frank Ruhl Libre', 'Times New Roman', serif;
-  --font-ticket: 'Barlow Condensed', 'Assistant', system-ui, sans-serif;
+  /* Rubik לטקסט ולכותרות המשנה. Karantina, אות של שלט צבוע ביד, לכותרות הגדולות, ללוגו ולספירה לאחור */
+  --font-body: 'Rubik', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --font-display: var(--font-body);
+  --font-ticket: 'Karantina', 'Rubik', system-ui, sans-serif;
 
-  --radius-sm: 3px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  /* כפתורים ותגיות: מלבן עם פינה קטנה, לא "גלולה" */
-  --radius-pill: 6px;
-  --shadow: 0 1px 2px rgba(2, 29, 73, 0.05);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+  --shadow: 0 1px 2px rgba(15, 45, 82, 0.06), 0 8px 24px rgba(15, 45, 82, 0.08);
 
-  --sidebar-w: 264px;
-  --topbar-h: 60px;
+  --topbar-h: 64px;
+  --drawer-w: 300px;
   --focus: 0 0 0 2px var(--surface), 0 0 0 4px var(--sea);
+
+  /* הצבע של כותרת הדף, לפי הקבוצה בתפריט (נקבע ב-pageTheme.js) */
+  --group: var(--sea);
+}
+[data-group='ship'] {
+  --group: var(--aqua);
+}
+[data-group='mine'] {
+  --group: var(--coral);
+}
+[data-group='admin'] {
+  --group: var(--olive);
 }
 
 /* ===== מצב כהה =====
-   לפי הגדרת המכשיר (מצב כהה בטלפון או במחשב). הכחול הכהה של המותג נשאר, והרקעים הבהירים
-   מתחלפים בגוונים כהים של אותו כחול */
+   לפי הגדרת המכשיר (מצב כהה בטלפון או במחשב). הרקעים הבהירים מתחלפים בגוונים כהים של כחול ים */
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --paper: #081226;
-    --surface: #0f1c35;
-    --ink: #e6edf8;
-    --muted: #a5b4cf;
-    --line: #26375a;
-    --heading: #f1f6ff;
-    --prose: #c9d4e8;
-    --link: #9dbcff;
-    --link-hover: #c5d7ff;
-    --accent-text: #a9c4ff;
-    --selected-bg: #e6edf8;
-    --selected-ink: #081226;
+    --paper: #0b1824;
+    --surface: #122434;
+    --ink: #e8eef3;
+    --muted: #a3b3c2;
+    --line: #25394b;
+    --heading: #f3f7fa;
+    --prose: #c9d6e2;
+    --link: #8fc0ff;
+    --link-hover: #c0dcff;
+    --accent-text: #9cc8ff;
+    --selected-bg: #e8eef3;
+    --selected-ink: #0b1824;
     --danger-line: #7a2a2f;
     --success-line: #1f5a3a;
-    --track: #26375a;
-    --info-bg: #13274a;
+    --track: #25394b;
+    --info-bg: #14304d;
 
     --gold-soft: #3a2f0d;
-    --sea-soft: #172a52;
+    --sea-soft: #14304d;
     --success: #4ade80;
     --success-bg: #0f2a1d;
     --warn: #fbbf6a;
     --danger: #f87171;
     --danger-bg: #3a1519;
 
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.3);
   }
 }

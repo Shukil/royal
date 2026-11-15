@@ -1,46 +1,46 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import RoyalLogo from './RoyalLogo';
 import { clearSession, useUser } from './session';
 import { isStandalone } from './installPrompt';
 
-// התפריט מחולק לקבוצות לפי נושא, כדי שיהיה קל למצוא דף בלי לקרוא רשימה ארוכה אחת.
-// קבוצה בלי כותרת (title) מוצגת בלי שורת כותרת
+// הניווט של האתר: סרגל עליון. במחשב הקבוצות נפתחות כתפריטים מהסרגל;
+// בטלפון כפתור התפריט פותח מגירה מהצד עם אותן קבוצות.
+// התפריט מחולק לקבוצות לפי נושא, כדי שיהיה קל למצוא דף בלי לקרוא רשימה ארוכה אחת
 const MENU_GROUPS = [
-  {
-    id: 'top',
-    items: [{ path: '/search', label: 'חיפוש' }],
-  },
   {
     id: 'trip',
     title: 'הטיול',
     items: [
-      { path: '/schedule', label: 'לו״ז' },
-      { path: '/plan', label: 'תוכנית הטיול' },
-      { path: '/tasks', label: 'משימות' },
-      { path: '/itinerary', label: 'המסלול שלנו' },
-      { path: '/guides', label: 'מדריכי יעדים' },
+      { path: '/schedule', label: 'לו״ז', icon: '📅' },
+      { path: '/plan', label: 'תוכנית הטיול', icon: '📋' },
+      { path: '/tasks', label: 'משימות', icon: '✅' },
+      { path: '/itinerary', label: 'המסלול שלנו', icon: '🗺️' },
+      { path: '/guides', label: 'מדריכי יעדים', icon: '🧭' },
     ],
   },
   {
     id: 'ship',
     title: 'הספינה והחדר',
     items: [
-      { path: '/odyssey', label: 'על האודיסי' },
-      { path: '/cabin', label: 'פרטי חדר' },
-      { path: '/cabin-checklist', label: 'צ\'ק ליסט חדר' },
+      { path: '/odyssey', label: 'על האודיסי', icon: '🚢' },
+      { path: '/cabin', label: 'פרטי חדר', icon: '🛏️' },
+      { path: '/cabin-checklist', label: 'צ\'ק ליסט חדר', icon: '🛎️' },
     ],
   },
   {
     id: 'mine',
     title: 'שלי',
     items: [
-      { path: '/personal-checklist', label: 'צ\'ק ליסט אישי' },
-      { path: '/documents', label: 'המסמכים שלי' },
-      { path: '/emergency', label: 'חירום ומידע חשוב' },
+      { path: '/personal-checklist', label: 'צ\'ק ליסט אישי', icon: '🎒' },
+      { path: '/documents', label: 'המסמכים שלי', icon: '🗂️' },
+      { path: '/emergency', label: 'חירום ומידע חשוב', icon: '🆘' },
     ],
   },
 ];
+
+// דף ההסבר על התקנה כאפליקציה. לא מוצג כשהאתר כבר פתוח כאפליקציה
+const INSTALL_ITEM = { path: '/install', label: 'להתקין כאפליקציה', icon: '📲' };
 
 // דפי המנהלים מוצגים בתפריט רק למנהלים (מנהלי האתר ומנהלי המשפחות).
 // השרת קובע מי מנהל, וזה מגיע עם פרטי המשתמש (/auth/me בכל טעינה). השרת גם חוסם את הדפים עצמם
@@ -48,114 +48,175 @@ const ADMIN_GROUP = {
   id: 'admin',
   title: 'ניהול',
   items: [
-    { path: '/admin/announcements', label: 'הודעה לכולם' },
-    { path: '/admin/families', label: 'ניהול משפחות' },
-    { path: '/updates', label: 'עדכוני האתר' },
+    { path: '/admin/announcements', label: 'הודעה לכולם', icon: '📢' },
+    { path: '/admin/families', label: 'ניהול משפחות', icon: '👨‍👩‍👧' },
+    { path: '/updates', label: 'עדכוני האתר', icon: '🛠️' },
   ],
 };
 
-const Brand = () => (
-  <Link to="/" className="brand" aria-label="Royal Caribbean · Odyssey of the Seas - דף הבית">
-    <RoyalLogo compact />
-  </Link>
-);
+const isActivePath = (pathname, path) => pathname === path || pathname.startsWith(`${path}/`);
+
+const menuGroups = (isAdmin) => {
+  const groups = isStandalone()
+    ? MENU_GROUPS
+    : MENU_GROUPS.map((g) => (g.id === 'mine' ? { ...g, items: [...g.items, INSTALL_ITEM] } : g));
+  return isAdmin ? [...groups, ADMIN_GROUP] : groups;
+};
 
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false); // המגירה בטלפון
+  const [menu, setMenu] = useState(null); // הקבוצה הפתוחה בסרגל העליון (במחשב)
+  const topnav = useRef(null);
   const user = useUser();
-  const groups = user?.isAdmin ? [...MENU_GROUPS, ADMIN_GROUP] : MENU_GROUPS;
+  const groups = menuGroups(user?.isAdmin);
 
-  // סגירה עם Escape
+  const closeAll = () => {
+    setDrawerOpen(false);
+    setMenu(null);
+  };
+
+  // סגירה עם Escape, ובלחיצה מחוץ לתפריט הפתוח
   useEffect(() => {
-    if (!open) return;
-    const onKey = (e) => e.key === 'Escape' && setOpen(false);
+    if (!drawerOpen && !menu) return undefined;
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      setDrawerOpen(false);
+      setMenu(null);
+    };
+    const onPointer = (e) => {
+      if (!topnav.current?.contains(e.target)) setMenu(null);
+    };
     document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [open]);
+    document.addEventListener('pointerdown', onPointer);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('pointerdown', onPointer);
+    };
+  }, [drawerOpen, menu]);
 
   const handleLogout = () => {
+    closeAll();
     clearSession();
     navigate('/login');
   };
 
+  const pageLink = (item, className) => (
+    <Link
+      to={item.path}
+      className={className}
+      aria-current={isActivePath(location.pathname, item.path) ? 'page' : undefined}
+      onClick={closeAll} // סגירת התפריט אחרי מעבר עמוד
+    >
+      <span className="nav__icon" aria-hidden="true">{item.icon}</span>
+      {item.label}
+    </Link>
+  );
+
   return (
     <>
-      {/* סרגל עליון - מובייל בלבד */}
       <header className="topbar">
-        <Brand />
-        <button
-          type="button"
-          className="menu-button"
-          aria-expanded={open}
-          aria-controls="site-nav"
-          aria-label={open ? 'סגירת תפריט' : 'פתיחת תפריט'}
-          onClick={() => setOpen((o) => !o)}
-        >
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-            {open ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
-          </svg>
-        </button>
-      </header>
-
-      <div className={`scrim${open ? ' is-open' : ''}`} onClick={() => setOpen(false)} aria-hidden="true" />
-
-      <aside id="site-nav" className={`sidebar${open ? ' is-open' : ''}`}>
-        {/* הלוגו הוא הכפתור לספירה לאחור (הדף הראשי) */}
+        {/* הלוגו הוא הכפתור לדף הראשי (הספירה לאחור) */}
         <Link
           to="/"
-          className="brand brand--link"
-          aria-label="ספירה לאחור · דף הבית"
+          className="brand"
+          aria-label="Royal Caribbean · Odyssey of the Seas - דף הבית"
           aria-current={location.pathname === '/' ? 'page' : undefined}
           onClick={() => {
-            setOpen(false);
+            closeAll();
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
         >
-          <RoyalLogo />
+          <RoyalLogo compact />
           <span className="brand__ship">Odyssey of the Seas</span>
-          <span className="brand__date">הפלגה בים התיכון · אוגוסט 2027</span>
         </Link>
 
-        <nav className="sidebar__nav" aria-label="ניווט ראשי">
+        {/* מחשב: הקבוצות בסרגל, כל אחת נפתחת לתפריט */}
+        <nav className="topnav" aria-label="ניווט ראשי" ref={topnav}>
+          {groups.map((group) => {
+            const open = menu === group.id;
+            const current = group.items.some((item) => isActivePath(location.pathname, item.path));
+            return (
+              <div key={group.id} className="topnav__group">
+                <button
+                  type="button"
+                  className={`topnav__button${current ? ' is-current' : ''}`}
+                  aria-expanded={open}
+                  aria-controls={`topnav-${group.id}`}
+                  onClick={() => setMenu(open ? null : group.id)}
+                >
+                  {group.title}
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M2.5 4.5 6 8l3.5-3.5" />
+                  </svg>
+                </button>
+                <ul id={`topnav-${group.id}`} className="topnav__menu" hidden={!open}>
+                  {group.items.map((item) => (
+                    <li key={item.path}>{pageLink(item, 'topnav__link')}</li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </nav>
+
+        <div className="topbar__end">
+          <Link
+            to="/search"
+            className="topbar__icon"
+            aria-label="חיפוש"
+            aria-current={location.pathname === '/search' ? 'page' : undefined}
+            onClick={closeAll}
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.5-3.5" />
+            </svg>
+          </Link>
+          {user && (
+            <div className="topbar__user">
+              <Link
+                to="/profile"
+                className="topbar__name"
+                aria-current={location.pathname === '/profile' ? 'page' : undefined}
+                onClick={closeAll}
+              >
+                {user.name}
+              </Link>
+              <button type="button" className="topbar__logout" onClick={handleLogout}>התנתקות</button>
+            </div>
+          )}
+          <button
+            type="button"
+            className="menu-button"
+            aria-expanded={drawerOpen}
+            aria-controls="site-nav"
+            aria-label={drawerOpen ? 'סגירת תפריט' : 'פתיחת תפריט'}
+            onClick={() => setDrawerOpen((o) => !o)}
+          >
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+              {drawerOpen ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div className={`scrim${drawerOpen ? ' is-open' : ''}`} onClick={() => setDrawerOpen(false)} aria-hidden="true" />
+
+      {/* טלפון: מגירה מהצד עם כל הדפים */}
+      <aside id="site-nav" className={`sidebar${drawerOpen ? ' is-open' : ''}`}>
+        <nav className="sidebar__nav" aria-label="כל הדפים">
           {groups.map((group) => (
-            <div key={group.id} className="nav-group" role="group" aria-labelledby={group.title ? `nav-${group.id}` : undefined}>
-              {group.title && <p id={`nav-${group.id}`} className="nav-group__title">{group.title}</p>}
+            <div key={group.id} className="nav-group" role="group" aria-labelledby={`nav-${group.id}`}>
+              <p id={`nav-${group.id}`} className="nav-group__title">{group.title}</p>
               <ul className="nav">
-                {group.items.map((item) => {
-                  const isActive = location.pathname === item.path || location.pathname.startsWith(`${item.path}/`);
-                  return (
-                    <li key={item.path}>
-                      <Link
-                        to={item.path}
-                        className="nav__link"
-                        aria-current={isActive ? 'page' : undefined}
-                        onClick={() => setOpen(false)} // סגירת התפריט במובייל אחרי מעבר עמוד
-                      >
-                        {item.label}
-                      </Link>
-                    </li>
-                  );
-                })}
+                {group.items.map((item) => (
+                  <li key={item.path}>{pageLink(item, 'nav__link')}</li>
+                ))}
               </ul>
             </div>
           ))}
-
-          {/* כפתור לדף ההסבר על התקנה כאפליקציה. לא מוצג כשהאתר כבר פתוח כאפליקציה */}
-          {!isStandalone() && (
-            <Link
-              to="/install"
-              className="install-link"
-              aria-current={location.pathname === '/install' ? 'page' : undefined}
-              onClick={() => setOpen(false)}
-            >
-              <span>
-                <strong>להתקין כאפליקציה</strong>
-                <small>עובד גם בלי אינטרנט</small>
-              </span>
-            </Link>
-          )}
         </nav>
 
         <div className="sidebar__footer">
@@ -168,7 +229,7 @@ const Sidebar = () => {
                   to="/profile"
                   className="link-button"
                   aria-current={location.pathname === '/profile' ? 'page' : undefined}
-                  onClick={() => setOpen(false)}
+                  onClick={closeAll}
                 >
                   הפרופיל שלי
                 </Link>

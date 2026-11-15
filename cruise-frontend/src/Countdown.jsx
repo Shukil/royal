@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { findCabin } from './cabins';
 import { useUser } from './session';
+import { photos } from './photos';
 
 // כל הזמנים בשעון רומא (CEST, UTC+2), כך שהספירה נכונה מכל מקום
 const cruise = {
@@ -77,7 +78,8 @@ const Countdown = () => {
   return (
     <div>
       <article className="pass" aria-labelledby="pass-title">
-        <div className="pass__main">
+        {/* ברקע: האונייה עצמה (אותה תמונה מופיעה עם קרדיט מלא בהמשך הדף, ב"על האודיסי") */}
+        <div className="pass__main" style={{ '--pass-photo': `url("${photos.ship.hero.src}")` }}>
           <div className="pass__route">
             <span>רומא</span>
             <span className="pass__route-line" aria-hidden="true" />

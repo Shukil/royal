@@ -17,15 +17,17 @@
   opacity: 0;
   transition: opacity 0.18s linear;
   overflow: hidden;
+  background-size: cover;
+  background-position: center;
 }
 .home__layer--countdown {
   background: var(--paper);
 }
 .home__layer--odyssey {
-  background: #021d49;
+  background: var(--navy-800);
 }
 .home__layer--guides {
-  background: #0b3566;
+  background: var(--sea);
 }
 /* צבע לכל יעד: טרקוטה לרומא, כחול אגאי לסנטוריני, אדום טורקי לקושאדסי,
    טורקיז למיקונוס ושקיעה מעל הוזוב לנאפולי */
@@ -45,13 +47,21 @@
   background: #5f2a52;
 }
 
+/* שכבה עם תמונה: הכהיה אחידה כדי שהכרטיס והנקודות ייראו טוב מעל כל תמונה */
+.home__layer--photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 30, 56, 0.32);
+}
+
 .scene {
   position: relative;
   z-index: 1;
   padding-block: clamp(2.5rem, 7vh, 5rem);
 }
 .scene--countdown {
-  min-height: calc(100vh - 2 * clamp(1rem, 4vw, 3rem));
+  min-height: calc(100vh - var(--topbar-h) - 2 * clamp(1rem, 4vw, 3rem));
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -71,11 +81,12 @@
 }
 .scene__title {
   margin-top: 0.75rem;
-  font-size: clamp(2.4rem, 8vw, 4.75rem);
-  font-weight: 900;
+  font-size: clamp(3.5rem, 12vw, 7rem);
+  font-weight: 700;
   text-transform: none;
   letter-spacing: 0;
-  line-height: 1.05;
+  line-height: 0.9;
+  font-family: var(--font-ticket);
 }
 
 .scroll-hint {
@@ -159,6 +170,9 @@
 .scene--guides .card__header {
   display: none;
 }
+.scene--odyssey .card__body {
+  margin: 0;
+}
 
 /* ===== Home: the route, one destination at a time ===== */
 html.home-snap {
@@ -229,38 +243,11 @@ html.home-snap {
 }
 .dest {
   width: 100%;
-  max-width: 980px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  max-width: 520px;
+  margin-inline: clamp(0rem, 6vw, 5rem) auto;
   background: var(--surface);
   border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: none;
-}
-.dest__photo {
-  margin: 0;
-  position: relative;
-  min-height: 100%;
-}
-.dest__photo img {
-  width: 100%;
-  height: 100%;
-  min-height: 320px;
-  object-fit: cover;
-}
-.dest__photo figcaption {
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  padding: 0.4rem 0.75rem;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.55));
-  text-align: end;
-}
-.dest__photo figcaption a {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 0.72rem;
-  text-decoration: none;
+  box-shadow: 0 16px 40px rgba(10, 30, 56, 0.3);
 }
 .dest__body {
   padding: clamp(1.5rem, 4vw, 2.5rem);
@@ -274,9 +261,11 @@ html.home-snap {
   font-weight: 700;
 }
 .dest__title {
-  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-size: clamp(3.25rem, 9vw, 4.75rem);
   color: var(--heading);
-  font-weight: 900;
+  font-weight: 700;
+  font-family: var(--font-ticket);
+  line-height: 0.9;
 }
 .dest__lead {
   color: var(--prose);
@@ -319,13 +308,23 @@ html.home-snap {
   background: var(--selected-bg);
   color: var(--selected-ink);
 }
+.dest__credit {
+  align-self: flex-end;
+  direction: ltr;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-decoration: none;
+}
+.dest__credit:hover {
+  text-decoration: underline;
+}
+/* בטלפון הכרטיס יושב בתחתית המסך, כדי שהתמונה תיראה מעליו */
 @media (max-width: 760px) {
-  .dest {
-    grid-template-columns: 1fr;
+  .scene--dest {
+    align-items: flex-end;
   }
-  .dest__photo img {
-    min-height: 0;
-    aspect-ratio: 16 / 10;
+  .dest {
+    margin-inline: auto;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -335,4 +334,11 @@ html.home-snap {
   .home__layer {
     transition: none;
   }
+}
+
+/* אחרי כללי הצבע של כל שכבה (שמאפסים את שאר מאפייני הרקע): התמונה ממלאת את המסך */
+.home__layer--photo {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }

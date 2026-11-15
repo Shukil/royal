@@ -1,59 +1,62 @@
-/* ===== App shell ===== */
+/* ===== App shell =====
+   סרגל עליון קבוע בכל הדפים (Sidebar.jsx). במחשב התפריטים נפתחים מהסרגל, ובטלפון מגירה מהצד */
 .app-main {
   min-height: 100vh;
-  margin-inline-start: var(--sidebar-w);
-  padding: clamp(1rem, 4vw, 3rem);
+  padding: calc(var(--topbar-h) + clamp(1rem, 3vw, 2rem)) clamp(1rem, 4vw, 3rem) clamp(1.5rem, 4vw, 3rem);
 }
 .app-main--bare {
-  margin-inline-start: 0;
+  padding-top: clamp(1rem, 4vw, 3rem);
   display: grid;
   place-items: center;
 }
 
 .offline-banner {
   position: sticky;
-  top: 0;
+  top: calc(var(--topbar-h) + 0.5rem);
   z-index: 20;
-  margin: 0 0 1rem;
+  max-width: 900px;
+  margin: 0 auto 1rem;
   padding: 0.6rem 1rem;
   border-radius: var(--radius-md);
   background: var(--gold-soft);
   color: var(--heading);
   font-size: 0.92rem;
   font-weight: 500;
-  box-shadow: none;
   border: 1px solid var(--line);
 }
 
-/* Sidebar (desktop: fixed, mobile: drawer) */
-.sidebar {
+/* ===== הסרגל העליון ===== */
+.topbar {
   position: fixed;
-  inset-block: 0;
-  inset-inline-start: 0;
-  width: var(--sidebar-w);
-  background: var(--navy-800);
-  color: #fff;
+  inset-inline: 0;
+  top: 0;
+  z-index: 150;
+  height: var(--topbar-h);
   display: flex;
-  flex-direction: column;
-  padding: 1.75rem 1rem 1.25rem;
-  z-index: 200;
-  overflow-y: auto;
+  align-items: center;
+  gap: clamp(0.75rem, 2vw, 2rem);
+  padding: 0 clamp(0.75rem, 3vw, 2rem);
+  background: var(--surface);
+  color: var(--heading);
+  border-bottom: 1px solid var(--line);
 }
 
 .brand {
-  display: block;
-  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  color: var(--heading);
   text-decoration: none;
-  padding: 0 0.75rem 1.5rem;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   direction: ltr;
-  text-align: right;
+  border-radius: var(--radius-sm);
+}
+.brand:hover {
+  color: var(--sea);
 }
 .royal-logo {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.5rem;
   color: inherit;
 }
 .royal-logo__mark {
@@ -67,160 +70,215 @@
   font-family: var(--font-ticket);
   font-weight: 700;
   text-transform: uppercase;
-  line-height: 0.95;
+  line-height: 0.9;
   letter-spacing: 0.08em;
   text-align: left;
 }
 .royal-logo__word {
-  font-size: 1.15rem;
+  font-size: 1.3rem;
 }
 .royal-logo--compact .royal-logo__mark {
-  width: 2rem;
-  height: 2rem;
+  width: 2.1rem;
+  height: 2.1rem;
 }
 .royal-logo--compact .royal-logo__word {
-  font-size: 0.9rem;
+  font-size: 1.05rem;
 }
+/* שם האונייה ליד הלוגו, מופרד בקו */
 .brand__ship {
-  display: block;
-  margin-top: 0.85rem;
+  padding-inline-start: 0.9rem;
+  border-inline-start: 1px solid var(--line);
   font-family: var(--font-ticket);
   font-weight: 700;
-  font-size: 1.35rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--gold);
-}
-.brand__date {
-  display: block;
-  direction: rtl;
-  color: #adbdd6;
-  font-size: 0.875rem;
-  margin-top: 0.6rem;
+  font-size: 1.5rem;
+  letter-spacing: 0.03em;
+  color: var(--coral);
+  white-space: nowrap;
 }
 
-.nav {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+/* הקבוצות בסרגל (מחשב) */
+.topnav {
   display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
+  align-items: center;
+  gap: 0.25rem;
+  margin-inline-start: auto;
 }
+.topnav__group {
+  position: relative;
+}
+.topnav__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  padding: 0.4rem 0.9rem;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--heading);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+.topnav__button:hover,
+.topnav__button[aria-expanded='true'] {
+  background: var(--sea-soft);
+}
+/* הקבוצה שהדף הנוכחי שייך אליה */
+.topnav__button.is-current {
+  font-weight: 700;
+  box-shadow: inset 0 -3px 0 var(--gold);
+  border-radius: var(--radius-sm);
+}
+.topnav__button svg {
+  transition: transform 0.15s ease;
+}
+.topnav__button[aria-expanded='true'] svg {
+  transform: rotate(180deg);
+}
+.topnav__menu {
+  position: absolute;
+  top: calc(100% + 0.6rem);
+  inset-inline-start: 0;
+  min-width: 230px;
+  margin: 0;
+  padding: 0.4rem;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+}
+.topnav__link,
 .nav__link {
   display: flex;
   align-items: center;
-  min-height: 42px;
-  padding: 0.4rem 0.9rem;
-  color: #dbe4f3;
+  gap: 0.7rem;
+  min-height: 44px;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-sm);
+  color: var(--ink);
   text-decoration: none;
-  border-inline-start: 3px solid transparent;
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  font-size: 1.05rem;
-  transition: background-color 0.15s ease;
 }
+.topnav__link:hover,
 .nav__link:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: var(--sea-soft);
+  color: var(--ink);
 }
+.topnav__link[aria-current='page'],
 .nav__link[aria-current='page'] {
-  background: rgba(255, 255, 255, 0.08);
-  border-inline-start-color: var(--gold);
-  color: #fff;
+  background: var(--gold-soft);
+  color: var(--heading);
   font-weight: 700;
 }
-.nav__link:focus-visible {
-  box-shadow: 0 0 0 3px var(--on-navy);
+.nav__icon {
+  width: 1.5rem;
+  font-size: 1.15rem;
+  text-align: center;
 }
 
-.sidebar__footer {
-  margin-top: auto;
-  padding: 1rem 0.75rem 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  font-size: 0.9rem;
-  color: #adbdd6;
-}
-.sidebar__footer strong {
-  color: #fff;
-  display: block;
-}
-.sidebar__actions {
+/* חיפוש, שם המשתמש והתנתקות */
+.topbar__end {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0 1.25rem;
+  align-items: center;
+  gap: 0.5rem;
 }
+.topbar__icon,
+.menu-button {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--heading);
+  cursor: pointer;
+}
+.topbar__icon:hover,
+.topbar__icon[aria-current='page'],
+.menu-button:hover {
+  background: var(--sea-soft);
+  color: var(--heading);
+}
+.topbar__user {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-inline-start: 0.9rem;
+  border-inline-start: 1px solid var(--line);
+  line-height: 1.25;
+}
+.topbar__name {
+  color: var(--heading);
+  font-weight: 700;
+  text-decoration: none;
+}
+.topbar__name:hover,
+.topbar__name[aria-current='page'] {
+  color: var(--link);
+  text-decoration: underline;
+}
+.topbar__logout {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.topbar__logout:hover {
+  color: var(--danger);
+  text-decoration: underline;
+}
+.menu-button {
+  display: none;
+}
+
 .link-button {
   background: none;
   border: 0;
   padding: 0.35rem 0;
   font: inherit;
-  color: var(--on-navy);
+  color: var(--link);
   text-decoration: underline;
   text-underline-offset: 3px;
   cursor: pointer;
 }
 
-/* Mobile top bar */
-.topbar {
-  display: none;
-}
+/* ===== המגירה (טלפון) ===== */
+.sidebar,
 .scrim {
   display: none;
 }
 
-@media (max-width: 900px) {
-  .app-main {
-    margin-inline-start: 0;
-    padding-top: calc(var(--topbar-h) + 1rem);
+@media (max-width: 960px) {
+  .topnav,
+  .topbar__user {
+    display: none;
   }
-  .app-main--bare {
-    padding-top: 1rem;
+  .topbar__end {
+    margin-inline-start: auto;
   }
-  .offline-banner {
-    top: calc(var(--topbar-h) + 0.5rem);
-  }
-
-  .topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: fixed;
-    inset-inline: 0;
-    top: 0;
-    height: var(--topbar-h);
-    padding: 0 0.75rem 0 1rem;
-    background: var(--navy-800);
-    color: #fff;
-    z-index: 150;
-    box-shadow: 0 2px 10px rgba(2, 29, 73, 0.25);
-  }
-  .topbar .brand {
-    border: 0;
-    margin: 0;
-    padding: 0;
-  }
-
   .menu-button {
-    width: 48px;
-    height: 48px;
     display: grid;
-    place-items: center;
-    background: transparent;
-    border: 0;
-    color: #fff;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-  }
-  .menu-button:focus-visible {
-    box-shadow: 0 0 0 3px var(--on-navy);
   }
 
   .sidebar {
+    position: fixed;
+    inset-block: var(--topbar-h) 0;
+    inset-inline-start: 0;
+    z-index: 140;
+    width: min(88vw, var(--drawer-w));
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0.75rem;
+    background: var(--surface);
+    border-inline-end: 1px solid var(--line);
     transform: translateX(100%);
     visibility: hidden;
-    transition: transform 0.25s ease, visibility 0.25s;
-    box-shadow: -8px 0 30px rgba(2, 29, 73, 0.35);
-    width: min(85vw, var(--sidebar-w));
+    transition: transform 0.22s ease, visibility 0.22s;
   }
   .sidebar.is-open {
     transform: none;
@@ -229,47 +287,59 @@
   .scrim.is-open {
     display: block;
     position: fixed;
-    inset: 0;
-    background: rgba(2, 29, 73, 0.55);
-    z-index: 190;
+    inset: var(--topbar-h) 0 0;
+    z-index: 130;
+    background: rgba(10, 30, 56, 0.45);
   }
-}
-
-/* ===== קבוצות בתפריט =====
-   כותרת קטנה לכל קבוצת דפים. בין קבוצות יש רווח, בלי קווים */
-.nav-group + .nav-group {
-  margin-top: 0.9rem;
-}
-.nav-group__title {
-  padding: 0 0.9rem 0.3rem calc(0.9rem + 3px);
-  color: #8fa3c4;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-/* כשהמסך גבוה מספיק, רק רשימת הדפים נגללת: הלוגו למעלה והפרופיל וההתנתקות למטה נשארים במקום,
-   כך שלא צריך לגלול עד הסוף כדי להתנתק. במסך נמוך (טלפון שוכב) כל התפריט נגלל כמו קודם */
-@media (min-height: 620px) {
-  .sidebar {
-    overflow: hidden;
-  }
+  /* רק רשימת הדפים נגללת; הפרופיל וההתנתקות נשארים בתחתית */
   .sidebar__nav {
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
     overscroll-behavior: contain;
-    margin-inline: -0.5rem;
-    padding: 0.25rem 0.5rem 1rem;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
   }
-  .sidebar .brand {
-    margin-bottom: 0.75rem;
+  .nav {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nav-group + .nav-group {
+    margin-top: 0.9rem;
+  }
+  .nav-group__title {
+    padding: 0 0.8rem 0.25rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  .sidebar__footer {
+    padding: 0.9rem 0.8rem 0;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  .sidebar__footer strong {
+    display: block;
+    color: var(--heading);
+  }
+  .sidebar__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.25rem;
+  }
+}
+@media (max-width: 520px) {
+  .brand__ship {
+    display: none;
   }
 }
 
-/* כפתור ההתקנה הוא חלק מרשימת הדפים הנגללת (Sidebar.jsx) */
-.sidebar__nav .install-link {
-  margin-top: 1rem;
-  margin-bottom: 0;
+/* הלוגו בקצה הימני של הסרגל, ושם האונייה משמאלו */
+.brand {
+  flex-direction: row-reverse;
+}
+.brand__ship {
+  padding-inline: 0 0.9rem;
+  border-inline-start: 0;
+  border-inline-end: 1px solid var(--line);
 }

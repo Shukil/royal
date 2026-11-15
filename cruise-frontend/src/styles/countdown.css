@@ -4,15 +4,15 @@
   margin: 0 auto;
   background: var(--surface);
   border-radius: var(--radius-lg);
-  box-shadow: none;
+  box-shadow: var(--shadow);
   display: grid;
   grid-template-columns: 1fr auto;
   overflow: hidden;
-  border: 1px solid var(--line);
+  border: 0;
 }
 .pass__main {
   padding: clamp(1.5rem, 5vw, 3rem);
-  background: var(--navy-800);
+  background: linear-gradient(rgba(10, 30, 56, 0.74), rgba(10, 30, 56, 0.74)), var(--pass-photo, none) center / cover no-repeat, var(--navy-800);
   color: #fff;
 }
 .pass__route {
@@ -28,15 +28,16 @@
   max-width: 160px;
 }
 .pass__title {
-  font-size: clamp(2.2rem, 7vw, 3.8rem);
+  font-size: clamp(3.2rem, 11vw, 6rem);
   font-weight: 700;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
-  margin: 0.75rem 0 0.25rem;
+  margin: 0.75rem 0 0.4rem;
   direction: ltr;
   text-align: right;
   font-family: var(--font-ticket);
   color: var(--gold);
+  line-height: 0.9;
 }
 .pass__subtitle {
   color: #fff;
@@ -62,9 +63,9 @@
 .timer__value {
   display: block;
   font-family: var(--font-ticket);
-  font-size: clamp(2.2rem, 7.5vw, 4rem);
+  font-size: clamp(3rem, 10vw, 5.25rem);
   font-weight: 700;
-  line-height: 1;
+  line-height: 0.9;
   font-variant-numeric: tabular-nums;
 }
 .timer__unit:first-child {
@@ -173,10 +174,11 @@
 .flight {
   background: var(--surface);
   color: var(--ink);
-  border: 1px solid var(--line);
-  border-inline-start: 4px solid var(--sea);
+  border: 0;
+  border-inline-start: 5px solid var(--sea);
   border-radius: var(--radius-lg);
   padding: 1.25rem;
+  box-shadow: var(--shadow);
 }
 .flight--mine {
   border-inline-start-color: var(--gold);
@@ -232,7 +234,7 @@
   border-inline-start-color: var(--line);
 }
 .timer--small .timer__value {
-  font-size: clamp(1.4rem, 5vw, 2rem);
+  font-size: clamp(2rem, 7vw, 2.75rem);
 }
 .timer--small .timer__label {
   font-size: 0.85rem;
@@ -264,5 +266,18 @@
 }
 .quick-link span[aria-hidden] {
   font-size: 1.4rem;
-  display: none;
+}
+
+/* הספרות של הספירה לאחור ב-Rubik: ב-Karantina הספרות קשות לקריאה בגודל הזה */
+.timer__value {
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: clamp(2.4rem, 8vw, 4.25rem);
+  line-height: 1;
+}
+.timer--small .timer__value {
+  font-size: clamp(1.6rem, 5.5vw, 2.25rem);
+}
+.pass__title {
+  font-size: clamp(2.8rem, 8.5vw, 4.5rem);
 }
