@@ -256,7 +256,7 @@ const Today = ({ day, next, now, preview }) => {
       {getToken() && <TodayTasks day={day} preview={preview} />}
 
       <section className="today__section" aria-labelledby="today-events">
-        <h2 id="today-events" className="today__subtitle">📅 מה בלו״ז היום</h2>
+        <h2 id="today-events" className="today__subtitle">מה בלו״ז היום</h2>
         {evStatus === 'guest' && <p className="today__empty"><Link to="/login">התחבר</Link> כדי לראות את האירועים של היום.</p>}
         {evStatus === 'loading' && <p className="today__empty">טוען…</p>}
         {evStatus === 'error' && <p className="today__empty">לא הצלחנו לטעון את הלו״ז כרגע.</p>}

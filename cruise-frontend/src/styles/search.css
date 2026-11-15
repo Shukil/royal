@@ -30,7 +30,7 @@
   text-decoration: none;
 }
 .search-result:hover {
-  border-color: var(--purple);
+  border-color: var(--sea);
 }
 .search-result:focus-visible {
   box-shadow: var(--focus);

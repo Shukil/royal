@@ -89,7 +89,7 @@ const OdysseyInfo = () => (
   <div className="page">
     <article className="card">
       <header className="card__header">
-        <h1 className="card__title">על האודיסי 🚢</h1>
+        <h1 className="card__title">על האודיסי</h1>
         <p className="card__lead">Odyssey of the Seas · Royal Caribbean</p>
       </header>
 
@@ -148,7 +148,7 @@ const OdysseyInfo = () => (
         </section>
 
         <section className="section" id="dining">
-          <h2 className="section__title">מסעדות 🍽️</h2>
+          <h2 className="section__title">מסעדות</h2>
           <h3 className="subhead">כלולות במחיר</h3>
           <Spots items={includedDining} />
           <h3 className="subhead">מסעדות מיוחדות (בתשלום נוסף)</h3>
@@ -160,13 +160,13 @@ const OdysseyInfo = () => (
         </section>
 
         <section className="section" id="bars">
-          <h2 className="section__title">ברים ולאונג׳ים 🍹</h2>
+          <h2 className="section__title">ברים ולאונג׳ים</h2>
           <p className="prose">יש בספינה 14 ברים, כולל שלושה ברים על סיפון הבריכה. כמה מהבולטים:</p>
           <Spots items={bars} />
         </section>
 
         <section className="section" id="attractions">
-          <h2 className="section__title">אטרקציות 🎢</h2>
+          <h2 className="section__title">אטרקציות</h2>
           <div className="routes">
             {attractions.map((a) => (
               <div key={a.title} className="route">
@@ -179,7 +179,7 @@ const OdysseyInfo = () => (
         </section>
 
         <section className="section" id="shows">
-          <h2 className="section__title">מופעים ובידור 🎭</h2>
+          <h2 className="section__title">מופעים ובידור</h2>
           <Spots items={shows} />
           <Gallery photos={photos.ship.shows} featured={false} />
         </section>

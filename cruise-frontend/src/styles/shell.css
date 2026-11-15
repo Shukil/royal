@@ -21,7 +21,8 @@
   color: var(--heading);
   font-size: 0.92rem;
   font-weight: 500;
-  box-shadow: var(--shadow);
+  box-shadow: none;
+  border: 1px solid var(--line);
 }
 
 /* Sidebar (desktop: fixed, mobile: drawer) */
@@ -63,7 +64,7 @@
 .royal-logo__text {
   display: flex;
   flex-direction: column;
-  font-family: var(--font-display);
+  font-family: var(--font-ticket);
   font-weight: 700;
   text-transform: uppercase;
   line-height: 0.95;
@@ -83,15 +84,12 @@
 .brand__ship {
   display: block;
   margin-top: 0.85rem;
-  font-family: var(--font-display);
+  font-family: var(--font-ticket);
   font-weight: 700;
   font-size: 1.35rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  background: var(--promo-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--gold);
 }
 .brand__date {
   display: block;
@@ -112,13 +110,13 @@
 .nav__link {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  min-height: 44px;
-  padding: 0.45rem 0.9rem;
-  color: #e4ecf9;
+  min-height: 42px;
+  padding: 0.4rem 0.9rem;
+  color: #dbe4f3;
   text-decoration: none;
-  border-radius: var(--radius-pill);
-  font-size: 1rem;
+  border-inline-start: 3px solid transparent;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 1.05rem;
   transition: background-color 0.15s ease;
 }
 .nav__link:hover {
@@ -126,17 +124,13 @@
   color: #fff;
 }
 .nav__link[aria-current='page'] {
-  background: var(--promo-gradient);
+  background: rgba(255, 255, 255, 0.08);
+  border-inline-start-color: var(--gold);
   color: #fff;
   font-weight: 700;
 }
 .nav__link:focus-visible {
-  box-shadow: 0 0 0 3px var(--cyan);
-}
-.nav__icon {
-  font-size: 1.25rem;
-  width: 1.5rem;
-  text-align: center;
+  box-shadow: 0 0 0 3px var(--on-navy);
 }
 
 .sidebar__footer {
@@ -160,7 +154,7 @@
   border: 0;
   padding: 0.35rem 0;
   font: inherit;
-  color: var(--cyan);
+  color: var(--on-navy);
   text-decoration: underline;
   text-underline-offset: 3px;
   cursor: pointer;
@@ -218,7 +212,7 @@
     cursor: pointer;
   }
   .menu-button:focus-visible {
-    box-shadow: 0 0 0 3px var(--cyan);
+    box-shadow: 0 0 0 3px var(--on-navy);
   }
 
   .sidebar {
@@ -247,9 +241,9 @@
   margin-top: 0.9rem;
 }
 .nav-group__title {
-  padding: 0 0.9rem 0.3rem;
+  padding: 0 0.9rem 0.3rem calc(0.9rem + 3px);
   color: #8fa3c4;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 500;
 }
 

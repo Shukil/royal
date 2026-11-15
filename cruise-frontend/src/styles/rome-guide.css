@@ -2,22 +2,20 @@
 .toc {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.4rem 1.25rem;
   margin-bottom: 2rem;
 }
-/* צ׳יפים סגולים כמו "Top Destinations" בבאנר של Royal Caribbean */
+/* קישורי טקסט עם קו תחתון, כמו תוכן עניינים מודפס */
 .toc__link {
-  padding: 0.35rem 0.95rem;
-  background: var(--purple);
-  border-radius: var(--radius-pill);
-  color: #fff;
-  font-size: 0.9rem;
+  padding: 0.2rem 0;
+  border-bottom: 2px solid var(--line);
+  color: var(--link);
   font-weight: 700;
   text-decoration: none;
 }
 .toc__link:hover {
-  background: var(--purple-dark);
-  color: #fff;
+  border-bottom-color: currentColor;
+  color: var(--link-hover);
 }
 .toc__link:focus-visible {
   outline: none;

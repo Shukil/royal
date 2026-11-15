@@ -10,7 +10,7 @@ const Guides = () => (
   <div className="page">
     <article className="card">
       <header className="card__header">
-        <h1 className="card__title">מדריכי היעדים 🧭</h1>
+        <h1 className="card__title">מדריכי היעדים</h1>
         <p className="card__lead">מדריך מלא לכל עצירה במסלול, כולל מידע על הנמל</p>
       </header>
 

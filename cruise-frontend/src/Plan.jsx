@@ -146,7 +146,7 @@ const Plan = () => {
     <div className="page page--wide">
       <article className="card">
         <header className="card__header">
-          <h1 className="card__title">תוכנית הטיול 📋</h1>
+          <h1 className="card__title">תוכנית הטיול</h1>
           <p className="card__lead">מה עושים בכל יום, מי מצטרף ומה כבר הוזמן. התוכנית משותפת לכל המשפחות, והיא נבדקת מול שעות הספינה.</p>
         </header>
 

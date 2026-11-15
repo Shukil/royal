@@ -69,7 +69,7 @@ const AdminAnnouncements = () => {
     <div className="page">
       <article className="card">
         <header className="card__header">
-          <h1 className="card__title">הודעה לכולם 📢</h1>
+          <h1 className="card__title">הודעה לכולם</h1>
           <p className="card__lead">
             ההודעה מופיעה בראש האתר אצל כל המשתתפים, ונשלחת כהתראה לטלפון למי שהפעיל התראות.
           </p>

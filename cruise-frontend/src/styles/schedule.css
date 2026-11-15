@@ -1,14 +1,14 @@
 /* ===== Schedule (לו״ז) =====
    צבע לכל סוג אירוע: סגול = לכולם, כתום = משפחתי, טורקיז = אישי, מג׳נטה = בהתאמה אישית */
-.event--all { --ev: #8833ff; --ev-soft: #f1e8ff; --ev-text: #5b16c9; }
-.event--family { --ev: #ff6900; --ev-soft: #fff0e5; --ev-text: #b34700; }
+.event--all { --ev: #1a4fb4; --ev-soft: #e8eefb; --ev-text: #123a8a; }
+.event--family { --ev: #c8590c; --ev-soft: #fbeee2; --ev-text: #8f3f06; }
 .event--personal { --ev: #007291; --ev-soft: #e0f4f8; --ev-text: #005a72; }
-.event--custom { --ev: #ff0db2; --ev-soft: #ffe6f6; --ev-text: #b8007f; }
+.event--custom { --ev: #a8265f; --ev-soft: #f9e8f0; --ev-text: #861a4a; }
 @media (prefers-color-scheme: dark) {
-  .event--all { --ev-soft: #24174a; --ev-text: #c9a8ff; }
+  .event--all { --ev-soft: #172a52; --ev-text: #a9c4ff; }
   .event--family { --ev-soft: #3a1d08; --ev-text: #ffb27a; }
   .event--personal { --ev-soft: #08303a; --ev-text: #6fd3ec; }
-  .event--custom { --ev-soft: #3a0b2c; --ev-text: #ff8ad6; }
+  .event--custom { --ev-soft: #3a1026; --ev-text: #f2a3c8; }
 }
 
 .page--wide {
@@ -138,11 +138,11 @@
   cursor: pointer;
 }
 .invitee:has(input:checked) {
-  border-color: #ff0db2;
-  background: var(--pink-soft);
+  border-color: var(--sea);
+  background: var(--sea-soft);
 }
 .invitee input {
-  accent-color: #ff0db2;
+  accent-color: var(--sea);
 }
 .invitee__family {
   margin-inline-start: auto;

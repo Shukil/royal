@@ -9,35 +9,35 @@ import { isStandalone } from './installPrompt';
 const MENU_GROUPS = [
   {
     id: 'top',
-    items: [{ path: '/search', label: 'חיפוש', icon: '🔍' }],
+    items: [{ path: '/search', label: 'חיפוש' }],
   },
   {
     id: 'trip',
     title: 'הטיול',
     items: [
-      { path: '/schedule', label: 'לו״ז', icon: '📅' },
-      { path: '/plan', label: 'תוכנית הטיול', icon: '📋' },
-      { path: '/tasks', label: 'משימות', icon: '✅' },
-      { path: '/itinerary', label: 'המסלול שלנו', icon: '🗺️' },
-      { path: '/guides', label: 'מדריכי יעדים', icon: '🧭' },
+      { path: '/schedule', label: 'לו״ז' },
+      { path: '/plan', label: 'תוכנית הטיול' },
+      { path: '/tasks', label: 'משימות' },
+      { path: '/itinerary', label: 'המסלול שלנו' },
+      { path: '/guides', label: 'מדריכי יעדים' },
     ],
   },
   {
     id: 'ship',
     title: 'הספינה והחדר',
     items: [
-      { path: '/odyssey', label: 'על האודיסי', icon: '🚢' },
-      { path: '/cabin', label: 'פרטי חדר', icon: '🛏️' },
-      { path: '/cabin-checklist', label: 'צ\'ק ליסט חדר', icon: '🛎️' },
+      { path: '/odyssey', label: 'על האודיסי' },
+      { path: '/cabin', label: 'פרטי חדר' },
+      { path: '/cabin-checklist', label: 'צ\'ק ליסט חדר' },
     ],
   },
   {
     id: 'mine',
     title: 'שלי',
     items: [
-      { path: '/personal-checklist', label: 'צ\'ק ליסט אישי', icon: '🎒' },
-      { path: '/documents', label: 'המסמכים שלי', icon: '🗂️' },
-      { path: '/emergency', label: 'חירום ומידע חשוב', icon: '🆘' },
+      { path: '/personal-checklist', label: 'צ\'ק ליסט אישי' },
+      { path: '/documents', label: 'המסמכים שלי' },
+      { path: '/emergency', label: 'חירום ומידע חשוב' },
     ],
   },
 ];
@@ -48,9 +48,9 @@ const ADMIN_GROUP = {
   id: 'admin',
   title: 'ניהול',
   items: [
-    { path: '/admin/announcements', label: 'הודעה לכולם', icon: '📢' },
-    { path: '/admin/families', label: 'ניהול משפחות', icon: '👨‍👩‍👧' },
-    { path: '/updates', label: 'עדכוני האתר', icon: '🛠️' },
+    { path: '/admin/announcements', label: 'הודעה לכולם' },
+    { path: '/admin/families', label: 'ניהול משפחות' },
+    { path: '/updates', label: 'עדכוני האתר' },
   ],
 };
 
@@ -133,7 +133,6 @@ const Sidebar = () => {
                         aria-current={isActive ? 'page' : undefined}
                         onClick={() => setOpen(false)} // סגירת התפריט במובייל אחרי מעבר עמוד
                       >
-                        <span className="nav__icon" aria-hidden="true">{item.icon}</span>
                         {item.label}
                       </Link>
                     </li>
@@ -151,7 +150,6 @@ const Sidebar = () => {
               aria-current={location.pathname === '/install' ? 'page' : undefined}
               onClick={() => setOpen(false)}
             >
-              <span aria-hidden="true">📲</span>
               <span>
                 <strong>להתקין כאפליקציה</strong>
                 <small>עובד גם בלי אינטרנט</small>

@@ -1,35 +1,29 @@
 /* ===== Design tokens =====
-   הפלטה לפי מערכת העיצוב של royalcaribbean.com:
-   כחול מותג #021d49, כפתור ראשי #053b81, קישורים #1240b5,
-   כפתור הזמנה צהוב-כתום #ffb500, רקע משני #f1f6ff, כפתורים מעוגלים לגמרי */
+   שלושה צבעים, כולם שטוחים (בלי גרדיאנטים): כחול כהה של הספינה, כחול ים לקישורים ולהדגשות,
+   וצהוב אחד לכפתור הראשי ולסימון הדף הנוכחי. הנראות היא של תוכנית הפלגה מודפסת:
+   קווים דקים במקום צללים, ופינות כמעט ישרות */
 :root {
   --navy-900: #010c1d;
   --navy-800: #021d49;
   --navy-600: #053b81;
   --gold: #ffb500;
-  --gold-hover: #ff8000;
+  --gold-hover: #eba300;
   --gold-soft: #fff5d1;
-  --sea: #8833ff;
-  --sea-dark: #6a1fd6;
-  --cyan: #00d5ff;
-  --magenta: #ff0db2;
-  --magenta-dark: #e10099;
-  --orange: #ff6900;
-  --purple: #8833ff;
-  --purple-dark: #6a1fd6;
-  --purple-soft: #f1e8ff;
-  /* הגרדיאנט של באנרי הקמפיין: ורוד-מג׳נטה למעלה, כתום למטה */
-  --promo-gradient: linear-gradient(165deg, #ff0db2 0%, #ff3a78 48%, #ff6900 100%);
+  --sea: #1a4fb4;
+  --sea-dark: #123a8a;
+  --sea-soft: #e8eefb;
+  /* הדגשה על הרקע הכחול הכהה (קישורים בתפריט, טבעת פוקוס): צהוב רך */
+  --on-navy: #ffd166;
 
-  --paper: #f1f6ff;
+  --paper: #f3f5f8;
   --surface: #ffffff;
   --ink: #021d49;
   --muted: #4d5b7c;
-  --line: #d7dee9;
+  --line: #d5dbe6;
   /* כותרות וטקסט מודגש: כחול המותג, ובמצב כהה כמעט לבן */
   --heading: var(--navy-800);
   /* צבעי טקסט שמתחלפים במצב כהה: טקסט רץ, קישורים, וטקסט מודגש בסגול (תאריכים, שעות).
-     הסגול של המותג (--purple) נשאר לרקעים עם טקסט לבן; על רקע כהה הוא כהה מדי לטקסט */
+     כחול הים (--sea) נשאר לרקעים עם טקסט לבן; על רקע כהה הוא כהה מדי לטקסט */
   --prose: #2a3a5c;
   --link: var(--sea);
   --link-hover: var(--sea-dark);
@@ -41,7 +35,6 @@
   --success-line: #abefc6;
   --track: #e4ecf9;
   --info-bg: #eaf1fb;
-  --pink-soft: #ffe6f6;
 
   --success: #15803d;
   --success-bg: #ecfdf3;
@@ -49,20 +42,22 @@
   --danger: #b42318;
   --danger-bg: #fde8e9;
 
-  /* Kapra ו-Proxima Nova הם גופנים מסחריים; Barlow Condensed ו-Heebo הם התחליפים הקרובים.
-     באותיות לטיניות מוצג Barlow Condensed, ובעברית Heebo */
-  --font-body: 'Heebo', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
-  --font-display: 'Barlow Condensed', 'Heebo', system-ui, sans-serif;
+  /* כותרות: פרנק-ריל, האות של ספרים ועיתונים בעברית. טקסט: Assistant.
+     Barlow Condensed נשאר רק ללוגו ולכרטיס העלייה לספינה (שם האונייה והספרות של הספירה לאחור) */
+  --font-body: 'Assistant', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --font-display: 'Frank Ruhl Libre', 'Times New Roman', serif;
+  --font-ticket: 'Barlow Condensed', 'Assistant', system-ui, sans-serif;
 
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-pill: 250px;
-  --shadow: 0 1px 2px rgba(2, 29, 73, 0.06), 0 6px 20px rgba(2, 29, 73, 0.08);
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  /* כפתורים ותגיות: מלבן עם פינה קטנה, לא "גלולה" */
+  --radius-pill: 6px;
+  --shadow: 0 1px 2px rgba(2, 29, 73, 0.05);
 
   --sidebar-w: 264px;
   --topbar-h: 60px;
-  --focus: 0 0 0 2px var(--surface), 0 0 0 4px #8833ff;
+  --focus: 0 0 0 2px var(--surface), 0 0 0 4px var(--sea);
 }
 
 /* ===== מצב כהה =====
@@ -78,25 +73,24 @@
     --line: #26375a;
     --heading: #f1f6ff;
     --prose: #c9d4e8;
-    --link: #b794ff;
-    --link-hover: #d4c0ff;
-    --accent-text: #c4a6ff;
+    --link: #9dbcff;
+    --link-hover: #c5d7ff;
+    --accent-text: #a9c4ff;
     --selected-bg: #e6edf8;
     --selected-ink: #081226;
     --danger-line: #7a2a2f;
     --success-line: #1f5a3a;
     --track: #26375a;
     --info-bg: #13274a;
-    --pink-soft: #3a1030;
 
     --gold-soft: #3a2f0d;
-    --purple-soft: #2a1f4a;
+    --sea-soft: #172a52;
     --success: #4ade80;
     --success-bg: #0f2a1d;
     --warn: #fbbf6a;
     --danger: #f87171;
     --danger-bg: #3a1519;
 
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.45), 0 6px 20px rgba(0, 0, 0, 0.35);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
   }
 }

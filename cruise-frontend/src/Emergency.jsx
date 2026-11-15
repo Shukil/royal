@@ -53,7 +53,7 @@ const Emergency = () => (
   <div className="page">
     <article className="card">
       <header className="card__header">
-        <h1 className="card__title">חירום ומידע חשוב 🆘</h1>
+        <h1 className="card__title">חירום ומידע חשוב</h1>
         <p className="card__lead">מספרי חירום, נציגויות ישראל, אזהרות מסע ומה עושים כשמשהו משתבש</p>
       </header>
 
@@ -75,7 +75,7 @@ const Emergency = () => (
         </section>
 
         <section className="section" id="warnings">
-          <h2 className="section__title">אזהרות מסע ⚠️</h2>
+          <h2 className="section__title">אזהרות מסע</h2>
           <TravelWarning />
         </section>
 
@@ -98,7 +98,7 @@ const Emergency = () => (
         </section>
 
         <section className="section prose" id="ship">
-          <h2 className="section__title">קשר עם הספינה 🚢</h2>
+          <h2 className="section__title">קשר עם הספינה</h2>
           <ul>
             <li>
               <strong>מהבית לספינה:</strong> קרובים בארץ יכולים להתקשר לספינה ב-<Phone number="+1 321 953 9003" />. העלות <span dir="ltr">$7.95</span> לדקה, בכרטיס אשראי, ועוד עלות השיחה לחו״ל. צריך לומר את שם הספינה (Odyssey of the Seas), את שם האורח ואת מספר החדר.
@@ -136,7 +136,7 @@ const Emergency = () => (
         </section>
 
         <section className="section prose" id="before-ashore">
-          <h2 className="section__title">לפני שיורדים לחוף ✅</h2>
+          <h2 className="section__title">לפני שיורדים לחוף</h2>
           <ul className="checklist-static">
             <li>כרטיס SeaPass ותעודה מזהה (ומי שצריך, דרכון)</li>
             <li>שעת ה-All Aboard ומספר סוכן הנמל מהתוכנייה היומית</li>

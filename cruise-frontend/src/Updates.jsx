@@ -33,7 +33,7 @@ const Updates = () => {
     <div className="page">
       <article className="card">
         <header className="card__header">
-          <h1 className="card__title">עדכוני האתר 🛠️</h1>
+          <h1 className="card__title">עדכוני האתר</h1>
           <p className="card__lead">כל מה שנוסף לאתר, לפי תאריכים. הדף מוצג רק למנהלי האתר.</p>
         </header>
 

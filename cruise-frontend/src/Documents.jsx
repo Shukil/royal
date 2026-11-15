@@ -85,7 +85,7 @@ const Documents = () => {
     <div className="page">
       <article className="card">
         <header className="card__header">
-          <h1 className="card__title">המסמכים שלי 🗂️</h1>
+          <h1 className="card__title">המסמכים שלי</h1>
           <p className="card__lead">צילומי דרכון, כרטיסי עלייה, טיסות וביטוח, במקום אחד וזמינים גם בלי אינטרנט.</p>
         </header>
 

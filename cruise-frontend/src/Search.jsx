@@ -25,7 +25,7 @@ const Search = () => {
     <div className="page">
       <article className="card">
         <header className="card__header">
-          <h1 className="card__title">חיפוש 🔍</h1>
+          <h1 className="card__title">חיפוש</h1>
           <p className="card__lead">במדריכים, במסלול, בדף החירום, בלו״ז, במשימות ובתוכנית. עובד גם בלי אינטרנט.</p>
         </header>
 

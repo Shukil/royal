@@ -46,7 +46,7 @@ const ResetPassword = () => {
     return (
       <AuthShell>
         <div className="card__body">
-          <h1 className="auth__title">הסיסמה עודכנה ✅</h1>
+          <h1 className="auth__title">הסיסמה עודכנה</h1>
           <p className="alert alert--success" role="status">{done}</p>
           <Link to="/login" className="btn btn--primary btn--block">להתחברות</Link>
         </div>

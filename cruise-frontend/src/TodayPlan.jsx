@@ -24,7 +24,7 @@ export const TodayPlan = ({ day }) => {
 
   return (
     <section className="today__section" aria-labelledby="today-plan">
-      <h2 id="today-plan" className="today__subtitle">📋 התוכנית להיום</h2>
+      <h2 id="today-plan" className="today__subtitle">התוכנית להיום</h2>
       {items.length ? (
         <ol className="plan-list">
           {items.map((item) => <PlanItemView key={item.id} item={item} day={day} />)}
@@ -46,7 +46,7 @@ export const TodayTasks = ({ day, preview }) => {
 
   return (
     <section className="today__section" aria-labelledby="today-tasks">
-      <h2 id="today-tasks" className="today__subtitle">✅ משימות להיום</h2>
+      <h2 id="today-tasks" className="today__subtitle">משימות להיום</h2>
       <ul className="task-list">
         {tasks.map((t) => (
           <TaskRow key={t.id} task={t} people={data.people} today={day.date} onToggle={preview ? () => {} : toggle} />

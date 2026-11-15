@@ -28,7 +28,7 @@
   border-color: var(--gold);
 }
 .install-link:focus-visible {
-  box-shadow: 0 0 0 3px var(--cyan);
+  box-shadow: 0 0 0 3px var(--on-navy);
 }
 .install-link + .sidebar__footer {
   margin-top: 0;

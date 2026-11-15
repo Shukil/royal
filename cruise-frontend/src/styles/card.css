@@ -7,22 +7,25 @@
 .card {
   background: var(--surface);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
+  box-shadow: none;
   overflow: hidden;
+  border: 1px solid var(--line);
 }
 
 .card__header {
-  background: var(--promo-gradient);
-  color: #fff;
-  padding: clamp(1.5rem, 4vw, 2.25rem);
+  padding: clamp(1.5rem, 4vw, 2.25rem) clamp(1.25rem, 4vw, 2rem) clamp(1.1rem, 3vw, 1.5rem);
+  border-bottom: 1px solid var(--line);
+  color: var(--heading);
 }
 .card__title {
-  font-size: clamp(1.7rem, 4.5vw, 2.4rem);
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 900;
+  line-height: 1.1;
 }
 .card__lead {
-  color: #fff;
-  font-weight: 500;
-  margin-top: 0.4rem;
+  color: var(--muted);
+  margin-top: 0.5rem;
+  max-width: 62ch;
 }
 
 .card__body {
@@ -33,7 +36,7 @@
   margin-top: 2rem;
 }
 .section__title {
-  font-size: 1.45rem;
+  font-size: 1.5rem;
   color: var(--heading);
   padding-bottom: 0.5rem;
   margin-bottom: 1rem;

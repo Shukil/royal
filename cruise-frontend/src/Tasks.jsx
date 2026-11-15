@@ -136,7 +136,7 @@ const Tasks = () => {
     <div className="page">
       <article className="card">
         <header className="card__header">
-          <h1 className="card__title">משימות ✅</h1>
+          <h1 className="card__title">משימות</h1>
           <p className="card__lead">מה צריך לסגור לפני הטיול ובמהלכו, עד מתי ובאחריות מי. יום לפני תאריך היעד נשלחת תזכורת למי שהפעיל התראות.</p>
         </header>
 

@@ -61,7 +61,7 @@ const DestinationGuide = () => {
     <div className="page">
       <article className="card">
         <header className="card__header">
-          <h1 className="card__title">המדריך ל{d.name} {d.emoji}</h1>
+          <h1 className="card__title">המדריך ל{d.name}</h1>
           <p className="card__lead">{d.lead}</p>
           <p className="card__lead">{d.day}</p>
         </header>
@@ -82,7 +82,7 @@ const DestinationGuide = () => {
           )}
 
           <section className="section prose" id="port">
-            <h2 className="section__title">⚓ הנמל: {d.port.title}</h2>
+            <h2 className="section__title">הנמל: {d.port.title}</h2>
             <ul>
               {d.port.items.map((i) => <li key={i}>{i}</li>)}
             </ul>
@@ -91,28 +91,28 @@ const DestinationGuide = () => {
 
           {info && day && (
             <section className="section" id="time">
-              <h2 className="section__title">⏰ כמה זמן באמת יש</h2>
+              <h2 className="section__title">כמה זמן באמת יש</h2>
               <TimeBudget timing={info.timing} day={day} />
             </section>
           )}
 
           {info && (
             <section className="section" id="ship-tour">
-              <h2 className="section__title">🧭 סיור של הספינה או לבד?</h2>
+              <h2 className="section__title">סיור של הספינה או לבד?</h2>
               <ShipOrSelf ship={info.ship} />
             </section>
           )}
 
           {info && (
             <section className="section" id="tickets">
-              <h2 className="section__title">🎟️ כרטיסים, מחירים ושעות</h2>
+              <h2 className="section__title">כרטיסים, מחירים ושעות</h2>
               <Tickets tickets={info.tickets} day={day} />
             </section>
           )}
 
           {info && (
             <section className="section" id="driver">
-              <h2 className="section__title">🚕 כרטיס לנהג: חזרה לספינה</h2>
+              <h2 className="section__title">כרטיס לנהג: חזרה לספינה</h2>
               <p className="prose">מראים את המסך לנהג המונית. עובד גם בלי אינטרנט.</p>
               <DriverCard driver={info.driver} day={day} />
             </section>
@@ -132,19 +132,19 @@ const DestinationGuide = () => {
           </section>
 
           <section className="section" id="weather">
-            <h2 className="section__title">מזג האוויר 🌤️</h2>
+            <h2 className="section__title">מזג האוויר</h2>
             <Weather id={id} />
           </section>
 
           {pics?.gallery && (
             <section className="section" id="photos">
-              <h2 className="section__title">תמונות מ{d.name} 📷</h2>
+              <h2 className="section__title">תמונות מ{d.name}</h2>
               <Gallery photos={pics.gallery} />
             </section>
           )}
 
           <section className="section" id="routes">
-            <h2 className="section__title">מסלולים מומלצים 🚶</h2>
+            <h2 className="section__title">מסלולים מומלצים</h2>
             <div className="routes">
               {d.routes.map((r) => (
                 <div key={r.title} className="route">
@@ -159,7 +159,7 @@ const DestinationGuide = () => {
           </section>
 
           <section className="section" id="sites">
-            <h2 className="section__title">אתרים שכדאי להכיר 📸</h2>
+            <h2 className="section__title">אתרים שכדאי להכיר</h2>
             <div className="sites">
               {d.sites.map((s) => (
                 <details key={s.name} className="site">
@@ -174,7 +174,7 @@ const DestinationGuide = () => {
           </section>
 
           <section className="section" id="map">
-            <h2 className="section__title">מפה 🗺️</h2>
+            <h2 className="section__title">מפה</h2>
             <p className="field__hint">⚓ הנמל, והמספרים לפי רשימת האתרים. לחיצה על נקודה פותחת ניווט ב-Google Maps.</p>
             <Suspense fallback={<p className="empty">טוען מפה…</p>}>
               <GuideMap id={id} />
@@ -189,19 +189,19 @@ const DestinationGuide = () => {
           </section>
 
           <section className="section" id="food">
-            <h2 className="section__title">אוכל 🍽️</h2>
+            <h2 className="section__title">אוכל</h2>
             <p className="prose">{d.food.intro}</p>
             <Spots items={d.food.spots} />
             <p className="tip">הרשימה כוללת מקומות ותיקים ומוכרים, אבל כדאי לבדוק שעות פתיחה לפני שהולכים.</p>
           </section>
 
           <section className="section" id="shopping">
-            <h2 className="section__title">קניות 🛍️</h2>
+            <h2 className="section__title">קניות</h2>
             <Spots items={d.shopping} />
           </section>
 
           <section className="section" id="transport">
-            <h2 className="section__title">תחבורה וטיפים 🚌</h2>
+            <h2 className="section__title">תחבורה וטיפים</h2>
             <div className="table-wrap">
               <table className="metro">
                 <thead>
@@ -230,7 +230,7 @@ const DestinationGuide = () => {
           </section>
 
           <section className="section" id="phrases">
-            <h2 className="section__title">מילים שימושיות ב{languages[guideLanguage[id]].name} 💬</h2>
+            <h2 className="section__title">מילים שימושיות ב{languages[guideLanguage[id]].name}</h2>
             <Phrasebook lang={guideLanguage[id]} />
           </section>
 

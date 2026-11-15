@@ -118,7 +118,7 @@ const PersonalChecklist = () => {
     <div className="page">
       <article className="card">
         <header className="card__header">
-          <h1 className="card__title">צ'ק ליסט אישי 🎒</h1>
+          <h1 className="card__title">צ'ק ליסט אישי</h1>
           <p className="card__lead">הרשימה שלך בלבד. אפשר להוסיף, לערוך ולמחוק פריטים, והיא נשמרת בחשבון שלך.</p>
         </header>
 

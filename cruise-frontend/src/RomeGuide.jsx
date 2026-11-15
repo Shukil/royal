@@ -175,7 +175,7 @@ const RomeGuide = () => (
   <div className="page">
     <article className="card">
       <header className="card__header">
-        <h1 className="card__title">המדריך לרומא 🏛️</h1>
+        <h1 className="card__title">המדריך לרומא</h1>
         <p className="card__lead">הכנות, טיולים והגעה לנמל צ'יוויטווקיה (Civitavecchia)</p>
       </header>
 
@@ -193,7 +193,7 @@ const RomeGuide = () => (
         </p>
 
         <section className="section prose" id="port">
-          <h2 className="section__title">הגעה לאונייה 🚢</h2>
+          <h2 className="section__title">הגעה לאונייה</h2>
           <p>
             ה-Odyssey of the Seas מפליגה ב-15.08.2027 בשעה 15:00 בערך מנמל צ'יוויטווקיה, כ-80 ק"מ צפונית-מערבית למרכז רומא.
           </p>
@@ -226,17 +226,17 @@ const RomeGuide = () => (
         </section>
 
         <section className="section" id="weather">
-          <h2 className="section__title">מזג האוויר 🌤️</h2>
+          <h2 className="section__title">מזג האוויר</h2>
           <Weather id="rome" />
         </section>
 
         <section className="section" id="photos">
-          <h2 className="section__title">תמונות מרומא 📷</h2>
+          <h2 className="section__title">תמונות מרומא</h2>
           <Gallery photos={photos.rome.gallery} />
         </section>
 
         <section className="section" id="routes">
-          <h2 className="section__title">מסלולי הליכה מומלצים 🚶</h2>
+          <h2 className="section__title">מסלולי הליכה מומלצים</h2>
           <div className="routes">
             {routes.map((r) => (
               <div key={r.title} className="route">
@@ -251,7 +251,7 @@ const RomeGuide = () => (
         </section>
 
         <section className="section" id="sites">
-          <h2 className="section__title">אתרים שכדאי להכיר 📸</h2>
+          <h2 className="section__title">אתרים שכדאי להכיר</h2>
           <div className="sites">
             {sites.map((s) => (
               <details key={s.name} className="site">
@@ -266,7 +266,7 @@ const RomeGuide = () => (
         </section>
 
         <section className="section" id="vatican">
-          <h2 className="section__title">הוותיקן ⛪</h2>
+          <h2 className="section__title">הוותיקן</h2>
           <div className="prose">
             <p>
               המדינה הקטנה בעולם (כ-400 דונם), מרכז הכנסייה הקתולית. דורש חצי יום לפחות, ומומלץ בסיור מודרך בעברית ובכרטיסים שהוזמנו מראש.
@@ -294,7 +294,7 @@ const RomeGuide = () => (
         </section>
 
         <section className="section" id="map">
-          <h2 className="section__title">מפה 🗺️</h2>
+          <h2 className="section__title">מפה</h2>
           <p className="field__hint">⚓ הנמל, והמספרים לפי רשימת האתרים. לחיצה על נקודה פותחת ניווט ב-Google Maps.</p>
           <Suspense fallback={<p className="empty">טוען מפה…</p>}>
             <GuideMap id="rome" />
@@ -302,7 +302,7 @@ const RomeGuide = () => (
         </section>
 
         <section className="section" id="food">
-          <h2 className="section__title">המלצות קולינריות 🍕</h2>
+          <h2 className="section__title">המלצות קולינריות</h2>
           <div className="prose">
             <p>
               ברומא כדאי להתרחק ממסעדות שנמצאות ממש על הפיאצות המרכזיות (מלכודות תיירים). חפשו טרטוריות קטנות בסמטאות, ונסו את המנות המקומיות: פסטה קרבונרה, קצ'ו א פפה (Cacio e Pepe), ופיצה רומאית דקה ופריכה.
@@ -313,12 +313,12 @@ const RomeGuide = () => (
         </section>
 
         <section className="section" id="shopping">
-          <h2 className="section__title">קניות 🛍️</h2>
+          <h2 className="section__title">קניות</h2>
           <Spots items={shopping} />
         </section>
 
         <section className="section" id="transport">
-          <h2 className="section__title">תחבורה וטיפים 🚇</h2>
+          <h2 className="section__title">תחבורה וטיפים</h2>
           <div className="table-wrap">
             <table className="metro">
               <thead>
@@ -351,7 +351,7 @@ const RomeGuide = () => (
         </section>
 
         <section className="section" id="phrases">
-          <h2 className="section__title">מילים שימושיות באיטלקית 💬</h2>
+          <h2 className="section__title">מילים שימושיות באיטלקית</h2>
           <Phrasebook lang="it" />
         </section>
 

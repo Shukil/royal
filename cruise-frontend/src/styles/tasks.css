@@ -57,7 +57,7 @@
 .task-row__check input {
   width: 22px;
   height: 22px;
-  accent-color: var(--purple);
+  accent-color: var(--sea);
 }
 .task-row__body {
   display: grid;

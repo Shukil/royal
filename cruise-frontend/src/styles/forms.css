@@ -22,7 +22,7 @@
   color: var(--ink);
   background: var(--surface);
   border: 1px solid #adbdd6;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   transition: border-color 0.15s ease;
 }
 .input:hover {
@@ -30,7 +30,7 @@
 }
 .input:focus-visible {
   border-color: var(--sea);
-  box-shadow: 0 0 0 3px rgba(18, 64, 181, 0.2);
+  box-shadow: 0 0 0 3px rgba(26, 79, 180, 0.22);
 }
 .input[dir='ltr'] {
   text-align: right;

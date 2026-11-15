@@ -304,7 +304,7 @@ const AdminFamilies = () => {
     <div className="page page--wide">
       <article className="card">
         <header className="card__header">
-          <h1 className="card__title">ניהול משפחות 👨‍👩‍👧</h1>
+          <h1 className="card__title">ניהול משפחות</h1>
           <p className="card__lead">
             מי בכל משפחה, מי באיזה חדר, ומי מנהל משפחה. מנהלי משפחה רואים את כל דפי המנהלים. כל שינוי נשמר מיד.
           </p>

@@ -93,27 +93,10 @@ const Home = () => {
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
 
-    // אלמנטים שעולים ומופיעים כשהם נכנסים למסך
-    let revealObserver;
-    if ('IntersectionObserver' in window) {
-      revealObserver = new IntersectionObserver(
-        (entries) => entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add('is-visible');
-            revealObserver.unobserve(e.target);
-          }
-        }),
-        { rootMargin: '0px 0px -10% 0px' },
-      );
-      el.querySelectorAll('.reveal').forEach((r) => revealObserver.observe(r));
-      el.classList.add('home--animated');
-    }
-
     return () => {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
       if (frame) cancelAnimationFrame(frame);
-      revealObserver?.disconnect();
       document.documentElement.classList.remove('home-snap');
     };
   }, []);
@@ -147,7 +130,7 @@ const Home = () => {
       </nav>
 
       <section id="scene-countdown" className="scene scene--countdown">
-        <div className="reveal">
+        <div>
           {today ? (
             <Suspense fallback={<p className="empty" role="status">טוען…</p>}>
               <Today day={today.day} next={today.next} now={now} preview={preview} />
@@ -161,22 +144,22 @@ const Home = () => {
       </section>
 
       <section id="scene-odyssey" className="scene scene--odyssey">
-        <header className="scene__intro reveal">
+        <header className="scene__intro">
           <p className="scene__kicker">הספינה שלנו</p>
           <h2 className="scene__title">Odyssey of the Seas</h2>
         </header>
-        <div className="reveal">
+        <div>
           <OdysseyInfo />
         </div>
       </section>
 
       <section id="scene-guides" className="scene scene--guides">
-        <header className="scene__intro reveal">
+        <header className="scene__intro">
           <p className="scene__kicker">לאן מפליגים</p>
           <h2 className="scene__title">המסלול שלנו</h2>
           <p className="scene__lead">חמש עצירות, שמונה ימים. גללו כדי לעבור בין היעדים לפי הסדר.</p>
         </header>
-        <ol className="route-strip reveal">
+        <ol className="route-strip">
           {stops.map((s) => (
             <li key={s.id}>
               <a href={`#scene-${s.id}`} className="route-strip__stop">
@@ -193,7 +176,7 @@ const Home = () => {
 
       {stops.map((s, i) => (
         <section key={s.id} id={`scene-${s.id}`} className="scene scene--dest">
-          <article className="dest reveal">
+          <article className="dest">
             <figure className="dest__photo">
               <img src={s.photo.src} alt={s.photo.caption} loading="lazy" decoding="async" crossOrigin="anonymous" />
               <figcaption>

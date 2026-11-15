@@ -81,8 +81,6 @@ const Countdown = () => {
           <div className="pass__route">
             <span>רומא</span>
             <span className="pass__route-line" aria-hidden="true" />
-            <span aria-hidden="true">🚢</span>
-            <span className="pass__route-line" aria-hidden="true" />
             <span>הים התיכון</span>
           </div>
 
@@ -128,7 +126,7 @@ const Countdown = () => {
       </article>
 
       <section className="flights" aria-labelledby="flights-title">
-        <h2 id="flights-title" className="flights__title">✈️ הטיסה שלך לרומא · 12.08.2027</h2>
+        <h2 id="flights-title" className="flights__title">הטיסה שלך לרומא · 12.08.2027</h2>
         {!myFlight && (
           <p className="flights__note">
             {user ? 'לא מצאנו טיסה שמשויכת לשם המשפחה שלך.' : 'התחבר כדי לראות את הטיימר לטיסה שלך.'}

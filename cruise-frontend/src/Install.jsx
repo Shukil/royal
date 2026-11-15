@@ -60,7 +60,7 @@ const Install = () => {
     <div className="page">
       <article className="card">
         <header className="card__header">
-          <h1 className="card__title">להתקין את האתר כאפליקציה 📲</h1>
+          <h1 className="card__title">להתקין את האתר כאפליקציה</h1>
           <p className="card__lead">סמל במסך הבית, מסך מלא, ועובד גם בלי אינטרנט על הספינה</p>
         </header>
 

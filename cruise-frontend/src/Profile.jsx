@@ -75,7 +75,7 @@ const Profile = () => {
     <div className="page">
       <article className="card">
         <header className="card__header">
-          <h1 className="card__title">הפרופיל שלי 👤</h1>
+          <h1 className="card__title">הפרופיל שלי</h1>
           <p className="card__lead">הפרטים שלך באתר, והחלפת סיסמה.</p>
         </header>
 

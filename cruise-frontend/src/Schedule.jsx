@@ -108,7 +108,7 @@ const Schedule = () => {
     <div className="page page--wide">
       <article className="card">
         <header className="card__header">
-          <h1 className="card__title">הלו״ז שלי 📅</h1>
+          <h1 className="card__title">הלו״ז שלי</h1>
           <p className="card__lead">כל האירועים שאתה מוזמן אליהם, לפי ימים ושעות. לחיצה על אירוע פותחת את הפרטים.</p>
         </header>
 

@@ -200,7 +200,7 @@ const Itinerary = () => (
   <div className="page">
     <article className="card">
       <header className="card__header">
-        <h1 className="card__title">המסלול שלנו 🗺️</h1>
+        <h1 className="card__title">המסלול שלנו</h1>
         <p className="card__lead">איי יוון ואיטליה · 7 לילות · 15–22.08.2027</p>
       </header>
 
