@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const Announcement = require('../models/Announcement');
-const User = require('../models/User');
 const auth = require('../middleware/auth');
 const { loadAdmin, requireAdmin } = require('../middleware/admin');
 const { notify } = require('../utils/push');

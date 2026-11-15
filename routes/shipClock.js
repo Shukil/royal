@@ -1,6 +1,5 @@
 const express = require('express');
 const ShipClock = require('../models/ShipClock');
-const User = require('../models/User');
 const auth = require('../middleware/auth');
 const { notify } = require('../utils/push');
 const router = express.Router();
