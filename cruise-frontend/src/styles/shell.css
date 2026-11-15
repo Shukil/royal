@@ -172,9 +172,11 @@
   font-weight: 700;
 }
 .nav__icon {
-  width: 1.5rem;
-  font-size: 1.15rem;
-  text-align: center;
+  flex: none;
+  color: var(--link);
+}
+[aria-current='page'] > .nav__icon {
+  color: inherit;
 }
 
 /* חיפוש, שם המשתמש והתנתקות */

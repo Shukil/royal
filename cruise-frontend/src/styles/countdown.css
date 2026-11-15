@@ -281,3 +281,9 @@
 .pass__title {
   font-size: clamp(2.8rem, 8.5vw, 4.5rem);
 }
+
+/* האייקון של קיצור הדרך (lucide) */
+.quick-link svg {
+  flex: none;
+  color: var(--link);
+}
