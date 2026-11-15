@@ -34,7 +34,7 @@
   color: var(--heading);
 }
 .guide-card__day {
-  color: var(--sea-dark);
+  color: var(--accent-text);
   font-size: 0.85rem;
 }
 .guide-card__lead {

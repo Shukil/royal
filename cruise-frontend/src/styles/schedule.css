@@ -42,8 +42,8 @@
   cursor: pointer;
 }
 .legend__item.is-on {
-  background: var(--ev, var(--navy-800));
-  border-color: var(--ev, var(--navy-800));
+  background: var(--ev, var(--selected-bg));
+  border-color: var(--ev, var(--selected-bg));
   color: #fff;
 }
 .legend__swatch {
@@ -262,4 +262,9 @@
   font-size: 0.8rem;
   font-weight: 700;
   white-space: nowrap;
+}
+
+/* "הכול" נבחר: במצב כהה הרקע בהיר, אז הטקסט כהה */
+.legend__item--any.is-on {
+  color: var(--selected-ink);
 }

@@ -1,11 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Countdown from './Countdown';
-import Today from './Today';
 import { findTripDay, useTripClock } from './tripDays';
 import OdysseyInfo from './OdysseyInfo';
 import { destinations, guideOrder } from './destinations';
 import { photos } from './photos';
+
+// מסך "היום" מוצג רק בימי הטיול עצמם, אז הוא (ואיתו התוכנית, המשימות ומזג האוויר) נטען רק אז
+// ולא מכביד על הכניסה לאתר בשאר השנה
+const Today = lazy(() => import('./Today'));
 
 // רומא לא נמצאת ב-destinations (יש לה דף משלה), אז הפרטים שלה כאן
 const rome = {
@@ -145,7 +148,11 @@ const Home = () => {
 
       <section id="scene-countdown" className="scene scene--countdown">
         <div className="reveal">
-          {today ? <Today day={today.day} next={today.next} now={now} preview={preview} /> : <Countdown />}
+          {today ? (
+            <Suspense fallback={<p className="empty" role="status">טוען…</p>}>
+              <Today day={today.day} next={today.next} now={now} preview={preview} />
+            </Suspense>
+          ) : <Countdown />}
         </div>
         <a href="#scene-odyssey" className="scroll-hint">
           <span>גללו להכיר את הספינה</span>

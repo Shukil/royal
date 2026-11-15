@@ -156,7 +156,7 @@
   width: 12px;
   height: 12px;
   border-radius: var(--radius-pill);
-  border: 2px solid var(--navy-800);
+  border: 2px solid var(--heading);
   background: transparent;
   transition: height 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
 }
@@ -338,10 +338,10 @@ html.home-snap {
 }
 .dest__title {
   font-size: clamp(2.2rem, 5vw, 3.2rem);
-  color: var(--navy-800);
+  color: var(--heading);
 }
 .dest__lead {
-  color: #2a3a5c;
+  color: var(--prose);
   font-size: 1.08rem;
   line-height: 1.7;
 }
@@ -378,8 +378,8 @@ html.home-snap {
   box-shadow: inset 0 0 0 1.5px var(--heading);
 }
 .btn--outline:hover {
-  background: var(--navy-800);
-  color: #fff;
+  background: var(--selected-bg);
+  color: var(--selected-ink);
 }
 @media (max-width: 760px) {
   .dest {

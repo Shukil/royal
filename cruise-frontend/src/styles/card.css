@@ -41,7 +41,7 @@
 }
 
 .prose {
-  color: #2a3a5c;
+  color: var(--prose);
   line-height: 1.8;
   max-width: 68ch;
 }
@@ -54,4 +54,9 @@
 }
 .prose strong {
   color: var(--ink);
+}
+
+/* הודעת שגיאה או הצלחה בראש הכרטיס לא נצמדת למה שמתחתיה */
+.card__body > .alert:not(:last-child) {
+  margin-bottom: 1rem;
 }

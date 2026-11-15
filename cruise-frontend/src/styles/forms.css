@@ -26,7 +26,7 @@
   transition: border-color 0.15s ease;
 }
 .input:hover {
-  border-color: var(--navy-800);
+  border-color: var(--heading);
 }
 .input:focus-visible {
   border-color: var(--sea);
@@ -88,10 +88,10 @@
 .alert--error {
   color: var(--danger);
   background: var(--danger-bg);
-  border-color: #fecdca;
+  border-color: var(--danger-line);
 }
 .alert--success {
   color: var(--success);
   background: var(--success-bg);
-  border-color: #abefc6;
+  border-color: var(--success-line);
 }

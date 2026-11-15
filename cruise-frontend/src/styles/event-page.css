@@ -37,7 +37,7 @@
   cursor: wait;
 }
 .rsvp__btn:hover {
-  border-color: var(--navy-800);
+  border-color: var(--heading);
 }
 .rsvp__btn--yes.is-on { background: var(--success-bg); border-color: var(--success); color: var(--success); }
 .rsvp__btn--maybe.is-on { background: var(--gold-soft); border-color: var(--gold); color: var(--warn); }
@@ -126,7 +126,7 @@
   font: inherit;
   font-size: 0.85rem;
   font-weight: 700;
-  color: var(--sea);
+  color: var(--link);
   cursor: pointer;
 }
 .comment .comment-form {
@@ -215,7 +215,7 @@
 }
 .modal__text {
   margin-top: 0.6rem;
-  color: #2a3a5c;
+  color: var(--prose);
 }
 .modal__list {
   list-style: none;

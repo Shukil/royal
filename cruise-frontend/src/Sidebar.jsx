@@ -4,28 +4,55 @@ import RoyalLogo from './RoyalLogo';
 import { clearSession, useUser } from './session';
 import { isStandalone } from './installPrompt';
 
-const menuItems = [
-  { path: '/search', label: 'חיפוש', icon: '🔍' },
-  { path: '/schedule', label: 'לו״ז', icon: '📅' },
-  { path: '/plan', label: 'תוכנית הטיול', icon: '📋' },
-  { path: '/tasks', label: 'משימות', icon: '✅' },
-  { path: '/itinerary', label: 'המסלול שלנו', icon: '🗺️' },
-  { path: '/odyssey', label: 'על האודיסי', icon: '🚢' },
-  { path: '/cabin', label: 'פרטי חדר', icon: '🛏️' },
-  { path: '/personal-checklist', label: 'צ\'ק ליסט אישי', icon: '🎒' },
-  { path: '/cabin-checklist', label: 'צ\'ק ליסט חדר', icon: '📋' },
-  { path: '/documents', label: 'המסמכים שלי', icon: '🗂️' },
-  { path: '/guides', label: 'מדריכי יעדים', icon: '🧭' },
-  { path: '/emergency', label: 'חירום ומידע חשוב', icon: '🆘' },
+// התפריט מחולק לקבוצות לפי נושא, כדי שיהיה קל למצוא דף בלי לקרוא רשימה ארוכה אחת.
+// קבוצה בלי כותרת (title) מוצגת בלי שורת כותרת
+const MENU_GROUPS = [
+  {
+    id: 'top',
+    items: [{ path: '/search', label: 'חיפוש', icon: '🔍' }],
+  },
+  {
+    id: 'trip',
+    title: 'הטיול',
+    items: [
+      { path: '/schedule', label: 'לו״ז', icon: '📅' },
+      { path: '/plan', label: 'תוכנית הטיול', icon: '📋' },
+      { path: '/tasks', label: 'משימות', icon: '✅' },
+      { path: '/itinerary', label: 'המסלול שלנו', icon: '🗺️' },
+      { path: '/guides', label: 'מדריכי יעדים', icon: '🧭' },
+    ],
+  },
+  {
+    id: 'ship',
+    title: 'הספינה והחדר',
+    items: [
+      { path: '/odyssey', label: 'על האודיסי', icon: '🚢' },
+      { path: '/cabin', label: 'פרטי חדר', icon: '🛏️' },
+      { path: '/cabin-checklist', label: 'צ\'ק ליסט חדר', icon: '🛎️' },
+    ],
+  },
+  {
+    id: 'mine',
+    title: 'שלי',
+    items: [
+      { path: '/personal-checklist', label: 'צ\'ק ליסט אישי', icon: '🎒' },
+      { path: '/documents', label: 'המסמכים שלי', icon: '🗂️' },
+      { path: '/emergency', label: 'חירום ומידע חשוב', icon: '🆘' },
+    ],
+  },
 ];
 
 // דפי המנהלים מוצגים בתפריט רק למנהלים (מנהלי האתר ומנהלי המשפחות).
 // השרת קובע מי מנהל, וזה מגיע עם פרטי המשתמש (/auth/me בכל טעינה). השרת גם חוסם את הדפים עצמם
-const ADMIN_ITEMS = [
-  { path: '/admin/announcements', label: 'הודעה לכולם', icon: '📢' },
-  { path: '/admin/families', label: 'ניהול משפחות', icon: '👨‍👩‍👧' },
-  { path: '/updates', label: 'עדכוני האתר', icon: '🛠️' },
-];
+const ADMIN_GROUP = {
+  id: 'admin',
+  title: 'ניהול',
+  items: [
+    { path: '/admin/announcements', label: 'הודעה לכולם', icon: '📢' },
+    { path: '/admin/families', label: 'ניהול משפחות', icon: '👨‍👩‍👧' },
+    { path: '/updates', label: 'עדכוני האתר', icon: '🛠️' },
+  ],
+};
 
 const Brand = () => (
   <Link to="/" className="brand" aria-label="Royal Caribbean · Odyssey of the Seas - דף הבית">
@@ -38,7 +65,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const user = useUser();
-  const items = user?.isAdmin ? [...menuItems, ...ADMIN_ITEMS] : menuItems;
+  const groups = user?.isAdmin ? [...MENU_GROUPS, ADMIN_GROUP] : MENU_GROUPS;
 
   // סגירה עם Escape
   useEffect(() => {
@@ -91,42 +118,47 @@ const Sidebar = () => {
           <span className="brand__date">הפלגה בים התיכון · אוגוסט 2027</span>
         </Link>
 
-        <nav aria-label="ניווט ראשי">
-          <ul className="nav">
-            {items.map((item) => {
-              const isActive = location.pathname === item.path || location.pathname.startsWith(`${item.path}/`);
-              return (
-                <li key={item.path}>
-                  <Link
-                    to={item.path}
-                    className="nav__link"
-                    aria-current={isActive ? 'page' : undefined}
-                    onClick={() => setOpen(false)} // סגירת התפריט במובייל אחרי מעבר עמוד
-                  >
-                    <span className="nav__icon" aria-hidden="true">{item.icon}</span>
-                    {item.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
+        <nav className="sidebar__nav" aria-label="ניווט ראשי">
+          {groups.map((group) => (
+            <div key={group.id} className="nav-group" role="group" aria-labelledby={group.title ? `nav-${group.id}` : undefined}>
+              {group.title && <p id={`nav-${group.id}`} className="nav-group__title">{group.title}</p>}
+              <ul className="nav">
+                {group.items.map((item) => {
+                  const isActive = location.pathname === item.path || location.pathname.startsWith(`${item.path}/`);
+                  return (
+                    <li key={item.path}>
+                      <Link
+                        to={item.path}
+                        className="nav__link"
+                        aria-current={isActive ? 'page' : undefined}
+                        onClick={() => setOpen(false)} // סגירת התפריט במובייל אחרי מעבר עמוד
+                      >
+                        <span className="nav__icon" aria-hidden="true">{item.icon}</span>
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
 
-        {/* כפתור לדף ההסבר על התקנה כאפליקציה. לא מוצג כשהאתר כבר פתוח כאפליקציה */}
-        {!isStandalone() && (
-          <Link
-            to="/install"
-            className="install-link"
-            aria-current={location.pathname === '/install' ? 'page' : undefined}
-            onClick={() => setOpen(false)}
-          >
-            <span aria-hidden="true">📲</span>
-            <span>
-              <strong>להתקין כאפליקציה</strong>
-              <small>עובד גם בלי אינטרנט</small>
-            </span>
-          </Link>
-        )}
+          {/* כפתור לדף ההסבר על התקנה כאפליקציה. לא מוצג כשהאתר כבר פתוח כאפליקציה */}
+          {!isStandalone() && (
+            <Link
+              to="/install"
+              className="install-link"
+              aria-current={location.pathname === '/install' ? 'page' : undefined}
+              onClick={() => setOpen(false)}
+            >
+              <span aria-hidden="true">📲</span>
+              <span>
+                <strong>להתקין כאפליקציה</strong>
+                <small>עובד גם בלי אינטרנט</small>
+              </span>
+            </Link>
+          )}
+        </nav>
 
         <div className="sidebar__footer">
           {user ? (

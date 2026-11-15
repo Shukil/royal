@@ -37,7 +37,7 @@
   font-weight: 700;
 }
 .itin__meta {
-  color: var(--sea-dark);
+  color: var(--accent-text);
   font-size: 0.85rem;
 }
 
@@ -78,7 +78,7 @@
   font-weight: 400;
 }
 .port__times {
-  color: var(--sea-dark);
+  color: var(--accent-text);
   font-weight: 700;
   margin-top: 0.2rem;
 }

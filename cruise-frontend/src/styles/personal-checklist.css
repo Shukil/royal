@@ -30,7 +30,7 @@
 }
 .icon-btn--danger:hover {
   background: var(--danger-bg);
-  border-color: #fecdca;
+  border-color: var(--danger-line);
 }
 .icon-btn:focus-visible,
 .btn:focus-visible {

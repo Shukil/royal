@@ -73,9 +73,9 @@
   cursor: pointer;
 }
 .install__tab.is-on {
-  border-color: var(--navy-800);
-  background: var(--navy-800);
-  color: #fff;
+  border-color: var(--selected-bg);
+  background: var(--selected-bg);
+  color: var(--selected-ink);
   font-weight: 700;
 }
 .install__steps {

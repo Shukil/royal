@@ -40,11 +40,11 @@ p {
 }
 
 a {
-  color: var(--sea);
+  color: var(--link);
   text-underline-offset: 3px;
 }
 a:hover {
-  color: var(--sea-dark);
+  color: var(--link-hover);
 }
 
 img {
@@ -90,4 +90,15 @@ img {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
   }
+}
+
+/* כותרות נשברות לשורות באורך דומה, וטקסט רץ לא משאיר מילה בודדת בשורה האחרונה */
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+p,
+li {
+  text-wrap: pretty;
 }

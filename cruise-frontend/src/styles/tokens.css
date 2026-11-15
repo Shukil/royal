@@ -28,6 +28,17 @@
   --line: #d7dee9;
   /* כותרות וטקסט מודגש: כחול המותג, ובמצב כהה כמעט לבן */
   --heading: var(--navy-800);
+  /* צבעי טקסט שמתחלפים במצב כהה: טקסט רץ, קישורים, וטקסט מודגש בסגול (תאריכים, שעות).
+     הסגול של המותג (--purple) נשאר לרקעים עם טקסט לבן; על רקע כהה הוא כהה מדי לטקסט */
+  --prose: #2a3a5c;
+  --link: var(--sea);
+  --link-hover: var(--sea-dark);
+  --accent-text: var(--sea-dark);
+  /* רקע של פריט נבחר (לשונית, מסנן): כחול המותג, ובמצב כהה בהיר עם טקסט כהה */
+  --selected-bg: var(--navy-800);
+  --selected-ink: #fff;
+  --danger-line: #fecdca;
+  --success-line: #abefc6;
   --track: #e4ecf9;
   --info-bg: #eaf1fb;
   --pink-soft: #ffe6f6;
@@ -66,6 +77,14 @@
     --muted: #a5b4cf;
     --line: #26375a;
     --heading: #f1f6ff;
+    --prose: #c9d4e8;
+    --link: #b794ff;
+    --link-hover: #d4c0ff;
+    --accent-text: #c4a6ff;
+    --selected-bg: #e6edf8;
+    --selected-ink: #081226;
+    --danger-line: #7a2a2f;
+    --success-line: #1f5a3a;
     --track: #26375a;
     --info-bg: #13274a;
     --pink-soft: #3a1030;

@@ -5,7 +5,22 @@ import { VitePWA } from 'vite-plugin-pwa'
 const DAY = 24 * 60 * 60
 
 // https://vite.dev/config/
+// הספריות (React, הנתב, axios) נארזות בקובץ נפרד מהקוד של האתר. הן כמעט לא משתנות, אז עדכון של האתר
+// מוריד מחדש רק את הקוד שלנו ולא את הספריות (חשוב באינטרנט האיטי של הספינה).
+// react-dom/server משמש רק את החיפוש, ונשאר בקובץ של החיפוש
+const VENDOR_RE = /node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler|axios|cookie|set-cookie-parser)[\\/]/
+const SERVER_RENDER_RE = /react-dom[\\/](server|cjs[\\/]react-dom-server)/
+
 export default defineConfig({
+  build: {
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [{ name: (id) => (VENDOR_RE.test(id) && !SERVER_RENDER_RE.test(id) ? 'vendor' : null) }],
+        },
+      },
+    },
+  },
   plugins: [
     react(),
     // אפליקציה שמתקינים במסך הבית ועובדת גם בלי אינטרנט (על הספינה האינטרנט בתשלום).

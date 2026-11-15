@@ -59,7 +59,7 @@
 }
 .task.is-done {
   background: var(--success-bg);
-  border-color: #abefc6;
+  border-color: var(--success-line);
 }
 .task__check {
   flex: none;

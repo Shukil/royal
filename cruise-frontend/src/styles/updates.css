@@ -17,7 +17,7 @@
 }
 .updates__area {
   margin: 0;
-  color: var(--purple-dark);
+  color: var(--accent-text);
   font-size: 0.95rem;
 }
 .updates__list {
