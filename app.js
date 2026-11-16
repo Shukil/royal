@@ -43,7 +43,9 @@ app.use(express.json({ limit: '100kb' }));
 // בדיקת חיים: לשירות שמעיר את השרת ב-Render (שנרדם אחרי רבע שעה בלי בקשות), ולדפדפן שמעיר אותו מראש
 app.get('/api/health', (req, res) => {
   const db = mongoose.connection.readyState === 1;
-  res.status(db ? 200 : 503).json({ ok: db, db });
+  // commit: איזו גרסה של הקוד רצה בשרת (Render קובע את RENDER_GIT_COMMIT), כדי שאפשר יהיה לוודא שפריסה הושלמה
+  const commit = (process.env.RENDER_GIT_COMMIT || '').slice(0, 7) || undefined;
+  res.status(db ? 200 : 503).json({ ok: db, db, commit });
 });
 
 // Routes

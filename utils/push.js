@@ -1,5 +1,6 @@
 const webpush = require('web-push');
 const PushSubscription = require('../models/PushSubscription');
+const { isAllowedPushEndpoint } = require('./pushEndpoint');
 
 // התראות לטלפון (Web Push). דורש מפתחות VAPID בסביבה; בלעדיהם ההתראות פשוט כבויות.
 // יצירת מפתחות: npx web-push generate-vapid-keys
@@ -26,6 +27,24 @@ if (VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY) {
 
 const publicKey = () => (enabled ? VAPID_PUBLIC_KEY : null);
 
+// הגנה כפולה מפני כתובות לא מורשות (utils/pushEndpoint.js): גם מנוי שכבר נשמר במסד לפני שהבדיקה נוספה
+// נמחק ולא מקבל בקשה מהשרת. בנוסף, מגבילים את זמן ההמתנה לתשובה
+const SEND_OPTIONS = { timeout: 10 * 1000 };
+const onlyAllowed = async (subs) => {
+  const bad = subs.filter((s) => !isAllowedPushEndpoint(s.endpoint));
+  if (bad.length) await PushSubscription.deleteMany({ _id: { $in: bad.map((s) => s._id) } });
+  return subs.filter((s) => !bad.includes(s));
+};
+
+// מוחק מהמסד מנויים עם כתובת לא מורשית (רץ כשהשרת עולה)
+const purgeInvalidSubscriptions = async () => {
+  const all = await PushSubscription.find().select('endpoint').lean();
+  const kept = await onlyAllowed(all);
+  const removed = all.length - kept.length;
+  if (removed) console.warn(`Removed ${removed} push subscription(s) with a disallowed endpoint`);
+  return removed;
+};
+
 // שולח התראה. to: רשימת מזהי משתמשים, או null לכולם. except: מי שגרם לשינוי (לא צריך התראה על עצמו).
 // לא מחכים לתוצאה ולא מפילים את הבקשה אם השליחה נכשלה
 const notify = ({ to = null, except = null, title, body, url = '/' }) => {
@@ -34,11 +53,11 @@ const notify = ({ to = null, except = null, title, body, url = '/' }) => {
     const filter = {};
     if (to) filter.user = { $in: to };
     if (except) filter.user = { ...filter.user, $ne: except };
-    const subs = await PushSubscription.find(filter).lean();
+    const subs = await onlyAllowed(await PushSubscription.find(filter).lean());
     const payload = JSON.stringify({ title, body, url });
     await Promise.all(subs.map(async (s) => {
       try {
-        await webpush.sendNotification({ endpoint: s.endpoint, keys: s.keys }, payload, { TTL: 12 * 60 * 60 });
+        await webpush.sendNotification({ endpoint: s.endpoint, keys: s.keys }, payload, { ...SEND_OPTIONS, TTL: 12 * 60 * 60 });
       } catch (err) {
         // המנוי בוטל או פג (למשל האפליקציה נמחקה מהטלפון)
         if (err.statusCode === 404 || err.statusCode === 410) await PushSubscription.deleteOne({ _id: s._id });
@@ -52,13 +71,13 @@ const notify = ({ to = null, except = null, title, body, url = '/' }) => {
 // מחזיר כמה מכשירים קיבלו, ואת קודי השגיאה של מה שנכשל, כדי שאפשר יהיה להבין מה לא עובד
 const sendTest = async (user) => {
   if (!enabled) return { enabled: false, sent: 0, failed: [] };
-  const subs = await PushSubscription.find({ user }).lean();
+  const subs = await onlyAllowed(await PushSubscription.find({ user }).lean());
   const payload = JSON.stringify({ title: '🔔 התראת ניסיון', body: 'ההתראות עובדות בטלפון הזה!', url: '/schedule' });
   const failed = [];
   let sent = 0;
   await Promise.all(subs.map(async (s) => {
     try {
-      await webpush.sendNotification({ endpoint: s.endpoint, keys: s.keys }, payload, { TTL: 60 * 60 });
+      await webpush.sendNotification({ endpoint: s.endpoint, keys: s.keys }, payload, { ...SEND_OPTIONS, TTL: 60 * 60 });
       sent += 1;
     } catch (err) {
       if (err.statusCode === 404 || err.statusCode === 410) await PushSubscription.deleteOne({ _id: s._id });
@@ -69,4 +88,4 @@ const sendTest = async (user) => {
   return { enabled: true, devices: subs.length, sent, failed };
 };
 
-module.exports = { publicKey, notify, sendTest };
+module.exports = { publicKey, notify, sendTest, purgeInvalidSubscriptions };

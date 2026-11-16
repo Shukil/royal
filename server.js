@@ -24,6 +24,8 @@ mongoose.connect(process.env.MONGO_URI)
     // משימות קבועות בימי הטיול, ותזכורות למשימות שמגיע תאריך היעד שלהן
     await require('./routes/tasks').seedSystemTasks();
     require('./utils/taskReminders').startTaskReminders();
+    // מנויי התראות עם כתובת לא מורשית (נשמרו לפני שנוספה הבדיקה) נמחקים
+    await require('./utils/push').purgeInvalidSubscriptions();
   })
   .catch((err) => console.log('Failed to connect to MongoDB', err));
 

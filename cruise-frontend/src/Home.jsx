@@ -73,7 +73,17 @@ const Home = () => {
 
     // מעבר צבעים רציף לפי מיקום הגלילה: סביב כל גבול בין סצנות יש אזור מעבר
     // ברוחב של כמעט מסך שלם, שבו השכבה הבאה מתגלה בהדרגה (smoothstep) מעל הקודמת
+    // מיקומי הסצנות נמדדים פעם אחת (ושוב כשגובה הדף משתנה: שינוי גודל מסך, תמונות ונתונים שנטענים),
+    // ולא בכל פריים של גלילה. כך בזמן הגלילה רק כותבים שקיפות לשכבות, בלי לכפות חישוב פריסה מחדש
     let frame = 0;
+    let tops = [];
+    const lastOpacity = [];
+    const measure = () => {
+      tops = scenes.map((s) => {
+        const node = document.getElementById(`scene-${s.id}`);
+        return node ? node.getBoundingClientRect().top + window.scrollY : null;
+      });
+    };
     const update = () => {
       frame = 0;
       const vh = window.innerHeight;
@@ -82,29 +92,40 @@ const Home = () => {
       let current = scenes[0].id;
       let currentIndex = 0;
       scenes.forEach((s, i) => {
-        const node = document.getElementById(`scene-${s.id}`);
+        const top = tops[i];
         const layer = layers.current[s.id];
-        if (!node || !layer) return;
-        const top = node.getBoundingClientRect().top + window.scrollY;
+        if (top == null || !layer) return;
         if (center >= top) {
           current = s.id;
           currentIndex = i;
         }
-        layer.style.opacity = i === 0 ? 1 : smoothstep((center - (top - zone / 2)) / zone);
+        const opacity = i === 0 ? 1 : smoothstep((center - (top - zone / 2)) / zone);
+        if (lastOpacity[i] === undefined || Math.abs(opacity - lastOpacity[i]) > 0.005) {
+          layer.style.opacity = opacity;
+          lastOpacity[i] = opacity;
+        }
       });
       setActive(current);
       setReached((r) => Math.max(r, currentIndex));
     };
-    const onScroll = () => {
+    const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);
     };
+    const remeasure = () => {
+      measure();
+      schedule();
+    };
+    measure();
     update();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', remeasure);
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(remeasure);
+    observer?.observe(el);
 
     return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', remeasure);
+      observer?.disconnect();
       if (frame) cancelAnimationFrame(frame);
       document.documentElement.classList.remove('home-snap');
     };
