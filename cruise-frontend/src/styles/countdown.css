@@ -175,7 +175,6 @@
   background: var(--surface);
   color: var(--ink);
   border: 0;
-  border-inline-start: 5px solid var(--sea);
   border-radius: var(--radius-lg);
   padding: 1.25rem;
   box-shadow: var(--shadow);
@@ -286,4 +285,54 @@
 .quick-link svg {
   flex: none;
   color: var(--link);
+}
+
+/* ===== מה נשאר לי לפני ההפלגה ===== */
+.todo {
+  max-width: 900px;
+  margin: 1.5rem auto 0;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.todo__title {
+  font-size: 1.35rem;
+}
+.todo__list {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.todo__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 48px;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  color: var(--ink);
+  text-decoration: none;
+}
+.todo__link:hover {
+  background: var(--sea-soft);
+  color: var(--ink);
+}
+.todo__count {
+  flex: none;
+  min-width: 2rem;
+  padding: 0.1rem 0.55rem;
+  border-radius: var(--radius-pill);
+  background: var(--gold);
+  color: var(--navy-800);
+  font-weight: 800;
+  text-align: center;
+}
+.todo__done {
+  margin-top: 0.5rem;
+  color: var(--success);
+  font-weight: 700;
 }

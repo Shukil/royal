@@ -150,21 +150,6 @@
   }
 }
 
-/* הלוגו בתפריט הצד הוא כפתור לדף הראשי */
-.brand--link {
-  border-radius: var(--radius-md);
-  transition: background-color 0.2s ease;
-}
-.brand--link:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #fff;
-}
-.brand--link:focus-visible {
-  box-shadow: 0 0 0 3px var(--on-navy);
-}
-.brand--link[aria-current='page'] .brand__date {
-  color: #fff;
-}
 /* בדף הראשי כותרת הסצנה הגדולה מחליפה את הכותרת של הדף המוטמע */
 .scene--odyssey .card__header,
 .scene--guides .card__header {

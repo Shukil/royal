@@ -324,3 +324,39 @@
 .today__nowrap {
   white-space: nowrap;
 }
+
+/* כרטיס חירום בתחתית מסך "היום" */
+.today__sos {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--danger-line);
+  border-radius: var(--radius-md);
+  background: var(--danger-bg);
+}
+.today__sos-title {
+  font-size: 1.15rem;
+  color: var(--danger);
+}
+.today__sos-list {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.6rem 0;
+  padding: 0;
+  list-style: none;
+}
+.today__sos-number {
+  margin-inline-end: 0.35rem;
+  color: var(--danger);
+  font-size: 1.6rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+.today__sos-tel {
+  font-weight: 700;
+  white-space: nowrap;
+}
+.today__sos-more {
+  display: inline-block;
+  min-height: 44px;
+  padding-block: 0.6rem;
+  font-weight: 700;
+}

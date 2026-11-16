@@ -10,7 +10,6 @@
   border-radius: var(--radius-lg);
   background: var(--navy-800);
   color: #fff;
-  border-inline-start: 6px solid var(--gold);
 }
 .deck-plan__title {
   font-size: 1.25rem;

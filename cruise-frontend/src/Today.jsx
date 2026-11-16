@@ -284,6 +284,16 @@ const Today = ({ day, next, now, preview }) => {
         )}
       </section>
 
+      <section className="today__sos" aria-labelledby="today-sos">
+        <h2 id="today-sos" className="today__sos-title">במקרה חירום</h2>
+        <ul className="today__sos-list">
+          <li><a href="tel:112" dir="ltr" className="today__sos-number">112</a> משטרה, אמבולנס וכיבוי אש, בכל היעדים</li>
+          <li>על הספינה: מהטלפון שבחדר (המספר כתוב עליו), ויש מרכז רפואי</li>
+          <li>חדר המצב של משרד החוץ, 24/7: <a href="tel:+97225303155" dir="ltr" className="today__sos-tel">+972 2 530 3155</a></li>
+        </ul>
+        <Link to="/emergency" className="today__sos-more">כל מספרי החירום והנציגויות</Link>
+      </section>
+
       <nav className="today__links" aria-label="קיצורי דרך להיום">
         <Link to={day.guide.to} className="btn btn--gold">{day.guide.label}</Link>
         <Link to="/schedule" className="btn btn--outline">📅 הלו״ז המלא</Link>

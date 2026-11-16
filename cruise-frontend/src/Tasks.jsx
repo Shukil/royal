@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getToken } from './session';
 import { daysBetween, dueText, localDate, shortDate, useTasks } from './tasksApi';
+import ItemMenu from './ItemMenu';
 
 export const TaskRow = ({ task, people, today, onToggle, actions }) => {
   const assignee = people.find((p) => p.id === task.assignee);
@@ -118,16 +119,18 @@ const Tasks = () => {
         today={today}
         onToggle={toggle}
         actions={
-          <p className="task-row__actions">
-            <button type="button" className="link-btn" onClick={() => setEditing(task.id)}>עריכה</button>
-            {task.createdBy === data.me && (
-              <>
-                {' · '}
-                <button type="button" className="link-btn" onClick={() => window.confirm(`למחוק את "${task.title}"?`) && remove(task)}>מחיקה</button>
-              </>
-            )}
-            <span className="plan-item__by"> · הוסיף/ה: {task.createdByName}</span>
-          </p>
+          <div className="item-actions">
+            <span className="plan-item__by">הוסיף/ה: {task.createdByName}</span>
+            <ItemMenu
+              label={`פעולות למשימה: ${task.title}`}
+              items={[
+                { label: 'עריכה', onClick: () => setEditing(task.id) },
+                ...(task.createdBy === data.me
+                  ? [{ label: 'מחיקה', danger: true, onClick: () => window.confirm(`למחוק את "${task.title}"?`) && remove(task) }]
+                  : []),
+              ]}
+            />
+          </div>
         }
       />
     );

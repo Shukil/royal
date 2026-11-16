@@ -7,17 +7,13 @@
   text-align: center;
   color: var(--heading);
   margin-bottom: 1.5rem;
-  direction: ltr;
 }
-.auth__brand .royal-logo__mark {
-  width: 3.2rem;
-  height: 3.2rem;
+.auth__brand .brand__mark {
+  width: 3.4rem;
+  height: 3.4rem;
 }
-.auth__brand .royal-logo__word {
-  font-size: 1.45rem;
-}
-.auth__brand .brand__ship {
-  font-size: 1.6rem;
+.auth__brand .brand__name {
+  font-size: 2.6rem;
 }
 .auth .card__body {
   display: flex;
@@ -61,10 +57,9 @@
   font-weight: 500;
 }
 
-/* שם האונייה מתחת ללוגו בדפי ההתחברות */
-.auth__brand .brand__ship {
+/* שם האונייה מתחת לשם ההפלגה בדפי ההתחברות */
+.auth__ship {
   display: block;
-  margin-top: 0.5rem;
-  padding: 0;
-  border: 0;
+  margin-top: 0.6rem;
+  color: var(--muted);
 }

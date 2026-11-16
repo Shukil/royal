@@ -33,3 +33,4 @@
 @import './styles/admin.css'; /* ניהול משפחות (AdminFamilies.jsx) */
 @import './styles/announcements.css'; /* הודעות מהמנהלים (AnnouncementBanner.jsx) */
 @import './styles/documents.css'; /* המסמכים שלי (Documents.jsx) */
+@import './styles/item-menu.css'; /* תפריט פעולות בכרטיס (ItemMenu.jsx) */
