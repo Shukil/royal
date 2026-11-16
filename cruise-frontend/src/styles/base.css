@@ -49,7 +49,7 @@ img {
 }
 
 :focus-visible {
-  outline: none;
+  outline: 2px solid transparent;
   box-shadow: var(--focus);
   border-radius: var(--radius-sm);
 }
@@ -79,12 +79,18 @@ img {
   top: 1rem;
 }
 
+/* מי שביקש פחות תנועה: בלי אנימציות ובלי גלילה חלקה. מעברי צבע קצרים נשארים, כי הם מראים מה השתנה */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+  .sidebar,
+  .topnav__button svg {
+    transition: none !important;
   }
 }
 

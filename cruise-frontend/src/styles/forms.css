@@ -95,3 +95,10 @@
   background: var(--success-bg);
   border-color: var(--success-line);
 }
+
+/* הודעה ניטרלית: מצב צפוי (למשל לפני ששיבצו חדר), לא שגיאה */
+.alert--info {
+  color: var(--heading);
+  background: var(--info-bg);
+  border-color: var(--line);
+}

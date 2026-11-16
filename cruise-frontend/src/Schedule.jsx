@@ -195,7 +195,7 @@ const Schedule = () => {
                             {ev.type === 'family' ? ev.familyLabel : EVENT_TYPES[ev.type].short}
                           </span>
                         </td>
-                        <td>{ev.isMine ? 'אני' : ev.createdBy.name}{ev.isSystem && ' 🔒'}</td>
+                        <td>{ev.isMine ? 'אני' : ev.createdBy.name}</td>
                         <td>
                           <button
                             type="button"

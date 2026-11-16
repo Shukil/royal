@@ -21,7 +21,7 @@
   border-color: var(--sea);
 }
 .itin__stop:focus-visible {
-  outline: none;
+  outline: 2px solid transparent;
   box-shadow: var(--focus);
 }
 .itin__stop--sea {

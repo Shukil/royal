@@ -6,7 +6,7 @@ import Sidebar from './Sidebar';
 import OfflineBanner from './OfflineBanner';
 import AnnouncementBanner from './AnnouncementBanner';
 import api from './api';
-import { creditOf, pageTheme } from './pageTheme';
+import { creditOf, pageTheme, pageTitle } from './pageTheme';
 import {
   clearSession, getLastActivity, getToken, saveLastActivity, saveToken, saveUser, tokenInfo, useToken, useUser,
 } from './session';
@@ -168,6 +168,9 @@ const AppLayout = () => {
   useSessionTimeout(token);
   const loggedIn = Boolean(user && token);
   const hideSidebar = AUTH_PATHS.includes(location.pathname);
+  useEffect(() => {
+    document.title = pageTitle(location.pathname);
+  }, [location.pathname]);
   // צבע ותמונה לכותרת הדף, לפי הכתובת (styles/card.css)
   const theme = pageTheme(location.pathname);
   const heroStyle = theme.hero

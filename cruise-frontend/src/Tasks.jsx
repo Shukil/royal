@@ -73,7 +73,7 @@ const GROUPS = [
   { key: 'late', title: '⏰ באיחור', test: (t, today) => t.due < today },
   { key: 'today', title: '📌 היום', test: (t, today) => t.due === today },
   { key: 'week', title: '🗓️ בשבוע הקרוב', test: (t, today) => daysBetween(today, t.due) <= 7 },
-  { key: 'later', title: '🔜 בהמשך', test: () => true },
+  { key: 'later', title: '🔭 בהמשך', test: () => true },
 ];
 
 const Tasks = () => {
@@ -155,7 +155,7 @@ const Tasks = () => {
                 )}
                 <label className="check-row">
                   <input type="checkbox" checked={onlyMine} onChange={(e) => setOnlyMine(e.target.checked)} />
-                  <span>רק שלי ושל כולם</span>
+                  <span>רק משימות שלי (כולל משימות של כולם)</span>
                 </label>
               </div>
 

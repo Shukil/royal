@@ -18,7 +18,7 @@
   color: var(--link-hover);
 }
 .toc__link:focus-visible {
-  outline: none;
+  outline: 2px solid transparent;
   box-shadow: var(--focus);
 }
 #main [id] {
@@ -78,7 +78,7 @@
   cursor: pointer;
 }
 .site__summary:focus-visible {
-  outline: none;
+  outline: 2px solid transparent;
   box-shadow: var(--focus);
   border-radius: var(--radius-md);
 }

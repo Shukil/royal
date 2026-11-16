@@ -26,8 +26,8 @@ const CabinDetails = () => {
           )}
 
           {user && !cabin && (
-            <p className="alert alert--error" role="alert">
-              עדיין לא שויכת לחדר. מנהלי הטיול משייכים את החדרים בדף ניהול המשפחות.
+            <p className="alert alert--info" role="status">
+              עדיין לא שויכת לחדר. כשהמארגנים ישייכו את החדרים, הפרטים של החדר שלך יופיעו כאן.
             </p>
           )}
 

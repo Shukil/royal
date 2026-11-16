@@ -441,3 +441,18 @@
     font-size: 1.35rem;
   }
 }
+
+/* טלפון צר מאוד (320px): הכפתור "חירום" נשאר כאייקון, כדי שהסרגל לא יגלוש */
+@media (max-width: 340px) {
+  .topbar__emergency-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .topbar__emergency {
+    padding: 0 0.65rem;
+  }
+}

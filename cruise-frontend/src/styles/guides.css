@@ -21,7 +21,7 @@
   border-color: var(--sea);
 }
 .guide-card:focus-visible {
-  outline: none;
+  outline: 2px solid transparent;
   box-shadow: var(--focus);
 }
 .guide-card__emoji {

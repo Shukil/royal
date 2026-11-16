@@ -169,7 +169,7 @@ const Plan = () => {
                   <span className="plan-day__date">{dayLabel(d)}</span>
                   <span className="plan-day__place">{d.country ? <Flag code={d.country} /> : d.emoji} {d.place}</span>
                   <span className="plan-day__meta">
-                    {list.length ? `${list.length} פריטים` : 'ריק'}
+                    {list.length ? `${list.length} פריטים` : 'אין עדיין'}
                     {open > 0 && ` · ${open} להזמין`}
                     {problems && ' · ⚠️'}
                   </span>

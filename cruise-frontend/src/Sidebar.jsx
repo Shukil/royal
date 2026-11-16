@@ -89,6 +89,8 @@ const Sidebar = () => {
     if (!drawerOpen && !menu) return undefined;
     const onKey = (e) => {
       if (e.key !== 'Escape') return;
+      // Escape סוגר את התפריט ומחזיר את הפוקוס לכפתור שפתח אותו
+      topnav.current?.querySelector('[aria-expanded="true"]')?.focus();
       setDrawerOpen(false);
       setMenu(null);
     };
@@ -144,7 +146,14 @@ const Sidebar = () => {
             const open = menu === group.id;
             const current = group.items.some((item) => isActivePath(location.pathname, item.path));
             return (
-              <div key={group.id} className="topnav__group">
+              <div
+                key={group.id}
+                className="topnav__group"
+                onBlur={(e) => {
+                  // יציאה מהתפריט עם Tab סוגרת אותו
+                  if (open && !e.currentTarget.contains(e.relatedTarget)) setMenu(null);
+                }}
+              >
                 <button
                   type="button"
                   className={`topnav__button${current ? ' is-current' : ''}`}
@@ -171,11 +180,12 @@ const Sidebar = () => {
           <Link
             to="/emergency"
             className="topbar__emergency"
+            aria-label="חירום ומידע חשוב"
             aria-current={location.pathname === '/emergency' ? 'page' : undefined}
             onClick={closeAll}
           >
             <LifeBuoy size={18} strokeWidth={2} aria-hidden="true" />
-            חירום
+            <span className="topbar__emergency-label">חירום</span>
           </Link>
           <Link
             to="/search"

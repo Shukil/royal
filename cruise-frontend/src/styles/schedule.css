@@ -1,7 +1,7 @@
 /* ===== Schedule (לו״ז) =====
    צבע לכל סוג אירוע: סגול = לכולם, כתום = משפחתי, טורקיז = אישי, מג׳נטה = בהתאמה אישית */
 .event--all { --ev: #1a4fb4; --ev-soft: #e8eefb; --ev-text: #123a8a; }
-.event--family { --ev: #c8590c; --ev-soft: #fbeee2; --ev-text: #8f3f06; }
+.event--family { --ev: #b04a07; --ev-soft: #fbeee2; --ev-text: #8f3f06; }
 .event--personal { --ev: #007291; --ev-soft: #e0f4f8; --ev-text: #005a72; }
 .event--custom { --ev: #a8265f; --ev-soft: #f9e8f0; --ev-text: #861a4a; }
 @media (prefers-color-scheme: dark) {
