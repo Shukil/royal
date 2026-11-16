@@ -6,7 +6,7 @@ import Sidebar from './Sidebar';
 import OfflineBanner from './OfflineBanner';
 import AnnouncementBanner from './AnnouncementBanner';
 import api from './api';
-import { creditOf, pageTheme } from './pageTheme';
+import { creditOf, pageTheme, pageTitle } from './pageTheme';
 import {
   clearSession, getLastActivity, getToken, saveLastActivity, saveToken, saveUser, tokenInfo, useToken, useUser,
 } from './session';
@@ -89,9 +89,9 @@ const useFreshSession = () => {
 // ===== ניתוק אחרי 15 דקות בלי פעילות =====
 // בלי "השאר אותי מחובר" הטוקן תקף ל-15 דקות. כל עוד משתמשים באתר (לחיצה, הקלדה, גלילה) ונשארו
 // פחות מ-10 דקות, מבקשים מהשרת טוקן חדש ל-15 דקות נוספות. עם "השאר אותי מחובר" הטוקן תקף ל-30 יום.
-// בלי אינטרנט (על הספינה) אי אפשר לחדש את הטוקן, אז סופרים 15 דקות מהפעילות האחרונה במכשיר עצמו:
-// מי שמשתמש באתר בלי חיבור לא מתנתק באמצע ויכול להמשיך לראות את המידע השמור. כשהחיבור חוזר,
-// טוקן שפג בינתיים כבר לא תקף בשרת, ואז מתחברים מחדש
+// בלי אינטרנט (על הספינה) לא מנתקים בכלל: מי שנעלם לו האינטרנט נשאר עם הלו״ז, שעת החזרה לספינה
+// ומידע החירום השמורים, ואי אפשר להתחבר מחדש בלי שרת. הניתוק מתבצע רק כשיש חיבור,
+// ואז טוקן שפג כבר לא תקף בשרת בכל מקרה
 const IDLE_LIMIT = 15 * 60 * 1000;
 const RENEW_WHEN_LEFT = 10 * 60 * 1000;
 const CHECK_EVERY = 30 * 1000;
@@ -125,13 +125,10 @@ const useSessionTimeout = (token) => {
         if (now >= info.exp) clearSession();
         return;
       }
-      // 15 דקות בלי שימוש: מתנתקים, גם בלי אינטרנט
-      if (now - lastActivity >= IDLE_LIMIT) {
-        clearSession();
-        return;
-      }
-      // עם חיבור, טוקן שפג כבר לא יעבוד בשרת
-      if (navigator.onLine && now >= info.exp) clearSession();
+      // בלי חיבור לא מנתקים (ראו למעלה)
+      if (!navigator.onLine) return;
+      // 15 דקות בלי שימוש, או טוקן שפג (שכבר לא יעבוד בשרת): מתנתקים
+      if (now - lastActivity >= IDLE_LIMIT || now >= info.exp) clearSession();
     };
 
     const onActivity = () => {
@@ -171,6 +168,9 @@ const AppLayout = () => {
   useSessionTimeout(token);
   const loggedIn = Boolean(user && token);
   const hideSidebar = AUTH_PATHS.includes(location.pathname);
+  useEffect(() => {
+    document.title = pageTitle(location.pathname);
+  }, [location.pathname]);
   // צבע ותמונה לכותרת הדף, לפי הכתובת (styles/card.css)
   const theme = pageTheme(location.pathname);
   const heroStyle = theme.hero
@@ -202,7 +202,7 @@ const AppLayout = () => {
         style={heroStyle}
       >
         <OfflineBanner />
-        {loggedIn && <AnnouncementBanner />}
+        {loggedIn && <AnnouncementBanner compact={location.pathname !== '/'} />}
         <Suspense fallback={<p className="empty" role="status">טוען…</p>}>
           <Routes>
             <Route path="/" element={<Home />} />

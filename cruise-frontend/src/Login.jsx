@@ -10,7 +10,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   // בלי הסימון: ניתוק אחרי 15 דקות בלי פעילות. עם הסימון: 30 יום
-  const [remember, setRemember] = useState(false);
+  const [remember, setRemember] = useState(true);
   const navigate = useNavigate();
   // הדף שניסו להיכנס אליו לפני ההתחברות (App.jsx)
   const from = useLocation().state?.from || '/';
@@ -79,7 +79,7 @@ const Login = () => {
             <span>השאר אותי מחובר</span>
           </label>
           <span id="login-remember-hint" className="field__hint">
-            בלי הסימון מתנתקים אחרי 15 דקות בלי שימוש. בטלפון האישי, ובמיוחד על הספינה בלי אינטרנט, כדאי לסמן.
+            מסומן כברירת מחדל, כדי שלא תינעלו בחוץ על הספינה בלי אינטרנט. במחשב משותף כדאי להסיר את הסימון: אז מתנתקים אחרי 15 דקות בלי שימוש.
           </span>
         </div>
 

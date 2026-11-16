@@ -224,3 +224,19 @@ test('אי אפשר להוסיף פריט לתוכנית בתאריך שאינו
   assert.equal(res.status, 404);
   assert.equal((await as('post', '/api/plan/not-a-date').send({ title: 'x' })).status, 404);
 });
+
+test('השותפים לחדר לא כוללים את המשתמש עצמו, גם כששניהם עם אותו שם פרטי', async () => {
+  // גל ויובל משובצים ראשונית לחדר 10543. שני גל: כל אחד רואה את השותף, לא את עצמו
+  const first = await signUp({ firstName: 'גל', lastName: 'ראשון' });
+  assert.deepEqual(first.user.cabinMates, [], 'לבד בחדר: אין שותפים');
+  const second = await signUp({ firstName: 'גל', lastName: 'שני' });
+  assert.deepEqual(second.user.cabinMates, ['גל']);
+  const again = await first.as('get', '/api/auth/me');
+  assert.deepEqual(again.body.user.cabinMates, ['גל']);
+
+  // שותף עם שם אחר
+  const other = await signUp({ firstName: 'יובל', lastName: 'שלישי' });
+  assert.deepEqual([...other.user.cabinMates].sort(), ['גל', 'גל']);
+  const me = await first.as('get', '/api/auth/me');
+  assert.deepEqual([...me.body.user.cabinMates].sort(), ['גל', 'יובל']);
+});

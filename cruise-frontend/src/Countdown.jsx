@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Backpack, ConciergeBell, Landmark, Map as MapIcon } from 'lucide-react';
 import { findCabin } from './cabins';
-import { useUser } from './session';
+import api from './api';
+import { firstNameOf, getToken, useUser } from './session';
+import { localDate } from './tasksApi';
 import { photos } from './photos';
 
 // כל הזמנים בשעון רומא (CEST, UTC+2), כך שהספירה נכונה מכל מקום
@@ -54,6 +56,63 @@ const units = (t) => [
   { value: pad(t.minutes), label: 'דקות' },
   { value: pad(t.seconds), label: 'שניות' },
 ];
+
+// מה עוד נשאר לי לפני ההפלגה: אירועים שמחכים לתשובה ומשימות פתוחות שלי.
+// אם אין מה לעשות, אומרים את זה
+const MyTodo = ({ user }) => {
+  const [todo, setTodo] = useState(null);
+
+  useEffect(() => {
+    if (!getToken()) return undefined;
+    let alive = true;
+    Promise.all([api.get('/events'), api.get('/tasks')])
+      .then(([ev, tk]) => {
+        if (!alive) return;
+        const today = localDate();
+        const waiting = ev.data.events.filter((e) => !e.isSystem && !e.myRsvp && e.date >= today).length;
+        const mine = tk.data.tasks
+          .filter((t) => !t.done && t.assignee === tk.data.me)
+          .sort((a, b) => a.due.localeCompare(b.due));
+        setTodo({ waiting, tasks: mine.length, nextTask: mine[0] || null });
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  if (!todo) return null;
+  const name = firstNameOf(user);
+  const nothing = !todo.waiting && !todo.tasks;
+
+  return (
+    <section className="todo" aria-labelledby="todo-title">
+      <h2 id="todo-title" className="todo__title">{name ? `${name}, מה נשאר לך לפני ההפלגה` : 'מה נשאר לך לפני ההפלגה'}</h2>
+      {nothing ? (
+        <p className="todo__done">הכול מסודר: אין לך משימות פתוחות, ואין אירועים שמחכים לתשובה.</p>
+      ) : (
+        <ul className="todo__list">
+          {todo.waiting > 0 && (
+            <li>
+              <Link to="/schedule" className="todo__link">
+                <span>{todo.waiting === 1 ? 'אירוע אחד מחכה לאישור הגעה שלך' : `${todo.waiting} אירועים מחכים לאישור הגעה שלך`}</span>
+                <span className="todo__count" aria-hidden="true">{todo.waiting}</span>
+              </Link>
+            </li>
+          )}
+          {todo.tasks > 0 && (
+            <li>
+              <Link to="/tasks" className="todo__link">
+                <span>{todo.tasks === 1 ? 'משימה פתוחה אחת' : `${todo.tasks} משימות פתוחות`} · הקרובה: {todo.nextTask.title}</span>
+                <span className="todo__count" aria-hidden="true">{todo.tasks}</span>
+              </Link>
+            </li>
+          )}
+        </ul>
+      )}
+    </section>
+  );
+};
 
 const Countdown = () => {
   // שעון אחד משותף לכל הטיימרים. חישוב מיידי כדי שלא יוצגו אפסים בשנייה הראשונה
@@ -178,6 +237,8 @@ const Countdown = () => {
         </div>
         {myFlight && <p className="flights__note">שעות לפי לוח הטיסות הנוכחי של אל על, בשעון המקומי. כדאי לוודא מול כרטיס הטיסה.</p>}
       </section>
+
+      {user && <MyTodo user={user} />}
 
       <nav className="quick-links" aria-label="קיצורי דרך">
         <Link to="/cabin-checklist" className="quick-link"><ConciergeBell size={22} strokeWidth={1.9} aria-hidden="true" />צ'ק ליסט חדר</Link>

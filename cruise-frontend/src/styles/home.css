@@ -126,15 +126,21 @@
   z-index: 100;
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
+  gap: 0.75rem;
 }
 .scene-dots__dot {
+  position: relative;
   width: 12px;
   height: 12px;
   border-radius: var(--radius-pill);
   border: 2px solid var(--heading);
   background: transparent;
   transition: height 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+.scene-dots__dot::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
 }
 .home[data-dark] .scene-dots__dot {
   border-color: #fff;
@@ -150,21 +156,6 @@
   }
 }
 
-/* הלוגו בתפריט הצד הוא כפתור לדף הראשי */
-.brand--link {
-  border-radius: var(--radius-md);
-  transition: background-color 0.2s ease;
-}
-.brand--link:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #fff;
-}
-.brand--link:focus-visible {
-  box-shadow: 0 0 0 3px var(--on-navy);
-}
-.brand--link[aria-current='page'] .brand__date {
-  color: #fff;
-}
 /* בדף הראשי כותרת הסצנה הגדולה מחליפה את הכותרת של הדף המוטמע */
 .scene--odyssey .card__header,
 .scene--guides .card__header {

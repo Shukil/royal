@@ -4,7 +4,7 @@ import {
   Backpack, BedDouble, CalendarDays, ClipboardList, Compass, ConciergeBell, FolderOpen, LifeBuoy, ListChecks,
   Map as MapIcon, Megaphone, Ship, Smartphone, Users, Wrench,
 } from 'lucide-react';
-import RoyalLogo from './RoyalLogo';
+import FamilyMark from './FamilyMark';
 import { clearSession, useUser } from './session';
 import { isStandalone } from './installPrompt';
 
@@ -39,10 +39,12 @@ const MENU_GROUPS = [
     items: [
       { path: '/personal-checklist', label: 'צ\'ק ליסט אישי', icon: Backpack },
       { path: '/documents', label: 'המסמכים שלי', icon: FolderOpen },
-      { path: '/emergency', label: 'חירום ומידע חשוב', icon: LifeBuoy },
     ],
   },
 ];
+
+// חירום תמיד בהישג יד: קישור קבוע בסרגל (בכל מסך) ופריט ראשון במגירה
+const EMERGENCY_ITEM = { path: '/emergency', label: 'חירום ומידע חשוב', icon: LifeBuoy };
 
 // דף ההסבר על התקנה כאפליקציה. לא מוצג כשהאתר כבר פתוח כאפליקציה
 const INSTALL_ITEM = { path: '/install', label: 'להתקין כאפליקציה', icon: Smartphone };
@@ -87,6 +89,8 @@ const Sidebar = () => {
     if (!drawerOpen && !menu) return undefined;
     const onKey = (e) => {
       if (e.key !== 'Escape') return;
+      // Escape סוגר את התפריט ומחזיר את הפוקוס לכפתור שפתח אותו
+      topnav.current?.querySelector('[aria-expanded="true"]')?.focus();
       setDrawerOpen(false);
       setMenu(null);
     };
@@ -126,15 +130,14 @@ const Sidebar = () => {
         <Link
           to="/"
           className="brand"
-          aria-label="Royal Caribbean · Odyssey of the Seas - דף הבית"
+          aria-label="ההפלגה שלנו · דף הבית"
           aria-current={location.pathname === '/' ? 'page' : undefined}
           onClick={() => {
             closeAll();
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
         >
-          <RoyalLogo compact />
-          <span className="brand__ship">Odyssey of the Seas</span>
+          <FamilyMark compact />
         </Link>
 
         {/* מחשב: הקבוצות בסרגל, כל אחת נפתחת לתפריט */}
@@ -143,7 +146,14 @@ const Sidebar = () => {
             const open = menu === group.id;
             const current = group.items.some((item) => isActivePath(location.pathname, item.path));
             return (
-              <div key={group.id} className="topnav__group">
+              <div
+                key={group.id}
+                className="topnav__group"
+                onBlur={(e) => {
+                  // יציאה מהתפריט עם Tab סוגרת אותו
+                  if (open && !e.currentTarget.contains(e.relatedTarget)) setMenu(null);
+                }}
+              >
                 <button
                   type="button"
                   className={`topnav__button${current ? ' is-current' : ''}`}
@@ -167,6 +177,16 @@ const Sidebar = () => {
         </nav>
 
         <div className="topbar__end">
+          <Link
+            to="/emergency"
+            className="topbar__emergency"
+            aria-label="חירום ומידע חשוב"
+            aria-current={location.pathname === '/emergency' ? 'page' : undefined}
+            onClick={closeAll}
+          >
+            <LifeBuoy size={18} strokeWidth={2} aria-hidden="true" />
+            <span className="topbar__emergency-label">חירום</span>
+          </Link>
           <Link
             to="/search"
             className="topbar__icon"
@@ -212,6 +232,11 @@ const Sidebar = () => {
       {/* טלפון: מגירה מהצד עם כל הדפים */}
       <aside id="site-nav" className={`sidebar${drawerOpen ? ' is-open' : ''}`}>
         <nav className="sidebar__nav" aria-label="כל הדפים">
+          <div className="nav-group">
+            <ul className="nav">
+              <li>{pageLink(EMERGENCY_ITEM, 'nav__link nav__link--emergency')}</li>
+            </ul>
+          </div>
           {groups.map((group) => (
             <div key={group.id} className="nav-group" role="group" aria-labelledby={`nav-${group.id}`}>
               <p id={`nav-${group.id}`} className="nav-group__title">{group.title}</p>

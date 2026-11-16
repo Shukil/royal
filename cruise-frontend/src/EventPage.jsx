@@ -264,30 +264,6 @@ const EventPage = () => {
             </section>
           )}
 
-          <div className="add-to-cal" role="group" aria-label="הוספה ליומן">
-            <span className="add-to-cal__label">הוספה ליומן:</span>
-            <a
-              className="btn btn--outline btn--sm"
-              href={googleCalendarUrl(event, window.location.href)}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <GoogleIcon /> Google Calendar
-            </a>
-            <button type="button" className="btn btn--outline btn--sm" onClick={() => downloadIcs(event, window.location.href)}>
-              <AppleIcon /> Apple / Outlook
-            </button>
-          </div>
-
-          <section className="section">
-            <h2 className="section__title">תיאור האירוע</h2>
-            {event.description ? (
-              <p className="prose event-page__desc">{event.description}</p>
-            ) : (
-              <p className="field__hint">לא נוסף תיאור לאירוע.</p>
-            )}
-          </section>
-
           <section className="section">
             <h2 className="section__title">אישור הגעה</h2>
             <div className="rsvp" role="group" aria-label="האם תגיע?">
@@ -319,6 +295,32 @@ const EventPage = () => {
               ))}
             </ul>
           </section>
+
+          <section className="section">
+            <h2 className="section__title">תיאור האירוע</h2>
+            {event.description ? (
+              <p className="prose event-page__desc">{event.description}</p>
+            ) : (
+              <p className="field__hint">לא נוסף תיאור לאירוע.</p>
+            )}
+          </section>
+
+          <details className="add-to-cal">
+            <summary className="btn btn--outline btn--sm">הוספה ליומן</summary>
+            <div className="add-to-cal__options">
+            <a
+              className="btn btn--outline btn--sm"
+              href={googleCalendarUrl(event, window.location.href)}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <GoogleIcon /> Google Calendar
+            </a>
+            <button type="button" className="btn btn--outline btn--sm" onClick={() => downloadIcs(event, window.location.href)}>
+              <AppleIcon /> Apple / Outlook
+            </button>
+            </div>
+          </details>
 
           <section className="section">
             <h2 className="section__title">תגובות ({event.comments.length})</h2>

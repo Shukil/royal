@@ -8,7 +8,9 @@ const CabinDetails = () => {
   const user = useUser();
   const cabin = findCabin(user);
   const firstName = firstNameOf(user);
-  const roommates = cabin?.guests.filter((g) => g !== firstName) ?? [];
+  // השותפים לחדר מגיעים מהשרת (לפי מזהה, בלי המשתמש עצמו). בפרטי משתמש שנשמרו לפני שהשדה נוסף
+  // (עד הטעינה הבאה של האתר) מסננים לפי שם פרטי
+  const roommates = user?.cabinMates ?? cabin?.guests.filter((g) => g !== firstName) ?? [];
 
   return (
     <div className="page">
@@ -26,8 +28,8 @@ const CabinDetails = () => {
           )}
 
           {user && !cabin && (
-            <p className="alert alert--error" role="alert">
-              עדיין לא שויכת לחדר. מנהלי הטיול משייכים את החדרים בדף ניהול המשפחות.
+            <p className="alert alert--info" role="status">
+              עדיין לא שויכת לחדר. כשהמארגנים ישייכו את החדרים, הפרטים של החדר שלך יופיעו כאן.
             </p>
           )}
 
@@ -55,7 +57,7 @@ const CabinDetails = () => {
                   )}
                   <div className="fact">
                     <dt>שותפים לחדר</dt>
-                    <dd>{roommates.length ? roommates.join(', ') : cabin.guests.join(' ו') || '—'}</dd>
+                    <dd>{roommates.length ? roommates.join(' ו') : 'עדיין אין שותף רשום לחדר'}</dd>
                   </div>
                   {cabin.known && (
                     <div className="fact">

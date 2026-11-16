@@ -5,6 +5,7 @@ import Flag from './Flag';
 import { getToken } from './session';
 import { checkItem, dayLabel, planDays } from './planChecks';
 import { findTripDay } from './tripDays';
+import ItemMenu from './ItemMenu';
 
 const emptyForm = { start: '10:00', end: '', title: '', who: '', booked: false, note: '', link: '' };
 
@@ -168,7 +169,7 @@ const Plan = () => {
                   <span className="plan-day__date">{dayLabel(d)}</span>
                   <span className="plan-day__place">{d.country ? <Flag code={d.country} /> : d.emoji} {d.place}</span>
                   <span className="plan-day__meta">
-                    {list.length ? `${list.length} פריטים` : 'ריק'}
+                    {list.length ? `${list.length} פריטים` : 'אין עדיין'}
                     {open > 0 && ` · ${open} להזמין`}
                     {problems && ' · ⚠️'}
                   </span>
@@ -207,18 +208,20 @@ const Plan = () => {
                         item={item}
                         day={selected}
                         actions={
-                          <p className="plan-item__actions">
-                            <button type="button" className="link-btn" onClick={() => setEditing(item.id)}>עריכה</button>
-                            {' · '}
-                            <button
-                              type="button"
-                              className="link-btn"
-                              onClick={() => window.confirm(`למחוק את "${item.title}" מהתוכנית של כולם?`) && save(() => api.delete(`/plan/${selected.date}/${item.id}`))}
-                            >
-                              מחיקה
-                            </button>
-                            <span className="plan-item__by"> · עדכן/ה: {item.updatedBy}</span>
-                          </p>
+                          <div className="item-actions">
+                            <span className="plan-item__by">עדכן/ה: {item.updatedBy}</span>
+                            <ItemMenu
+                              label={`פעולות לפריט: ${item.title}`}
+                              items={[
+                                { label: 'עריכה', onClick: () => setEditing(item.id) },
+                                {
+                                  label: 'מחיקה',
+                                  danger: true,
+                                  onClick: () => window.confirm(`למחוק את "${item.title}" מהתוכנית של כולם?`) && save(() => api.delete(`/plan/${selected.date}/${item.id}`)),
+                                },
+                              ]}
+                            />
+                          </div>
                         }
                       />
                     ),

@@ -36,7 +36,11 @@
   font-weight: 400;
 }
 .announcement__close {
-  padding: 0.15rem 0.45rem;
+  min-width: 44px;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
   border: 0;
   border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.12);
@@ -53,4 +57,39 @@
 .announcements {
   max-width: 900px;
   margin-inline: auto;
+}
+
+/* שורה אחת בכל דף חוץ מדף הבית; לחיצה פותחת את כל ההודעות */
+.announcements--compact {
+  margin-bottom: 0.75rem;
+}
+.announcement-chip {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.9rem;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--navy-800);
+  color: #fff;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.announcement-chip__text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+}
+.announcement-chip__count {
+  flex: none;
+  padding: 0.05rem 0.5rem;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 0.85rem;
 }

@@ -16,8 +16,9 @@ const readDismissed = () => {
 
 const timeOf = (iso) => new Date(iso).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
 
-const AnnouncementBanner = () => {
+const AnnouncementBanner = ({ compact = false }) => {
   const [list, setList] = useState([]);
+  const [open, setOpen] = useState(false);
   const [dismissed, setDismissed] = useState(readDismissed);
 
   useEffect(() => {
@@ -50,6 +51,21 @@ const AnnouncementBanner = () => {
 
   const visible = list.filter((a) => !dismissed.includes(a.id));
   if (!visible.length) return null;
+
+  // בכל דף חוץ מדף הבית ההודעה תופסת שורה אחת, ולחיצה עליה פותחת את כל ההודעות.
+  // כך הדף עצמו מתחיל גבוה יותר במסך, וההודעה לא נעלמת
+  if (compact && !open) {
+    const [first] = visible;
+    return (
+      <div className="announcements announcements--compact" role="region" aria-label="הודעות מהמארגנים">
+        <button type="button" className="announcement-chip" aria-expanded="false" onClick={() => setOpen(true)}>
+          <span className="announcement__icon" aria-hidden="true">📢</span>
+          <span className="announcement-chip__text">{first.text}</span>
+          {visible.length > 1 && <span className="announcement-chip__count">+{visible.length - 1}</span>}
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="announcements" role="region" aria-label="הודעות מהמארגנים">

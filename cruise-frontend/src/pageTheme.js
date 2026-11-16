@@ -1,3 +1,5 @@
+import { destinations } from './destinations';
+import { TRIP_NAME } from './brand';
 import { photos } from './photos';
 
 // המראה של כותרת הדף לפי הכתובת: צבע לפי הקבוצה בתפריט (styles/tokens.css),
@@ -27,3 +29,38 @@ export const pageTheme = (pathname) => {
 
 // הקרדיט לצלם, כפי שנדרש ברישיון
 export const creditOf = (photo) => `© ${photo.credit} · ${photo.license}`;
+
+// הכותרת של הלשונית (וההיסטוריה, וקורא המסך) לפי הכתובת, כדי שאפשר יהיה להבדיל בין הדפים
+const TITLES = {
+  '/': 'דף הבית',
+  '/schedule': 'לו״ז',
+  '/plan': 'תוכנית הטיול',
+  '/tasks': 'משימות',
+  '/itinerary': 'המסלול שלנו',
+  '/guides': 'מדריכי יעדים',
+  '/rome-guide': 'המדריך לרומא',
+  '/odyssey': 'על האודיסי',
+  '/cabin': 'פרטי חדר',
+  '/cabin-checklist': 'צ׳ק ליסט חדר',
+  '/personal-checklist': 'צ׳ק ליסט אישי',
+  '/documents': 'המסמכים שלי',
+  '/emergency': 'חירום ומידע חשוב',
+  '/profile': 'הפרופיל שלי',
+  '/search': 'חיפוש',
+  '/install': 'התקנה כאפליקציה',
+  '/updates': 'עדכוני האתר',
+  '/admin/families': 'ניהול משפחות',
+  '/admin/announcements': 'הודעה לכולם',
+  '/login': 'התחברות',
+  '/register': 'הרשמה',
+  '/forgot-password': 'שחזור סיסמה',
+  '/reset-password': 'איפוס סיסמה',
+};
+
+export const pageTitle = (pathname) => {
+  const guide = pathname.match(/^\/guide\/([\w-]+)/);
+  let name = TITLES[pathname];
+  if (guide && destinations[guide[1]]) name = `המדריך ל${destinations[guide[1]].name}`;
+  else if (pathname.startsWith('/schedule/')) name = 'אירוע';
+  return name && pathname !== '/' ? `${name} · ${TRIP_NAME}` : `${TRIP_NAME} · אוגוסט 2027`;
+};

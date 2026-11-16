@@ -44,56 +44,54 @@
 .brand {
   display: flex;
   align-items: center;
-  gap: 0.9rem;
   color: var(--heading);
   text-decoration: none;
-  direction: ltr;
   border-radius: var(--radius-sm);
 }
 .brand:hover {
   color: var(--sea);
 }
-.royal-logo {
+/* הסימן והשם של ההפלגה (FamilyMark.jsx) */
+.brand__lockup {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.7rem;
   color: inherit;
 }
-.royal-logo__mark {
-  width: 2.6rem;
-  height: 2.6rem;
+.brand__mark {
+  width: 2.8rem;
+  height: 2.8rem;
   flex: none;
+  color: var(--navy-800);
 }
-.royal-logo__text {
+.brand__text {
   display: flex;
   flex-direction: column;
+  line-height: 1;
+}
+.brand__name {
   font-family: var(--font-ticket);
+  font-size: 2rem;
   font-weight: 700;
-  text-transform: uppercase;
-  line-height: 0.9;
-  letter-spacing: 0.08em;
-  text-align: left;
+  line-height: 0.85;
+  color: var(--heading);
 }
-.royal-logo__word {
-  font-size: 1.3rem;
+.brand__date {
+  margin-top: 0.2rem;
+  font-size: 0.8rem;
+  color: var(--muted);
 }
-.royal-logo--compact .royal-logo__mark {
-  width: 2.1rem;
-  height: 2.1rem;
+.brand__lockup--compact .brand__mark {
+  width: 2.4rem;
+  height: 2.4rem;
 }
-.royal-logo--compact .royal-logo__word {
-  font-size: 1.05rem;
+.brand__lockup--compact .brand__name {
+  font-size: 1.7rem;
 }
-/* שם האונייה ליד הלוגו, מופרד בקו */
-.brand__ship {
-  padding-inline-start: 0.9rem;
-  border-inline-start: 1px solid var(--line);
-  font-family: var(--font-ticket);
-  font-weight: 700;
-  font-size: 1.5rem;
-  letter-spacing: 0.03em;
-  color: var(--coral);
-  white-space: nowrap;
+@media (prefers-color-scheme: dark) {
+  .brand__mark {
+    color: var(--heading);
+  }
 }
 
 /* הקבוצות בסרגל (מחשב) */
@@ -330,28 +328,6 @@
     gap: 0 1.25rem;
   }
 }
-@media (max-width: 520px) {
-  .brand__ship {
-    display: none;
-  }
-}
-
-/* הלוגו בקצה הימני של הסרגל, ושם האונייה משמאלו */
-.brand {
-  flex-direction: row-reverse;
-}
-.brand__ship {
-  padding-inline: 0 0.9rem;
-  border-inline-start: 0;
-  border-inline-end: 1px solid var(--line);
-}
-
-/* שם האונייה בקורל: במצב כהה גוון בהיר יותר, כדי שיישאר קריא על הסרגל הכהה */
-@media (prefers-color-scheme: dark) {
-  .brand__ship {
-    color: #ff9a78;
-  }
-}
 /* שטח לחיצה נוח גם לקישור הקטן */
 .topbar__logout {
   min-height: 24px;
@@ -371,5 +347,112 @@
   }
   .topbar {
     gap: 0.5rem;
+  }
+}
+
+/* ===== חירום: תמיד בסרגל ===== */
+.topbar__emergency {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  padding: 0 0.95rem;
+  border: 1px solid var(--danger-line);
+  border-radius: var(--radius-pill);
+  background: var(--danger-bg);
+  color: var(--danger);
+  font-weight: 700;
+  text-decoration: none;
+}
+.topbar__emergency:hover,
+.topbar__emergency[aria-current='page'] {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+.nav__link--emergency {
+  color: var(--danger);
+  font-weight: 700;
+}
+.nav__link--emergency .nav__icon {
+  color: var(--danger);
+}
+@media (max-width: 380px) {
+  .topbar__emergency {
+    padding: 0 0.6rem;
+  }
+}
+
+/* ===== כותרת קומפקטית בדפים היומיומיים בטלפון =====
+   בדפי המדריכים הכותרת נשארת גדולה עם התמונה. בשאר הדפים הפסקה שמתחת לכותרת נשארת לקוראי מסך
+   אבל לא תופסת מקום, כך שהתוכן עצמו מתחיל גבוה יותר */
+@media (max-width: 640px) {
+  .app-main:not([data-hero]) .card__header {
+    padding: 1.1rem 1.1rem 2.4rem;
+  }
+  .app-main:not([data-hero]) .card__title {
+    font-size: 2.5rem;
+  }
+  .app-main:not([data-hero]) .card__lead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+/* טלפון צר: הסרגל (סימן, חירום, חיפוש, תפריט) צריך להיכנס בלי לדחוף את הדף הצידה */
+@media (max-width: 520px) {
+  .topbar {
+    gap: 0.25rem;
+    padding-inline: 0.5rem;
+  }
+  .topbar__end {
+    gap: 0;
+  }
+  .brand__lockup {
+    gap: 0.45rem;
+  }
+  .brand__lockup--compact .brand__mark {
+    width: 2.1rem;
+    height: 2.1rem;
+  }
+  .brand__lockup--compact .brand__name {
+    font-size: 1.45rem;
+  }
+  .brand__date {
+    font-size: 0.75rem;
+  }
+  .topbar__emergency {
+    padding: 0 0.7rem;
+  }
+  .topbar__icon,
+  .menu-button {
+    width: 40px;
+  }
+}
+@media (max-width: 400px) {
+  .brand__date {
+    display: none;
+  }
+  .brand__lockup--compact .brand__name {
+    font-size: 1.35rem;
+  }
+}
+
+/* טלפון צר מאוד (320px): הכפתור "חירום" נשאר כאייקון, כדי שהסרגל לא יגלוש */
+@media (max-width: 340px) {
+  .topbar__emergency-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .topbar__emergency {
+    padding: 0 0.65rem;
   }
 }

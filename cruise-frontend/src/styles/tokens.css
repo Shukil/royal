@@ -13,8 +13,8 @@
   --sea-dark: #0e4a96;
   --sea-soft: #e6f0fb;
   --aqua: #0b7a84;
-  --coral: #cf4a26;
-  --olive: #5d6b2b;
+  --plum: #85306a;
+  --slate: #3f4f5f;
   /* הדגשה על רקע כהה (קישורים, טבעת פוקוס): צהוב רך */
   --on-navy: #ffd166;
 
@@ -67,10 +67,10 @@
   --group: var(--aqua);
 }
 [data-group='mine'] {
-  --group: var(--coral);
+  --group: var(--plum);
 }
 [data-group='admin'] {
-  --group: var(--olive);
+  --group: var(--slate);
 }
 
 /* ===== מצב כהה =====
