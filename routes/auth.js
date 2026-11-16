@@ -41,19 +41,21 @@ const isInviteCode = (code) => {
   return crypto.timingSafeEqual(digest(normalizeCode(code)), digest(expected));
 };
 
-// כל החדרים ומי גר בכל אחד (שמות פרטיים), לפי מה שנשמר במסד
+// כל החדרים ומי גר בכל אחד (שמות פרטיים), לפי מה שנשמר במסד.
+// מחזיר גם את רשימת המשתמשים עצמה, כדי לדעת מי השותפים לחדר של משתמש מסוים לפי המזהה שלו
+// ולא לפי השם הפרטי (שני שותפים יכולים לשאת את אותו שם פרטי)
 const cabinRoster = async () => {
   const users = await User.find({ cabinNumber: { $nin: [null, '', UNASSIGNED] } })
     .select('firstName cabinNumber').sort({ firstName: 1 }).lean();
   const byCabin = {};
   for (const u of users) (byCabin[u.cabinNumber] ||= []).push(u.firstName);
-  return byCabin;
+  return { byCabin, users };
 };
 
 // פרטי המשתמש שהאתר שומר. החדר, השותפים לחדר, המשפחה וההרשאות נקבעים כאן בלבד
 // (ומשתנים בדף ניהול המשפחות, routes/admin.js)
 const userPayload = async (user) => {
-  const cabins = await cabinRoster();
+  const { byCabin: cabins, users: roster } = await cabinRoster();
   return {
     id: user._id,
     name: `${user.firstName} ${user.lastName}`,
@@ -62,6 +64,10 @@ const userPayload = async (user) => {
     email: user.email,
     cabinNumber: user.cabinNumber,
     cabinGuests: cabins[user.cabinNumber] || [],
+    // השותפים לחדר, בלי המשתמש עצמו. אם אף שותף עוד לא נרשם לאתר, הרשימה ריקה
+    cabinMates: roster
+      .filter((u) => u.cabinNumber === user.cabinNumber && String(u._id) !== String(user._id))
+      .map((u) => u.firstName),
     // כל החדרים, כדי שטבלת החדרים תעבוד גם בלי אינטרנט
     cabins,
     family: user.family || null,
