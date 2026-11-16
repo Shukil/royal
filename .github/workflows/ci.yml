@@ -7,10 +7,14 @@ on:
   push:
     branches: [main]
   pull_request:
+  # פעם בשבוע בודקים גם בלי שינוי בקוד, כי חולשות חדשות בספריות מתגלות עם הזמן
+  schedule:
+    - cron: '0 6 * * 1'
 
 jobs:
   server:
     name: בדיקות השרת
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,6 +32,7 @@ jobs:
 
   frontend:
     name: האתר (lint ובנייה)
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -42,3 +47,20 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run build
+
+  # חולשות מוכרות בספריות שרצות בפרודקשן (השרת והאתר). נכשל רק על חומרה High ומעלה;
+  # כלי פיתוח ובנייה (nodemon, vite-plugin-pwa) לא נשלחים למשתמשים ולכן לא נספרים.
+  # לא צריך להתקין כלום: הבדיקה קוראת את package-lock.json
+  audit:
+    name: חולשות מוכרות בספריות
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: שרת
+        run: npm audit --omit=dev --audit-level=high
+      - name: אתר
+        run: npm audit --omit=dev --audit-level=high
+        working-directory: cruise-frontend
