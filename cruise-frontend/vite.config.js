@@ -72,7 +72,8 @@ export default defineConfig({
             handler: 'NetworkFirst',
             options: {
               cacheName: 'api',
-              networkTimeoutSeconds: 10,
+              // על Wi-Fi של ספינה שמחובר אבל לא עונה, אחרי 4 שניות מוצג העותק השמור (ולא אחרי 10)
+              networkTimeoutSeconds: 4,
               expiration: { maxEntries: 200, maxAgeSeconds: 60 * DAY },
               cacheableResponse: { statuses: [200] },
             },

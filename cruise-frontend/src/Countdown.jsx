@@ -6,6 +6,7 @@ import api from './api';
 import { firstNameOf, getToken, useUser } from './session';
 import { localDate } from './tasksApi';
 import { photos } from './photos';
+import { thumb } from './thumb';
 
 // כל הזמנים בשעון רומא (CEST, UTC+2), כך שהספירה נכונה מכל מקום
 const cruise = {
@@ -139,7 +140,7 @@ const Countdown = () => {
     <div>
       <article className="pass" aria-labelledby="pass-title">
         {/* ברקע: האונייה עצמה (אותה תמונה מופיעה עם קרדיט מלא בהמשך הדף, ב"על האודיסי") */}
-        <div className="pass__main" style={{ '--pass-photo': `url("${photos.ship.hero.src}")` }}>
+        <div className="pass__main" style={{ '--pass-photo': `url("${thumb(photos.ship.hero.src, 500)}")` }}>
           <div className="pass__route">
             <span>רומא</span>
             <span className="pass__route-line" aria-hidden="true" />
