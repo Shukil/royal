@@ -15,6 +15,9 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MIN_PASSWORD = 8; // רק לסיסמה חדשה; מי שכבר נרשם עם סיסמה קצרה יותר ממשיך להתחבר איתה
 const RESET_TTL = 60 * 60 * 1000; // שעה
 const BCRYPT_ROUNDS = 10;
+// hash מזויף להשוואה כשאין משתמש עם המייל: כך התחברות עם מייל שלא קיים לוקחת אותו זמן כמו עם סיסמה שגויה,
+// ואי אפשר לגלות לפי מהירות התשובה אילו מיילים רשומים
+const DUMMY_HASH = bcrypt.hashSync('not-a-real-password', BCRYPT_ROUNDS);
 const BAD_LOGIN = 'המייל או הסיסמה שגויים';
 // עד 128 תווים: bcrypt מתעלם ממה שאחרי 72 בתים, ואין סיבה לקבל קלט ענק
 const MAX_PASSWORD = 128;
@@ -115,10 +118,8 @@ router.post('/register', registerLimits, async (req, res) => {
 // התחברות
 router.post('/login', loginLimits, async (req, res) => {
   const user = await User.findOne({ email: normalizeEmail(req.body.email) });
-  if (!user) return res.status(400).json({ message: BAD_LOGIN });
-
-  const isMatch = await bcrypt.compare(String(req.body.password || ''), user.password);
-  if (!isMatch) return res.status(400).json({ message: BAD_LOGIN });
+  const isMatch = await bcrypt.compare(String(req.body.password || ''), user ? user.password : DUMMY_HASH);
+  if (!user || !isMatch) return res.status(400).json({ message: BAD_LOGIN });
 
   res.json({ token: signToken(user, Boolean(req.body.remember)), user: await userPayload(user) });
 });

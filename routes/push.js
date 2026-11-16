@@ -19,6 +19,13 @@ router.post('/subscribe', async (req, res) => {
   if (!isAllowedPushEndpoint(endpoint) || !hasValidKeys(keys)) {
     return res.status(400).json({ message: 'פרטי ההרשמה להתראות אינם תקינים' });
   }
+  // כתובת שכבר רשומה למשתמש אחר עוברת אליי רק אם המפתחות הפרטיים של המנוי זהים (אותו מכשיר שהתחבר עם חשבון אחר).
+  // מי שמכיר רק את הכתובת, בלי המפתחות, לא יכול לקחת לעצמו מנוי של מישהו אחר
+  const existing = await PushSubscription.findOne({ endpoint }).lean();
+  if (existing && String(existing.user) !== String(req.userId)
+    && (existing.keys.p256dh !== keys.p256dh || existing.keys.auth !== keys.auth)) {
+    return res.status(400).json({ message: 'פרטי ההרשמה להתראות אינם תקינים' });
+  }
   await PushSubscription.findOneAndUpdate(
     { endpoint },
     { user: req.userId, endpoint, keys: { p256dh: keys.p256dh, auth: keys.auth } },

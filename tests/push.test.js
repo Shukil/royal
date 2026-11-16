@@ -113,3 +113,19 @@ test('בדיקת חיים לא חושפת גרסאות של ספריות', async
   const res = await api().get('/api/health');
   assert.deepEqual(Object.keys(res.body).sort(), ['db', 'ok']); // בלי RENDER_GIT_COMMIT אין שדה commit
 });
+
+test('מנוי של משתמש אחר לא נלקח בלי המפתחות הפרטיים שלו', async () => {
+  const owner = await signUp();
+  const other = await signUp();
+  const endpoint = 'https://fcm.googleapis.com/fcm/send/ownership-check';
+  assert.equal((await owner.as('post', '/api/push/subscribe').send({ subscription: { endpoint, keys: KEYS } })).status, 200);
+
+  // מי שמכיר את הכתובת בלבד, עם מפתחות אחרים: נדחה, והמנוי נשאר של הבעלים
+  const otherKeys = { p256dh: `${KEYS.p256dh.slice(0, -1)}A`, auth: `${KEYS.auth.slice(0, -1)}A` };
+  assert.equal((await other.as('post', '/api/push/subscribe').send({ subscription: { endpoint, keys: otherKeys } })).status, 400);
+  assert.equal(String((await PushSubscription.findOne({ endpoint }).lean()).user), String(owner.user.id));
+
+  // אותו מכשיר שהתחבר עם חשבון אחר (אותם מפתחות): המנוי עובר אליו
+  assert.equal((await other.as('post', '/api/push/subscribe').send({ subscription: { endpoint, keys: KEYS } })).status, 200);
+  assert.equal(String((await PushSubscription.findOne({ endpoint }).lean()).user), String(other.user.id));
+});
